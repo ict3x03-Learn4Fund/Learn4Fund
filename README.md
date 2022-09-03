@@ -20,9 +20,9 @@ install docker desktop to run the web with docker
 ## Run application
 ### Running application without docker
 
-1. run **npm start** to start the frontend.
+1. navigate to frontend folder and run **npm start** to start the frontend.
 
-2. run **nodemon server** to start the backend
+2. navigate to backend folder and run **nodemon server** to start the backend.
 
 ### Running application with docker
 1. Navigate to the highest level directory
@@ -42,7 +42,7 @@ install docker desktop to run the web with docker
 
 ## Project set up steps using command lines & other useful commands
 Clone project
-- git clone https://github.com/ict3111-team10-2022/ict3111-team10-2022.git
+- git clone https://github.com/ict3x03-Learn4Fund/Learn4Fund.git
 
 **Checkout main branch**
 - git checkout main
