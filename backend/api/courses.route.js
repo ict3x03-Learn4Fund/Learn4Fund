@@ -1,5 +1,5 @@
 import express from "express"
-import CoursesCtrl from "../dao/courses.controller.js"
+import CoursesCtrl from "../dao/controller/courses.controller.js"
 
 const router = express.Router()
 

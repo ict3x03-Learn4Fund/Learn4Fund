@@ -8,7 +8,7 @@ export default class CoursesDAO{
             return
         }
         try {
-            courses = await conn.db(process.env.COURSES_NS).collection("sales")
+            courses = await conn.db(process.env.COURSES_NS).collection("courses")
         } catch (e) {
             console.error(
                 `Unable to establish a collection handle in coursesDAO: ${e}`,
@@ -24,10 +24,10 @@ export default class CoursesDAO{
     } = {}){
         let query
         if (filters){
-            if ("email" in filters) {
-                query = { $text: { $search: filters["email"]}}
-            } else if ("storeLocation" in filters) {
-                query = { "storeLocation" : { $eq: filters["storeLocation"]}}
+            if ("name" in filters) {
+                query = { $text: { $search: filters["name"]}}
+            } else if ("courseType" in filters) {
+                query = { "courseType" : { $eq: filters["courseType"]}}
             }
         }
 
@@ -45,9 +45,6 @@ export default class CoursesDAO{
         try {
             const coursesList = await displayCursor.toArray()
             const totalNumCourses = await courses.countDocuments(query)
-            console.log(
-                `dao courseList: ${coursesList}`,
-            )
             return { coursesList, totalNumCourses}
         } catch (e) {
             console.error(

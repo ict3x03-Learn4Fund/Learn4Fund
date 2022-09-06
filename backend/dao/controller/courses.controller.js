@@ -1,4 +1,4 @@
-import CoursesDAO from "../dao/coursesDAO.js"
+import CoursesDAO from "../coursesDAO.js"
 
 // highest layer that contain methods to interact with the frontend
 export default class CoursesController {
@@ -8,10 +8,10 @@ export default class CoursesController {
         const page = req.query.page ? parseInt(req.query.page, 10) : 0
 
         let filters = {}
-        if (req.query.email){
-            filters.email = req.query.email
-        } else if (req.query.storeLocation) {
-            filters.storeLocation = req.query.storeLocation
+        if (req.query.name){
+            filters.name = req.query.name
+        } else if (req.query.courseType) {
+            filters.courseType = req.query.courseType
         }
 
         const { coursesList, totalNumCourses } = await CoursesDAO.getCourses({
