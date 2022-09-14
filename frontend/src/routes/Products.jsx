@@ -38,18 +38,18 @@ function Products() {
   return (
     <main className="flex flex-row flex-wrap w-full h-full px-[120px] pb-[119px] bg-[#EFEFF0] items-center">
       <div className="flex flex-col flex-wrap w-1/6 h-full mt-[24px] self-start">
-        <span className="font-roboto font-bold text-[20px] leading-[28px] tracking-[0.3px] text-[#242528]">
+        <span className="font-type1 font-bold text-[20px] leading-[28px] tracking-[0.3px] text-[#242528]">
           Products
         </span>
-        <span className="font-roboto font-normal text-[14px] leading-[22px] text-[#868A92]">
+        <span className="font-type1 font-normal text-[14px] leading-[22px] text-[#868A92]">
           10 results
         </span>
       </div>
       <div className="flex flex-row flex-wrap w-5/6 h-full mt-[24px]">
-        <span className="font-roboto font-normal text-[14px] leading-[22px] text-[#868A92] w-full">
+        <span className="font-type1 font-normal text-[14px] leading-[22px] text-[#868A92] w-full">
           Page 1 of 1 about 10 results
         </span>
-        <div className="flex flex-row flex-nowrap w-fit h-[32px] bg-white items-center font-roboto font-normal text-[12px] leading-[20px] mt-[8px]">
+        <div className="flex flex-row flex-nowrap w-fit h-[32px] bg-white items-center font-type1 font-normal text-[12px] leading-[20px] mt-[8px]">
           <div
             className="flex border-[1px] border-[#D9D9D9] rounded-l-sm py-[6px] px-[16px]"
             style={
@@ -130,21 +130,21 @@ function Products() {
                     />
                     {product.vipPriceFlag && (
                       <div className="flex h-fit w-fit bg-[#DBE5FA] px-[4px] rounded-sm">
-                        <span className="font-roboto font-bold text-[12px] leading-[20px] text-[#1E4DAF]">
+                        <span className="font-type1 font-bold text-[12px] leading-[20px] text-[#1E4DAF]">
                           VIP Price
                         </span>
                       </div>
                     )}
                     {product.bulkDiscountFlag && (
                       <div className="flex h-fit w-fit bg-[#FFE69C] px-[4px] rounded-sm">
-                        <span className="font-roboto font-bold text-[12px] leading-[20px] text-[#6A5001]">
+                        <span className="font-type1 font-bold text-[12px] leading-[20px] text-[#6A5001]">
                           Bulk Discount
                         </span>
                       </div>
                     )}
                     {(product.vipPriceFlag || product.bulkDiscountFlag) && (
                       <div className="flex h-fit w-fit bg-[#EFEFF0] px-[4px] rounded-sm">
-                        <span className="font-roboto font-bold text-[12px] leading-[20px] text-[#242528]">
+                        <span className="font-type1 font-bold text-[12px] leading-[20px] text-[#242528]">
                           MOQ: {product.moq}
                         </span>
                       </div>
@@ -153,11 +153,11 @@ function Products() {
 
                   <div className="flex flex-col flex-nowrap w-full h-[140px] mt-[8px]">
                     {product.highPriceOriginal && (
-                      <div className="text-[12px] leading-[20px] text-[#868A92] font-roboto font-normal line-through">
+                      <div className="text-[12px] leading-[20px] text-[#868A92] font-type1 font-normal line-through">
                         {product.highPriceOriginalPretty}
                       </div>
                     )}
-                    <div className="flex items-stretch text-[16px] leading-[20px] text-[#2A64DB] font-roboto font-bold">
+                    <div className="flex items-stretch text-[16px] leading-[20px] text-[#2A64DB] font-type1 font-bold">
                       <span className="text-[10px] leading-[12px] top-0 self-start">
                         {product.currencySymbol}
                       </span>{" "}
@@ -172,7 +172,7 @@ function Products() {
                         {product.highPrice && product.highPrice.toFixed(2)}
                       </span>
                     </div>
-                    <div className="mt-[10px] font-roboto font-normal text-[#242528] text-[14px] leading-[16px]">
+                    <div className="mt-[10px] font-type1 font-normal text-[#242528] text-[14px] leading-[16px]">
                       {product.title}
                     </div>
                   </div>
