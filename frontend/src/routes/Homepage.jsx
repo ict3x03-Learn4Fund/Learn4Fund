@@ -94,7 +94,7 @@ function Homepage() {
 
       <section id="featurebrands" className="w-full mt-[40px]">
         <div className="self-start font-roboto font-bold text-[20px] leading-[28px] tracking-[0.3px]">
-          Feature Brands
+          Feature Brands 
         </div>
         <div className="flex flex-row justify-between">
           <p className="text-[#55585D] text-[14px] leading-[16px] font-roboto font-normal">

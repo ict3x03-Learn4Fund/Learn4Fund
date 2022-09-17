@@ -1,4 +1,5 @@
-import AccountsDAO from "../accountsDAO.js"
+import AccountsDAO from "../dao/accountsDAO.js"
+
 
 // highest layer that contain methods to interact with the frontend
 export default class AccountsController {
