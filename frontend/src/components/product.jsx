@@ -10,13 +10,16 @@ import subimage3 from "../assets/images/Product img thumbnail 2.png";
 import { useParams, useNavigate } from "react-router-dom";
 
 function ProductPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
   const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(0);
   const [stars, setStars] = useState(0)
   const { productid } = useParams();
   const navigate = useNavigate();
 
-  const [productDetails, setProductDetails] = useState({});
+  let [productDetails, setProductDetails] = useState({});
   productDetails = dataProducts.find((element) => element.id === productid);
 
   // Add quantity to const variable

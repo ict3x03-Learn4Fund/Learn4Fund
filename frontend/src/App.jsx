@@ -3,7 +3,6 @@ import {Routes,
     Route,
     Link} from "react-router-dom"
     import Homepage from './routes/Homepage';
-    import Brands from './routes/Brands';
     import Products from './routes/Products';
     import Nav from './components/nav/Nav';
     import ProductPage from './components/product';
@@ -42,7 +41,6 @@ function App() {
         <Route exact path="cart" element = {<Cart/>}/>
 
         <Route exact path="settings" element = {<RequireAuth><Settings/></RequireAuth>}/>
-        <Route exact path="brands" element = {<Brands/>}/>
         <Route exact path="login" element = {<Login/>}/>
         <Route exact path="signup" element = {<Signup/>}/>
         <Route exact path="products" element = {<Products/>}/>
