@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import dataProducts from "../assets/datasets/products.json";
 
 function Products() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
   const [productsWidth, setProductsWidth] = useState(0);
 

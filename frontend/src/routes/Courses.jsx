@@ -4,7 +4,7 @@ import CourseDataService from "../services/courses";
 import { useNavigate } from "react-router-dom";
 
 function Courses() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [searchEmail, setSearchEmail] = useState("");
   const [searchStoreLocation, setSearchStoreLocation] = useState("");
