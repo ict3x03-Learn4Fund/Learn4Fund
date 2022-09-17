@@ -59,7 +59,7 @@ function Brands() {
             className="flex flex-col w-full mt-[24px] mb-[40px]"
           >
             <div className="flex w-[94px] h-[48px] rounded bg-[#E4E5E7] justify-center items-center">
-              <span className="font-roboto font-bold text-[20px] leading-[28px] tracking-[0.3px]">
+              <span className="font-type1 font-bold text-[20px] leading-[28px] tracking-[0.3px]">
                 {alphabet}
               </span>
             </div>
@@ -84,10 +84,10 @@ function Brands() {
                       className="flex h-3/5 w-full object-contain"
                       alt={""}
                     />
-                    <div className="flex h-1/5 w-full justify-center pt-[8px] text-[16px] leading-[20px] font-bold font-roboto text-[#242528]">
+                    <div className="flex h-1/5 w-full justify-center pt-[8px] text-[16px] leading-[20px] font-bold font-type1 text-[#242528]">
                       {brand.name}
                     </div>
-                    <div className="flex h-1/5 w-full justify-center text-[12px] leading-[20px] font-normal font-roboto text-[#55585D]">
+                    <div className="flex h-1/5 w-full justify-center text-[12px] leading-[20px] font-normal font-type1 text-[#55585D]">
                       {(brand.productCount ? brand.productCount : "N.A") +
                         " Products"}
                     </div>
