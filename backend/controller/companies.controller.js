@@ -1,14 +1,35 @@
-import companyModel from "../models/companyModel.js"
+const asyncHandler = require('express-async-handler')
+const Company = require("../models/companyModel");
 
-// highest layer that contain methods to interact with the frontend
-export default class CompaniesController {
-    /***
-     * @desc Get All courses
-     * @route GET /v1/api/courses/getAll
-     * @access Private
-     */
-    static async apiGetCompanies(req,res,next){
-        const companies = companyModel.find()
-        res.json(companies)
-    }
+/***
+ * @desc Get All companies
+ * @route GET /v1/api/courses/company
+ * @access Private
+ */
+const apiGetCompanies = asyncHandler(async (req, res) => {
+  const companies = await Company.find();
+  res.json(companies);
+});
+
+/***
+ * @desc Get All companies
+ * @route GET /v1/api/courses/company
+ * @access Private
+ */
+const apiCreateCompany = asyncHandler(async (req, res) => {
+  try {
+    const company = await Company.create({
+      companyName: req.body.companyName,
+      companyImg: req.body.companyImg,
+      companyAddress: req.body.companyAddress,
+    });
+    res.status(200).json(company);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+module.exports = {
+  apiGetCompanies,
+  apiCreateCompany
 }
