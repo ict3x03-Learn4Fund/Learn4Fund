@@ -2,19 +2,18 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdArrowForwardIos } from "react-icons/md";
 
-// Add the banner images
-import Logo1 from "../assets/vectors/coupa-logo.png";
-import Logo2 from "../assets/vectors/ivalua-logo.png";
-import Logo3 from "../assets/vectors/gep-smart-logo.png";
-import Logo4 from "../assets/vectors/microsoft-dynamics-logo.png";
-import Logo5 from "../assets/vectors/oracle-logo.png";
-import Logo6 from "../assets/vectors/sap-logo.png";
-import Logo7 from "../assets/vectors/sap-ariba-logo.png";
-import Logo8 from "../assets/vectors/tenderboard-logo.png";
-
 // Mock datasets to render
 import dataBrands from "../assets/datasets/brands.json";
 import dataProducts from "../assets/datasets/products.json";
+
+// import Swiper core and required modules
+import { Navigation, Pagination, Autoplay } from 'swiper';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+//Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/pagination'
 
 function Homepage() {
   const [featureBrands, setFeatureBrands] = useState([]);
@@ -57,54 +56,42 @@ function Homepage() {
   return (
     <main className="flex flex-col flex-wrap w-full h-full px-[120px] pb-[119px] bg-[#EFEFF0] items-center">
       <div className="flex h-[385px] w-4/5 bg-white border-[1px] border-[#E4E5E7] rounded mt-[24px] p-[9px]">
-        <div className="relative w-full h-full rounded bg-[url(/src/assets/images/bannerbackground.png)] bg-cover">
-          <div className="absolute left-[63px] top-[100px] text-[#1E4DAF] font-normal text-[28px] leading-[32px]">
-            Punchout integration with all major
-          </div>
-          <div className="absolute left-[63px] top-[144px] text-[#1E4DAF] font-bold text-[36px] font-roboto leading-[54px]">
-            ERPs & eProcurement Solutions
-          </div>
-          <button className="absolute left-[63px] top-[219px] bg-[#1E4DAF] rounded-3xl text-white font-roboto font-bold text-[24px] leading-[28px] tracking-[0.5px] py-[10px] px-[32px]">
-            Learn More
-          </button>
-
-          {/* Add company logos */}
-          <div className="absolute w-2/5 h-[88px] shadow-banner right-[-8px] top-[85px] rounded-tl-sm bg-white">
-            <div className="flex w-full h-full items-center">
-              <div className="flex flex-row space-x-[20px] flex-wrap w-full h-1/2 mx-[32px]">
-                <img src={Logo1} alt={""} className="w-1/5 object-contain" />
-                <img src={Logo2} alt={""} className="w-1/5 object-contain" />
-                <img src={Logo3} alt={""} className="w-1/5 object-contain" />
-                <img src={Logo4} alt={""} className="w-1/5 object-contain" />
-              </div>
-            </div>
-          </div>
-          <div className="absolute w-1/2 h-[88px] shadow-banner right-[-8px] top-[193px] rounded-tl-sm bg-white">
-            <div className="flex w-full h-full items-center">
-              <div className="flex flex-row space-x-[20px] flex-wrap w-full h-1/2 mx-[32px]">
-                <img src={Logo5} alt={""} className="w-1/5 object-contain" />
-                <img src={Logo6} alt={""} className="w-1/5 object-contain" />
-                <img src={Logo7} alt={""} className="w-1/5 object-contain" />
-                <img src={Logo8} alt={""} className="w-1/5 object-contain" />
-              </div>
-            </div>
-          </div>
-        </div>
+      <Swiper className="container testimonials__container"
+    //Swiper modules
+    modules={[Navigation, Pagination, Autoplay]}
+          speed={400}
+          spaceBetween={0}
+          slidesPerView={1}
+          centeredSlides={true}
+          autoplay={{ delay: 2500, disableOnInteraction: true }}
+          loop
+    pagination={{ clickable: true }}
+    >
+      <SwiperSlide>
+        Promotion item 1
+      </SwiperSlide>
+      <SwiperSlide>
+      Promotion item 2
+      </SwiperSlide>
+      <SwiperSlide>
+      Promotion item 3
+      </SwiperSlide>
+    </Swiper>
       </div>
 
       <section id="featurebrands" className="w-full mt-[40px]">
-        <div className="self-start font-roboto font-bold text-[20px] leading-[28px] tracking-[0.3px]">
-          Feature Brands 
+        <div className="self-start font-type1 font-bold text-[20px] leading-[28px] tracking-[0.3px]">
+          Featured Companies
         </div>
         <div className="flex flex-row justify-between">
-          <p className="text-[#55585D] text-[14px] leading-[16px] font-roboto font-normal">
-            Browse the full catalog of brands today
+          <p className="text-[#55585D] text-[14px] leading-[16px] font-type1 font-normal">
+            Browse the full catalog of companies today
           </p>
           <span
-            className="flex font-roboto font-normal text-[#2A64DB] text-[14px] leading-[22px]"
+            className="flex font-type1 font-normal text-[#2A64DB] text-[14px] leading-[22px]"
             onClick={() => navigate("brands")}
           >
-            View More{" "}
+            View More
             <MdArrowForwardIos className="self-center w-[14px] h-[14px] ml-[4px] text-[#2A64DB] leading-[28px]" />
           </span>
         </div>
@@ -121,11 +108,11 @@ function Homepage() {
                   className="flex h-3/5 w-full object-contain"
                   alt={""}
                 />
-                <div className="flex h-1/5 w-full justify-center pt-[8px] text-[16px] leading-[20px] font-bold font-roboto text-[#242528]">
+                <div className="flex h-1/5 w-full justify-center pt-[8px] text-[16px] leading-[20px] font-bold font-type1 text-[#242528]">
                   {brand.name}
                 </div>
-                <div className="flex h-1/5 w-full justify-center text-[12px] leading-[20px] font-normal font-roboto text-[#55585D]">
-                  {brand.productCount + " Products"}
+                <div className="flex h-1/5 w-full justify-center text-[12px] leading-[20px] font-normal font-type1 text-[#55585D]">
+                  {brand.productCount + " Courses"}
                 </div>
               </div>
             );
@@ -134,15 +121,15 @@ function Homepage() {
       </section>
 
       <section id="ourproducts" className="w-full mt-[40px]">
-        <div className="self-start font-roboto font-bold text-[20px] leading-[28px] tracking-[0.3px]">
-          Our Products
+        <div className="self-start font-type1 font-bold text-[20px] leading-[28px] tracking-[0.3px]">
+          Our Courses
         </div>
         <div className="flex flex-row justify-between">
-          <p className="text-[#55585D] text-[14px] leading-[16px] font-roboto font-normal">
-            Trusted by the best companies in Asia
+          <p className="text-[#55585D] text-[14px] leading-[16px] font-type1 font-normal">
+            Trusted by most IT Specialists in Singapore
           </p>
           <span
-            className="flex font-roboto font-normal text-[#2A64DB] text-[14px] leading-[22px]"
+            className="flex font-type1 font-normal text-[#2A64DB] text-[14px] leading-[22px]"
             onClick={() => navigate("products")}
           >
             View More{" "}
@@ -177,21 +164,21 @@ function Homepage() {
                     />
                     {product.vipPriceFlag && (
                       <div className="flex h-fit w-fit bg-[#DBE5FA] px-[4px] rounded-sm">
-                        <span className="font-roboto font-bold text-[12px] leading-[20px] text-[#1E4DAF]">
+                        <span className="font-type1 font-bold text-[12px] leading-[20px] text-[#1E4DAF]">
                           VIP Price
                         </span>
                       </div>
                     )}
                     {product.bulkDiscountFlag && (
                       <div className="flex h-fit w-fit bg-[#FFE69C] px-[4px] rounded-sm">
-                        <span className="font-roboto font-bold text-[12px] leading-[20px] text-[#6A5001]">
+                        <span className="font-type1 font-bold text-[12px] leading-[20px] text-[#6A5001]">
                           Bulk Discount
                         </span>
                       </div>
                     )}
                     {(product.vipPriceFlag || product.bulkDiscountFlag) && (
                       <div className="flex h-fit w-fit bg-[#EFEFF0] px-[4px] rounded-sm">
-                        <span className="font-roboto font-bold text-[12px] leading-[20px] text-[#242528]">
+                        <span className="font-type1 font-bold text-[12px] leading-[20px] text-[#242528]">
                           MOQ: {product.moq}
                         </span>
                       </div>
@@ -200,11 +187,11 @@ function Homepage() {
 
                   <div className="flex flex-col flex-nowrap w-full h-[140px] mt-[8px]">
                     {product.highPriceOriginal && (
-                      <div className="text-[12px] leading-[20px] text-[#868A92] font-roboto font-normal line-through">
+                      <div className="text-[12px] leading-[20px] text-[#868A92] font-type1 font-normal line-through">
                         {product.highPriceOriginalPretty}
                       </div>
                     )}
-                    <div className="flex items-stretch text-[16px] leading-[20px] text-[#2A64DB] font-roboto font-bold">
+                    <div className="flex items-stretch text-[16px] leading-[20px] text-[#2A64DB] font-type1 font-bold">
                       <span className="text-[10px] leading-[12px] top-0 self-start">
                         {product.currencySymbol}
                       </span>{" "}
@@ -221,7 +208,7 @@ function Homepage() {
                         {product.highPrice && product.highPrice.toFixed(2)}
                       </span>
                     </div>
-                    <div className="mt-[10px] font-roboto font-normal text-[#242528] text-[14px] leading-[16px]">
+                    <div className="mt-[10px] font-type1 font-normal text-[#242528] text-[14px] leading-[16px]">
                       {product.title}
                     </div>
                   </div>

@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+
+
+.btn {
+    @apply bg-blue-500 uppercase text-[12px] text-white font-bold p-2 rounded;
+}
+
+.btn:hover{
+    @apply bg-blue-700;
+}
+
+.btn:focus {
+    @apply outline-none shadow-lg;
+}
+
+.btn:active{
+    @apply bg-blue-900;
+}
+
+.footerlink {
+    @apply cursor-pointer underline underline-offset-2 text-w1;
+}
+
+.footerlink:hover {
+    @apply text-orange-300;
+}
+
+.link {
+    @apply cursor-pointer underline underline-offset-2 text-b3;
+}
+
+.link:hover {
+    @apply text-orange-600;
+}
+
+.input {
+    @apply font-type1 font-normal leading-[20px] text-center self-center rounded-r border-2 border-b1;
+}
+
+@tailwind utilities;
+
+
+
