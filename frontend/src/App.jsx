@@ -19,6 +19,7 @@ import Banner from './components/banner/Banner';
 import Donations from './routes/Donations';
 import Admin from './routes/Admin';
 import {AuthProvider, RequireAuth} from "./hooks/useAuth";
+import { NavProvider } from './hooks/useNav';
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
@@ -29,7 +30,7 @@ function App() {
   },[])
   return (
     <AuthProvider>
-
+    <NavProvider>
     <Nav/>
       <Routes>
         <Route exact path="/" element = {<Homepage/>}/>
@@ -66,6 +67,7 @@ function App() {
       </Routes>
     {!bannerClose && <Banner closeBanner={setBannerClose}/>}
       <Footer/>
+      </NavProvider>
     </AuthProvider>
   )
 }

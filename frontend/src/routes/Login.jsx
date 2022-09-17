@@ -6,9 +6,11 @@ import { MdAlternateEmail } from "react-icons/md";
 import {BsShieldLockFill} from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {useAuth} from "../hooks/useAuth";
+import {useNav} from "../hooks/useNav";
 
 function Login() {
   const { login } = useAuth();
+  const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -21,8 +23,11 @@ function Login() {
     setPassword(event.target.value);
   }
 
+
   const handleLogin = () => {
     login().then(() => {
+      setTab(state?.path.substring(1) || '');
+      // setMenu(state?.path || "/");
       navigate(state?.path || "/");
     });
   };

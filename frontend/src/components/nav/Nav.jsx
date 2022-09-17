@@ -6,17 +6,20 @@ import {
   RiLogoutBoxRLine,
   RiUserSettingsFill,
 } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import picture from "../../assets/images/default_person.jpg";
 import { BiDonateHeart } from "react-icons/bi";
 import { AiOutlineHome } from "react-icons/ai";
 import {useAuth} from "../../hooks/useAuth";
+import {useNav} from "../../hooks/useNav";
 
 function Nav() {
   const { authed, logout } = useAuth();
+  const { tab, setTab } = useNav();
   const navigate = useNavigate();
   const [sessionItems, setSessionItems] = useState(0);
-  const [tab, setTab] = useState('');
+
+  console.log(tab);
 
   const handleLogout = () => {
     logout();
@@ -39,7 +42,7 @@ function Nav() {
     }
   }, []);
   return (
-    <section id="Nav" className="sticky top-0 flex w-full z-100 bg-w2">
+    <section id="Nav" className="sticky top-0 flex w-full bg-w2">
       <div className="flex-row flex-wrap w-full px-[40px] text-black shadow-lg">
         <div className="flex flex-row flex-wrap w-full justify-between mb-2">
         {authed === true ? <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
@@ -49,7 +52,7 @@ function Nav() {
                 className="w-[32px] h-[32px] mr-[8px] bg-w1 self-center"
                 style={{ borderRadius: "100%" }}
               />
-              <span className="font-type2 text-[24px]">Hi, John Doe</span>
+              <span className="font-type2 text-[32px]">Hi, John Doe</span>
             </div>: <div
             className="flex w-full lg:w-1/2 justify-center lg:justify-start font-type4 my-2 text-[32px]"
             onClick={() => {
