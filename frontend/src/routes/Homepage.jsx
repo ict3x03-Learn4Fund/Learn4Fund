@@ -7,18 +7,20 @@ import dataBrands from "../assets/datasets/brands.json";
 import dataProducts from "../assets/datasets/products.json";
 
 // import Swiper core and required modules
-import { Navigation, Pagination, Autoplay } from 'swiper';
+import { Navigation, Pagination, Autoplay } from "swiper";
 
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from "swiper/react";
 
 //Import Swiper styles
-import 'swiper/css'
-import 'swiper/css/pagination'
+import "swiper/css";
+import "swiper/css/pagination";
+import Subscribe from "../components/banner/Subscribe";
+import { BsSearch } from "react-icons/bs";
 
 function Homepage() {
   const [featureBrands, setFeatureBrands] = useState([]);
   const [productsWidth, setProductsWidth] = useState(0);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     let brands = [];
@@ -54,45 +56,50 @@ function Homepage() {
   }, []);
 
   return (
-    <main className="flex flex-col flex-wrap w-full h-full px-[120px] pb-[119px] bg-[#EFEFF0] items-center">
-      <div className="flex h-[385px] w-4/5 bg-white border-[1px] border-[#E4E5E7] rounded mt-[24px] p-[9px]">
-      <Swiper className="container testimonials__container"
-    //Swiper modules
-    modules={[Navigation, Pagination, Autoplay]}
+    <main className="flex flex-col flex-wrap w-full h-full bg-b1 items-center space-y-[40px] pb-[40px]">
+      
+      <div className="flex flex-row flex-wrap w-full justify-end mb-2 mt-[24px] px-[40px]">
+          <button className="flex w-[40px] h-[40px] bg-black rounded-full p-2 justify-center">
+            <BsSearch className="self-center text-w1" />
+          </button>
+          <input
+            className="flex w-1/3 bg-w1 text-black p-2 ml-2 rounded text-center border-2 border-b1"
+            placeholder="Search for courses"
+          />
+      </div>
+      <div className="flex h-[385px] w-4/5 bg-w1 border-[1px] border-w2 rounded mt-[24px] p-[9px]">
+        <Swiper
+          //Swiper modules
+          modules={[Navigation, Pagination, Autoplay]}
           speed={400}
           spaceBetween={0}
           slidesPerView={1}
           centeredSlides={true}
           autoplay={{ delay: 2500, disableOnInteraction: true }}
           loop
-    pagination={{ clickable: true }}
-    >
-      <SwiperSlide>
-        Promotion item 1
-      </SwiperSlide>
-      <SwiperSlide>
-      Promotion item 2
-      </SwiperSlide>
-      <SwiperSlide>
-      Promotion item 3
-      </SwiperSlide>
-    </Swiper>
+          pagination={{ clickable: true }}
+        >
+          <SwiperSlide >Promotion item 1</SwiperSlide>
+          <SwiperSlide >Promotion item 2</SwiperSlide>
+          <SwiperSlide>Promotion item 3</SwiperSlide>
+        </Swiper>
       </div>
+      <Subscribe />
 
-      <section id="featurebrands" className="w-full mt-[40px]">
-        <div className="self-start font-type1 font-bold text-[20px] leading-[28px] tracking-[0.3px]">
+      <section id="featurebrands" className="w-full px-[120px]">
+        <div className="self-start font-type1 font-bold text-[1rem] leading-[28px] tracking-[0.3px] text-w1">
           Featured Companies
         </div>
         <div className="flex flex-row justify-between">
-          <p className="text-[#55585D] text-[14px] leading-[16px] font-type1 font-normal">
-            Browse the full catalog of companies today
+          <p className="text-w2 text-[14px] leading-[16px] font-type1 font-normal">
+            Browse the list of companies that we have partnered with
           </p>
           <span
-            className="flex font-type1 font-normal text-[#2A64DB] text-[14px] leading-[22px]"
+            className="flex font-type1 font-normal text-[14px] text-w2 leading-[22px]"
             onClick={() => navigate("brands")}
           >
             View More
-            <MdArrowForwardIos className="self-center w-[14px] h-[14px] ml-[4px] text-[#2A64DB] leading-[28px]" />
+            <MdArrowForwardIos className="self-center w-[14px] h-[14px] ml-[4px] leading-[28px]" />
           </span>
         </div>
         <div className="flex flex-row w-full mt-[12px] space-x-[8px]">
@@ -120,20 +127,20 @@ function Homepage() {
         </div>
       </section>
 
-      <section id="ourproducts" className="w-full mt-[40px]">
-        <div className="self-start font-type1 font-bold text-[20px] leading-[28px] tracking-[0.3px]">
-          Our Courses
+      <section id="ourproducts" className="w-full px-[120px]">
+        <div className="self-start font-type1 font-bold text-[1rem] leading-[28px] tracking-[0.3px] text-w1">
+          Featured Courses
         </div>
         <div className="flex flex-row justify-between">
-          <p className="text-[#55585D] text-[14px] leading-[16px] font-type1 font-normal">
+          <p className="text-w1 text-[14px] leading-[16px] font-type1 font-normal">
             Trusted by most IT Specialists in Singapore
           </p>
           <span
-            className="flex font-type1 font-normal text-[#2A64DB] text-[14px] leading-[22px]"
+            className="flex font-type1 font-normal text-w2 text-[14px] leading-[22px]"
             onClick={() => navigate("products")}
           >
             View More{" "}
-            <MdArrowForwardIos className="self-center w-[14px] h-[14px] ml-[4px] text-[#2A64DB] leading-[28px]" />
+            <MdArrowForwardIos className="self-center w-[14px] h-[14px] ml-[4px] leading-[28px]" />
           </span>
         </div>
         <div

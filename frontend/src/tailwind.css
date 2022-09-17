@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 
-
 .btn {
     @apply bg-blue-500 uppercase text-[12px] text-white font-bold p-2 rounded;
 }
@@ -19,15 +18,15 @@
 }
 
 .footerlink {
-    @apply cursor-pointer underline underline-offset-2 text-w1;
+    @apply cursor-pointer underline underline-offset-2 font-bold;
 }
 
 .footerlink:hover {
-    @apply text-orange-300;
+    @apply text-red-600;
 }
 
 .link {
-    @apply cursor-pointer underline underline-offset-2 text-b3;
+    @apply cursor-pointer underline underline-offset-2 text-b2 font-bold;
 }
 
 .link:hover {

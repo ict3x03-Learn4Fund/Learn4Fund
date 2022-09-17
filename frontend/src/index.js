@@ -10,7 +10,7 @@ import App from './App';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Suspense fallback={(<div>Please wait...</div>)}>
+    <Suspense fallback={(<div className='w-screen h-screen bg-black text-w1'>Please wait...</div>)}>
       <BrowserRouter>
       <App/>
       </BrowserRouter>
