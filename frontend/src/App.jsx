@@ -3,9 +3,7 @@ import {Routes,
     Route,
     Link} from "react-router-dom"
     import Homepage from './routes/Homepage';
-    import Products from './routes/Products';
     import Nav from './components/nav/Nav';
-    import ProductPage from './components/product';
 import Footer from './components/footer/Footer';
 import Login from './routes/Login';
 import Signup from './routes/Signup';
@@ -19,6 +17,8 @@ import Donations from './routes/Donations';
 import Admin from './routes/Admin';
 import {AuthProvider, RequireAuth} from "./hooks/useAuth";
 import { NavProvider } from './hooks/useNav';
+import Catalog from './routes/Catalog';
+import CourseInfo from './components/catalog/CourseInfo';
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
@@ -43,8 +43,8 @@ function App() {
         <Route exact path="settings" element = {<RequireAuth><Settings/></RequireAuth>}/>
         <Route exact path="login" element = {<Login/>}/>
         <Route exact path="signup" element = {<Signup/>}/>
-        <Route exact path="products" element = {<Products/>}/>
-        <Route exact path="products/:productid" element = {<ProductPage/>}/>
+        <Route exact path="courses" element = {<Catalog/>}/>
+        <Route exact path="courses/:courseID" element = {<CourseInfo/>}/>
 
         <Route
             path="*"

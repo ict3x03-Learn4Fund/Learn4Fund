@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus } from "react-icons/bs";
 import {AiFillStar, AiOutlineStar} from "react-icons/ai";
-import dataProducts from "../assets/datasets/products.json";
-// TODO: temporary carousell images
-import subimage1 from "../assets/images/Group 1338.png";
-import subimage2 from "../assets/images/Group 1340.png";
-import subimage3 from "../assets/images/Product img thumbnail 2.png";
+import dataCourses from "../../assets/datasets/courses.json";
+
+// temporary image
+import courseImg from "../../assets/images/download.jpeg";
 
 import { useParams, useNavigate } from "react-router-dom";
 
-function ProductPage() {
+function CourseInfo() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
   const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(0);
   const [stars, setStars] = useState(0)
-  const { productid } = useParams();
+  const { courseID } = useParams();
   const navigate = useNavigate();
+  const [courseDetails, setCourseDetails] = useState({});
 
-  let [productDetails, setProductDetails] = useState({});
-  productDetails = dataProducts.find((element) => element.id === productid);
+    // console.log(courseID)
+    // setCourseDetails(dataCourses.find((element) => element.courseID === courseID));
+    // console.log(courseDetails)
+ 
 
   // Add quantity to const variable
   function handleChange(event) {
@@ -54,14 +56,12 @@ function ProductPage() {
       <div className="flex flex-row flex-wrap w-2/3 h-auto mt-[24px] p-[16px] bg-white  self-start">
         <div className="flex flex-col w-full border-b-[1px]">
           <span className="font-type1 font-medium text-[24px] leading-[32px]">
-            {productDetails.title}
+            {'test'}
           </span>
           <div className="flex flex-row flex-nowrap w-full h-[56px] py-[4px]">
             <img
               src={
-                productDetails &&
-                productDetails.metadata &&
-                productDetails.metadata.brandImage
+                courseImg
               }
               className="w-[100px] max-h-[48px] rounded"
               alt={""}
@@ -72,9 +72,7 @@ function ProductPage() {
                   Model: &nbsp;
                 </span>
                 <span className="font-type1 font-normal text-[12px] leading-[20px] text-b3">
-                  {productDetails &&
-                    productDetails.metadata &&
-                    productDetails.metadata.brand}
+                  {''}
                 </span>{" "}
               </div>
               <div>
@@ -82,9 +80,7 @@ function ProductPage() {
                   Brand: &nbsp;
                 </span>
                 <span className="font-type1 font-normal text-[12px] leading-[20px] text-b3">
-                  {productDetails &&
-                    productDetails.metadata &&
-                    productDetails.metadata.model}
+                  {'test'}
                 </span>{" "}
               </div>
             </div>
@@ -94,29 +90,13 @@ function ProductPage() {
           <div className="flex w-full h-5/6 justify-center">
             <img
               src={
-                productDetails &&
-                productDetails.images[0] &&
-                productDetails.images[0].url
+                courseImg
               }
               alt={""}
             />
           </div>
           <div className="flex flex-row w-full h-1/6 justify-center items-center space-x-[8px]">
-            <img
-              src={subimage1}
-              alt={""}
-              className="w-[50px] h-[50px] border-[1px] border-b3"
-            />
-            <img
-              src={subimage3}
-              alt={""}
-              className="w-[50px] h-[50px] border-[1px] border-[#E4E5E7]"
-            />
-            <img
-              src={subimage2}
-              alt={""}
-              className="w-[50px] h-[50px] border-[1px] border-[#E4E5E7]"
-            />
+            
           </div>
         </div>
         <div className="flex flex-col flex-wrap w-full h-auto align-start self-start content-start justify-start text-start my-[16px]">
@@ -128,7 +108,7 @@ function ProductPage() {
           </span>
           <div>
             <span className="font-type1 font-normal text-[14px] leading-[22px]">
-              {parse(productDetails.descriptionHtml)}
+              {'test'}
             </span>
           </div>
         </div>
@@ -136,23 +116,7 @@ function ProductPage() {
       <div className="flex flex-row flex-wrap w-1/3 h-auto space-y-8 self-start">
         
       <div className="flexcontent-start w-full h-[250px] bg-white mt-[24px] py-[16px] mx-[16px] px-[24px] border-[1px] border-[#E4E5E7] rounded self-start">
-        <div className="flex w-full h-fit border-b-2 border-b3 shadow-price-quote">
-          <span className="self-start font-type1 font-bold text-[20px] leading-[28px] text-b3 tracking-[0.3px]">
-            {productDetails.currencySymbol}
-          </span>
-          <span className="font-type1 font-medium text-b3 text-[30px] leading-[38px]">
-            {productDetails.lowPrice && productDetails.lowPrice.toFixed(2)}
-          </span>{" "}
-          {productDetails.highPrice ? (
-            <span className="self-center mx-[4px] text-[16px] leading-[20px] text-[#2A64DB] font-type1 font-bold">–</span>
-          ) : null}
-          <span className="self-start font-type1 font-bold text-[20px] leading-[28px] text-b3 tracking-[0.3px]">
-            {productDetails.highPrice && productDetails.currencySymbol}
-          </span>
-          <span className="font-type1 font-medium text-b3 text-[30px] leading-[38px]">
-            {productDetails.highPrice && productDetails.highPrice.toFixed(2)}
-          </span>
-        </div>
+        
         <div className="flex flex-row flex-nowrap w-full my-[24px] h-[32px]">
           <div className="flex font-type1 font-bold text-[14px] text-[#55585D] leading-[22px] self-center">
             Quantity:
@@ -247,4 +211,4 @@ function ProductPage() {
   );
 }
 
-export default ProductPage;
+export default CourseInfo;
