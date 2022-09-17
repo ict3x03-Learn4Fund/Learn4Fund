@@ -14,9 +14,9 @@ function ProductPage() {
   const [quantitySelected, setQuantitySelected] = useState(0);
   const [stars, setStars] = useState(0)
   const { productid } = useParams();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
-  let [productDetails, setProductDetails] = useState({});
+  const [productDetails, setProductDetails] = useState({});
   productDetails = dataProducts.find((element) => element.id === productid);
 
   // Add quantity to const variable

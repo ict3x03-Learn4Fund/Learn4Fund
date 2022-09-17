@@ -4,17 +4,35 @@ import {AiOutlineGoogle} from "react-icons/ai";
 import {FaFacebookF} from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
 import {BsShieldLockFill} from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import {useAuth} from "../hooks/useAuth";
+import {useNav} from "../hooks/useNav";
 
 function Login() {
+  const { login } = useAuth();
+  const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { state } = useLocation();
+
   function handleEmailChange(event) {
     setEmail(event.target.value);
   }
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
+
+
+  const handleLogin = () => {
+    login().then(() => {
+      setTab(state?.path.substring(1) || '');
+      // setMenu(state?.path || "/");
+      navigate(state?.path || "/");
+    });
+  };
+
+  
   return (
     <main>
       <div className="flex flex-col items-center justify-center h-screen bg-[url('assets/images/background.jpg')] bg-cover bg-no-repeat backdrop-blur-sm">
@@ -52,7 +70,7 @@ function Login() {
             />
           </div>
           <div className="flex flex-col w-full space-y-2 mt-6">
-          <button className="p-2 w-full rounded bg-success text-w1 font-bold">Login with Email</button>
+          <button className="p-2 w-full rounded bg-success text-w1 font-bold" onClick={handleLogin}>Login with Email</button>
           <button className="flex flex-wrap p-2 w-full rounded bg-[#FFCE44] text-w1 font-bold justify-center"><AiOutlineGoogle className="self-center"/>Login with Google</button>
           <button className="flex flex-wrap p-2 w-full rounded text-w1 font-bold justify-center bg-[#4267B2]"><FaFacebookF className="self-center"/>Login with Facebook</button>
           </div>
