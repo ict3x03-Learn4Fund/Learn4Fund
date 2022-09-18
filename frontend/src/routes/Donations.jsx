@@ -120,11 +120,9 @@ function Donations() {
         <div className="flex w-full justify-between">
           <div className="flex flex-nowrap font-type1 font-bold">
           <BsAward className='self-center text-gray-500'/>
-
             Jennie - $5
         </div>
           <div>14/9</div>
-        </div>
         </div>
         <div className="flex w-full justify-between">
           <div className="flex flex-nowrap font-type1 font-bold">
@@ -140,6 +138,8 @@ function Donations() {
           </div>
           <div>14/9</div>
         </div>
+        </div>
+
         </div>
 
       <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
