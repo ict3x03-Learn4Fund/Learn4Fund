@@ -25,7 +25,7 @@ function Donations() {
   }
   return (
     <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 items-center">
-      <div className="flex flex-row flex-wrap w-2/3 h-auto mt-[24px] p-[16px] bg-white rounded self-start">
+      <div className="flex flex-row flex-wrap w-2/3 h-[600px] mt-[24px] p-[40px] bg-white rounded">
         <div className="flex flex-col w-full">
           <span className="font-type2 font-medium text-[2vw] text-b3 leading-[32px]">
             {'A Learn4Fund donation drive'}
@@ -77,9 +77,9 @@ function Donations() {
           </div>
         </div>
       </div>
-      <div className="flex flex-row flex-wrap w-1/3 h-auto space-y-8 self-start">
+      <div className="flex flex-row flex-wrap w-1/3 h-[600px] mt-[24px]">
         
-      <div className="flexcontent-start w-full h-fit bg-white mt-[24px] py-[16px] mx-[16px] px-[24px] border-[1px] border-[#E4E5E7] rounded self-start">
+      <div className="flex flex-wrap w-full h-fit bg-white mx-[16px] p-[24px] border-[1px] border-[#E4E5E7] rounded self-start">
 
         <div className="flex flex-nowrap w-full">
           <div className="font-type1 w-1/2 font-bold text-[1vw] text-success leading-[22px] self-center">
@@ -92,7 +92,7 @@ function Donations() {
                 type="number"
     step=".01"
     ref={offerAmtRef}
-    defaultValue={offerAmtRef.current}
+    defaultValue={offerAmtRef.current.toFixed(2)}
     onKeyDown={(e)=> {
       handleDonationChange(e)
     }}
@@ -103,7 +103,7 @@ function Donations() {
         <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2"/>
 
 
-        <div className="flex justify-center">
+        <div className="flex justify-centerend">
 
 <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center"><input type="checkbox" defaultChecked className="mr-2 self-center"/></div>
 <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center my-2">Choose to donate anonymously</div>
@@ -121,7 +121,7 @@ function Donations() {
 
       </div>
 
-      <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
+      <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mx-[16px] p-[24px]">
       <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
         <span className="font-type1 text-[1.4vw] text-b3 font-bold">Top Donators </span>
         </div>
