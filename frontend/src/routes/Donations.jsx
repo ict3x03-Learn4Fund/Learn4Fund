@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react'
+import {useEffect, useRef} from 'react'
 import { BsAward } from 'react-icons/bs'
 import Banner from '../assets/images/donation banner.png'
 
@@ -27,7 +27,7 @@ function Donations() {
     <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 items-center">
       <div className="flex flex-row flex-wrap w-2/3 h-[600px] mt-[24px] p-[40px] bg-white rounded">
         <div className="flex flex-col w-full">
-          <span className="font-type2 font-medium text-[2vw] text-b3 leading-[32px]">
+          <span className="font-type3 font-medium text-[2vw] text-b3 leading-[32px]">
             {'A Learn4Fund donation drive'}
           </span>
           <div className="flex flex-row flex-nowrap w-full m-[2px]">
@@ -92,7 +92,7 @@ function Donations() {
                 type="number"
     step=".01"
     ref={offerAmtRef}
-    defaultValue={offerAmtRef.current.toFixed(2)}
+    defaultValue={offerAmtRef.current}
     onKeyDown={(e)=> {
       handleDonationChange(e)
     }}
@@ -103,12 +103,10 @@ function Donations() {
         <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2"/>
 
 
-        <div className="flex justify-centerend">
 
 <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center"><input type="checkbox" defaultChecked className="mr-2 self-center"/></div>
 <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center my-2">Choose to donate anonymously</div>
 
-</div>
         <button
           className="flex w-full h-[40px] rounded-sm bg-b3 justify-center items-center"
           onClick={() => addToCart()}

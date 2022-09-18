@@ -73,7 +73,7 @@ function Signup() {
             <div className="flex flex-row w-full justify-center"><input type="checkbox" className="mr-2"/> <label>Subscribe to Newsletter</label></div>
           </div>
           
-          <button className="mt-4 p-2 w-full rounded bg-orange-500 text-w1 font-bold">
+          <button className="mt-4 p-2 w-full rounded bg-orange-500 text-w1 font-bold" onClick={()=>onSubmit}>
             Activate OTP
           </button>
 

@@ -12,7 +12,7 @@ const CoursesCatalog = () => {
       
       <div className="flex-row flex-nowrap w-full space-y-2 p-2">
         <div className="flex w-full">
-        <table class="flex-row w-full table-fixed text-center border border-separate">
+        <table class="flex-row w-full table-fixed text-center border-separate">
   <thead>
     <tr>
       <th className='w-1/6 border'>ID</th>

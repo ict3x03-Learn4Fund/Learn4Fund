@@ -23,6 +23,7 @@ import { PromotionModal } from './modals/PromotionModal';
 import { NewsLetterModal } from './modals/NewsLetterModal';
 
 import { Toaster } from 'react-hot-toast';
+import { OTPModal } from './modals/OTPModal';
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
