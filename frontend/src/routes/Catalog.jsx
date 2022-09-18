@@ -8,18 +8,25 @@ import { BsSearch } from "react-icons/bs";
 import courseImg from "../assets/images/download.jpeg";
 
 function Catalog() {
+  const { state } = useLocation();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
 
-  const { state } = useLocation();
-  const { filter } = state;
+    if(state && state.filter){
+      console.log(state.filter);
+      setSelectedTab(state.filter);
+      }
+  }, [state]);
 
-  console.log(filter);
+  function handleSearchChange(event) {
+    setSearch(event.target.value);
+  }
 
-  const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState(0);
-  const [search, setSearch] = useState("");
+  
 
   // Add the sort condition and randomise if relevance is chosen
   function arrangeProducts(option) {
@@ -67,6 +74,8 @@ function Catalog() {
           <input
             className="flex bg-w1 text-black p-2 w-full rounded text-center border-2 border-b1"
             placeholder="Search for courses"
+            value={search}
+            onChange={handleSearchChange}
           />
           </div>
         </div>
@@ -149,7 +158,7 @@ function Catalog() {
             {arrangeProducts(selectedTab)
               .filter(
                 (a) =>
-                  a.courseName.includes("") || a.courseDescription.includes("")
+                  a.courseName.includes(search) || a.courseDescription.includes(search)
               )
               .map((course, index) => {
                 return (
