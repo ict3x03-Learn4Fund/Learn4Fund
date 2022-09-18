@@ -1,9 +1,13 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { BsAward } from 'react-icons/bs'
 import Banner from '../assets/images/donation banner.png'
 
 function Donations() {
   const [donationAmount, setDonationAmount] = useState(0.00)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
   function handleDonationChange(event) {
     setDonationAmount(event.target.value)
   }
@@ -147,7 +151,7 @@ function Donations() {
         </div>
         
         
-        <div className="flex flex-wrap w-full h-[184px] overflow-y-hidden py-2 content-start">
+        <div className="flex flex-wrap w-full h-[184px] overflow-y-scroll py-2 content-start">
           <div className="flex-row flex-wrap w-full h-fit text-[1vw]">
         <div className="flex w-full justify-between">
           <div className="flex flex-nowrap font-type1 font-bold">

@@ -25,9 +25,7 @@ function Catalog() {
   function handleSearchChange(event) {
     setSearch(event.target.value);
   }
-
   
-
   // Add the sort condition and randomise if relevance is chosen
   function arrangeProducts(option) {
     if (option === 0) {
@@ -158,7 +156,7 @@ function Catalog() {
             {arrangeProducts(selectedTab)
               .filter(
                 (a) =>
-                  a.courseName.includes(search) || a.courseDescription.includes(search)
+                  a.courseName.toLowerCase().includes(search.toLowerCase()) || a.courseDescription.toLowerCase().includes(search.toLowerCase())
               )
               .map((course, index) => {
                 return (
