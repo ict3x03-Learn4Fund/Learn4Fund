@@ -22,6 +22,8 @@ import CourseInfo from './components/catalog/CourseInfo';
 import { PromotionModal } from './modals/PromotionModal';
 import { NewsLetterModal } from './modals/NewsLetterModal';
 
+import { Toaster } from 'react-hot-toast';
+
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
@@ -77,7 +79,11 @@ function App() {
     {!bannerClose && <Banner closeBanner={setBannerClose} setPromoModal={setToggleModal}/>}
     {toggleModal && <PromotionModal closeModal={setToggleModal}/>}
     {newsModal && <NewsLetterModal closeModal={setNewsModal}/>}
-
+      <Toaster position="top-right" toastOptions={{
+    style: {
+      background: '#363636',
+      color: '#fff',
+    }}} />
       <Footer/>
       </NavProvider>
     </AuthProvider>

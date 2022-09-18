@@ -1,6 +1,22 @@
 import { AiOutlineCloseSquare } from "react-icons/ai"
+import { useAuth } from "../hooks/useAuth"
+import toast from 'react-hot-toast';
 
 export const NewsLetterModal = ({closeModal}) => {
+    const {authed} = useAuth();
+
+
+    function registerNewsLetter(){
+        if (!authed){
+            toast.error("Please sign in first")
+            return;
+        }
+
+        // do sanitisation and check if email is valid
+
+    }
+
+    
     return (
       <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.4)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300" style={{zIndex: 99}}>
         <div className="flex justify-center items-center h-full w-full">
@@ -30,7 +46,7 @@ export const NewsLetterModal = ({closeModal}) => {
             <button className="bg-red-500 text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>closeModal(false)}>
                     Cancel
                 </button>
-                <button className="bg-b3 text-w1 font-bold py-2 px-4 rounded-full" onClick={''}>
+                <button className="bg-b3 text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>registerNewsLetter()}>
                     Click Here To Confirm
                 </button>
             </div>
