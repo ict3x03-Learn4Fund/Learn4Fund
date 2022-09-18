@@ -7,7 +7,11 @@ const accountSchema = mongoose.Schema(
       required: [true, "Please add an email."],
       unique: true,
     },
-    avatarImg: {
+    authyId: {
+      type: String,
+      default: ""
+    },
+      avatarImg: {
       data: Buffer,
       type: String,
       default: ""

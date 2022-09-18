@@ -17,6 +17,7 @@ import "swiper/css/pagination";
 import Subscribe from "../components/banner/Subscribe";
 import { BsSearch } from "react-icons/bs";
 
+
 function Homepage() {
   const [featureBrands, setFeatureBrands] = useState([]);
   const [productsWidth, setProductsWidth] = useState(0);
