@@ -23,7 +23,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import Subscribe from "../components/banner/Subscribe";
 
-function Homepage() {
+function Homepage({setNewsModal}) {
   const navigate = useNavigate();
 
   function sortByDiscount( a, b ) {
@@ -58,7 +58,7 @@ function Homepage() {
           <SwiperSlide><img src={Banner3} className="w-full h-full object-fill" alt="contact us"/></SwiperSlide>
         </Swiper>
       </div>
-      <Subscribe />
+      <Subscribe setNewsModal={setNewsModal}/>
 
 <section className="w-full px-[120px]">
         <div className="font-type1 font-bold text-[2rem] tracking-[0.3px] text-w1">

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {Routes,
     Route,
     Link} from "react-router-dom"
@@ -19,9 +19,19 @@ import {AuthProvider, RequireAuth} from "./hooks/useAuth";
 import { NavProvider } from './hooks/useNav';
 import Catalog from './routes/Catalog';
 import CourseInfo from './components/catalog/CourseInfo';
+import { PromotionModal } from './modals/PromotionModal';
+import { NewsLetterModal } from './modals/NewsLetterModal';
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
+  const [toggleModal, setToggleModal] = useState(false);
+  const [newsModal, setNewsModal] = useState(false);
+  const modalValue = useRef(false);
+
+  useEffect(() => {
+    modalValue.current = toggleModal;
+  }, [toggleModal]);
+
   useEffect(() => {
     if (sessionStorage.getItem("closeBanner") === true) {
       setBannerClose(true);
@@ -32,8 +42,8 @@ function App() {
     <NavProvider>
     <Nav/>
       <Routes>
-        <Route exact path="/" element = {<Homepage/>}/>
-        <Route exact path="admin" element = {<Admin/>}/>
+        <Route exact path="/" element = {<Homepage setNewsModal={setNewsModal}/>}/>
+        <Route exact path="admin" element = {<RequireAuth><Admin/></RequireAuth>}/>
         <Route exact path="donate" element = {<Donations/>}/>
         <Route exact path="tos" element = {<Toc/>}/>
         <Route exact path="privacy" element = {<Privacy/>}/>
@@ -45,6 +55,7 @@ function App() {
         <Route exact path="signup" element = {<Signup/>}/>
         <Route exact path="courses" element = {<Catalog/>}/>
         <Route exact path="courses/:courseID" element = {<CourseInfo/>}/>
+        <Route exact path="promo" element = {<Homepage/>} />
 
         <Route
             path="*"
@@ -63,7 +74,10 @@ function App() {
             }
           />
       </Routes>
-    {!bannerClose && <Banner closeBanner={setBannerClose}/>}
+    {!bannerClose && <Banner closeBanner={setBannerClose} setPromoModal={setToggleModal}/>}
+    {toggleModal && <PromotionModal closeModal={setToggleModal}/>}
+    {newsModal && <NewsLetterModal closeModal={setNewsModal}/>}
+
       <Footer/>
       </NavProvider>
     </AuthProvider>

@@ -41,7 +41,7 @@ function ChangePassword() {
                     <div className="flex flex-row flex-wrap w-full bg-white rounded p-2 my-2">
             <div className="flex-none w-full"><b>Password Conditions</b></div>
                 <div className="flex-none w-1/2">
-                &#8226; At least 12 characters
+                &#8226; At least 8 characters
                     </div>
                     <div className="flex-none w-1/2">
                     &#8226; Mixture of upper and lower case letters
@@ -49,9 +49,7 @@ function ChangePassword() {
                     <div className="flex-none w-1/2">
                 &#8226; Mixture of letters and numbers
                     </div>
-                    <div className="flex-none w-1/2">
-                    &#8226; At least one special character (e.g. !@#$%^&*)
-                    </div>
+                    
                     
             </div>
         <div className="flex w-full">

@@ -14,12 +14,11 @@ const BannedUsers = () => {
         <table class="flex-row w-full table-fixed text-center border border-separate">
   <thead>
     <tr>
-      <th className='w-1/6 border'>ID</th>
-      <th className='w-1/6 border'>Email</th>
-      <th className='w-1/6 border'>Name</th>
-      <th className='w-1/6 border'>Locked Out</th>
-      <th className='w-1/6 border'>Session</th>
-      <th className='w-1/6 border'>Actions</th>
+      <th className='border'>ID</th>
+      <th className='border'>Email</th>
+      <th className='border'>Name</th>
+      <th className='border'>Locked Out</th>
+      <th className='border'>Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -28,7 +27,6 @@ const BannedUsers = () => {
       <td>test@gmail.com</td>
       <td>test ing</td>
       <td>F</td>
-      <td>UID</td>
       <td>Block/Unblock</td>
     </tr>
     <tr>
@@ -36,7 +34,6 @@ const BannedUsers = () => {
       <td>test@gmail.com</td>
       <td>test ing</td>
       <td>F</td>
-      <td>UID</td>
       <td>Block/Unblock</td>
     </tr>
     <tr>
@@ -44,7 +41,6 @@ const BannedUsers = () => {
       <td>test@gmail.com</td>
       <td>test ing</td>
       <td>F</td>
-      <td>UID</td>
       <td>Block/Unblock</td>
     </tr>
   </tbody>

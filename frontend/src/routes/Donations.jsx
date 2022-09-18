@@ -1,18 +1,27 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import { BsAward } from 'react-icons/bs'
 import Banner from '../assets/images/donation banner.png'
 
 function Donations() {
-  const [donationAmount, setDonationAmount] = useState(0.00)
-
+  const offerAmtRef = useRef(0.00)
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-  function handleDonationChange(event) {
-    setDonationAmount(event.target.value)
+  function handleDonationChange(e) {
+    if(e.key !== "Backspace"){
+      if(offerAmtRef.current.value.includes('.')){
+          if(offerAmtRef.current.value.split('.')[1].length >= 2){
+              var num = parseFloat(offerAmtRef.current.value);
+              var cleanNum = num.toFixed(2);
+              offerAmtRef.current.value = cleanNum;
+              e.preventDefault();
+          }
+      }
+  }
   }
   function addToCart(){
     console.log("added to cart")
+    console.log(offerAmtRef.current.value)
   }
   return (
     <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 items-center">
@@ -77,11 +86,16 @@ function Donations() {
             Pledge to donate:
           </div>
           
-            <div className="flex h-full w-1/2 border-2 justify-center text-center">
+            <div className="flex h-full w-1/2 border-2 border-b2 justify-center text-center">
               <input
-                className="font-type1 font-normal text-[12px] leading-[20px] w-full text-center self-center"
-                value={donationAmount}
-                onChange={handleDonationChange}
+                className="font-type1 font-normal text-[1.5vw] leading-[20px] w-full  text-center self-center"
+                type="number"
+    step=".01"
+    ref={offerAmtRef}
+    defaultValue={offerAmtRef.current}
+    onKeyDown={(e)=> {
+      handleDonationChange(e)
+    }}
               />
             </div>
             
@@ -91,7 +105,7 @@ function Donations() {
 
         <div className="flex justify-center">
 
-<div className="font-type1 font-bold text-[1vw] leading-[22px] self-center"><input type="checkbox" className="mr-2"/></div>
+<div className="font-type1 font-bold text-[1vw] leading-[22px] self-center"><input type="checkbox" defaultChecked className="mr-2 self-center"/></div>
 <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center my-2">Choose to donate anonymously</div>
 
 </div>

@@ -46,6 +46,10 @@ function CourseInfo() {
 
   // save quantity to cart
   function addToCart() {
+    if (quantitySelected > courseDetails.quantityAvailable) {
+      alert('amount exceeded');
+      return;
+  }
     console.log("save to cart");
     sessionStorage.setItem("cartItems", quantitySelected);
     navigate(0);
@@ -157,11 +161,10 @@ function CourseInfo() {
             </div>
             <div className="flex h-full border-[1px] w-[50px] justify-center text-center">
               <input
-                className="font-type1 font-normal text-[12px] leading-[20px] w-full text-center self-center"
+                className="font-type1 font-normal text-[1.5vw] leading-[20px] w-full text-center self-center"
                 type="number"
                 value={quantitySelected}
                 onChange={handleChange}
-                disabled
               />
             </div>
             <div

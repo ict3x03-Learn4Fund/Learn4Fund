@@ -49,12 +49,11 @@ function profile() {
         </div>
       </div>
       <div className="flex-row flex-nowrap w-full space-y-2 px-2">
-        <div className="flex w-full justify-between">
+        <div className="flex w-full">
         <div className="self-center">
           <b>Two Factor Authentication</b> (
           <span className="text-success">Enable</span>)
           </div>
-          <button className="btn">Enable/Disable</button>{" "}
         </div>
         <div>
         <div className="flex w-full justify-between">
