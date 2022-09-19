@@ -31,13 +31,42 @@ const Cart = () => {
   const [checkedState, setCheckedState] = useState(
     new Array(cartList.length).fill(false)
 );
+
+const handleOnChange = (position) => {
+  const updatedCheckedState = checkedState.map((item, index) =>
+    index === position ? !item : item
+  );
+
+  setCheckedState(updatedCheckedState);
+
+  // const totalPrice = updatedCheckedState.reduce(
+  //   (sum, currentState, index) => {
+  //     if (currentState === true) {
+  //       return sum + toppings[index].price;
+  //     }
+  //     return sum;
+  //   },
+  //   0
+  // );
+
+  // setTotal(totalPrice);
+};
   
   function checkOutItems(){
     console.log("call stripe api")
   }
 
-  function removeItem(selection){
-    setCartList([...cartList.filter((item)=>{return item.id!==selection})])
+  function removeItem(item, position){
+    const updatedCheckedState = checkedState.map((item, index) =>
+    index === position ? !item : item
+  );
+
+  setCheckedState(updatedCheckedState);
+    if(checkout.includes(item)){
+      setCheckout([...checkout.filter((element)=>{return element!==item})])
+    }
+    
+    setCartList([...cartList.filter((element)=>{return element!==item})])
   }
 
   function addToCheckout(item){
@@ -78,12 +107,13 @@ const Cart = () => {
   <tbody>
     {cartList.map((item, index) => (
       <tr key={index}>
-      <td><input type="checkbox" className="w-[20px] h-[20px]" onClick={()=>addToCheckout(item)}/></td>
+      <td><input type="checkbox" className="w-[20px] h-[20px]" checked={checkedState[index]}
+  onChange={() => handleOnChange(index)} onClick={()=>addToCheckout(item)}/></td>
       <td>{item.courseName}</td>
       <td>{item.quantity}</td>
       <td>${item.usualPrice}</td>
       <td>${item.discountedPrice}</td>
-      <td><button className='btn bg-red-500' onClick={()=>removeItem(item.id)}>delete</button></td>
+      <td><button className='btn bg-red-500' onClick={()=>removeItem(item, index)}>delete</button></td>
 
     </tr>
     ))}
