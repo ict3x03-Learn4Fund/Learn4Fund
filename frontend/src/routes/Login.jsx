@@ -7,7 +7,6 @@ import { BsShieldLockFill } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useNav } from "../hooks/useNav";
-import { toast } from "react-toastify";
 
 function Login() {
   const {auth, authed, authMsg, login, currentUser} = useAuth();
@@ -30,7 +29,6 @@ function Login() {
   };
 
   useEffect(() => {
-    console.log(currentUser)
     if (currentUser) navigate("/login2FA");
     else setErrorMsg(authMsg);
   });
