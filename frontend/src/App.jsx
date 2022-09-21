@@ -6,6 +6,7 @@ import {Routes,
     import Nav from './components/nav/Nav';
 import Footer from './components/footer/Footer';
 import Login from './routes/Login';
+import Login2FA from './routes/Login2FA';
 import Signup from './routes/Signup';
 import Toc from './policies/Toc';
 import Privacy from './policies/Privacy';
@@ -39,7 +40,7 @@ function App() {
     if (sessionStorage.getItem("closeBanner") === true) {
       setBannerClose(true);
     }
-  },[])
+  }, []);
   return (
     <AuthProvider>
     <NavProvider>
@@ -55,22 +56,33 @@ function App() {
 
         <Route exact path="settings" element = {<RequireAuth><Settings/></RequireAuth>}/>
         <Route exact path="login" element = {<Login/>}/>
+        <Route exact path="login2FA" element={<Login2FA />} />
         <Route exact path="signup" element = {<Signup/>}/>
         <Route exact path="courses" element = {<Catalog/>}/>
         <Route exact path="courses/:courseID" element = {<CourseInfo/>}/>
         <Route exact path="promo" element = {<Homepage/>} />
 
-        <Route
+          <Route
             path="*"
             element={
-              <main className='p-8 bg-rose-200 h-screen'>
-                <div className='bg-rose-400 p-8'>
-                  <p className='font-bold text-white'>URL not found - 404 code</p>
-                  <p>
-                    Go back to <u><Link to="/" className='font-bold'>Main Page</Link></u>
+              <main className="p-8 bg-rose-200 h-screen">
+                <div className="bg-rose-400 p-8">
+                  <p className="font-bold text-white">
+                    URL not found - 404 code
                   </p>
                   <p>
-                    If you suspect this is a bug, please contact us at <a href="mailto:learn4fund@gmail.com" className='font-bold'>learn4fund@gmail.com</a>
+                    Go back to{" "}
+                    <u>
+                      <Link to="/" className="font-bold">
+                        Main Page
+                      </Link>
+                    </u>
+                  </p>
+                  <p>
+                    If you suspect this is a bug, please contact us at{" "}
+                    <a href="mailto:learn4fund@gmail.com" className="font-bold">
+                      learn4fund@gmail.com
+                    </a>
                   </p>
                 </div>
               </main>
@@ -88,7 +100,7 @@ function App() {
       <Footer/>
       </NavProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
