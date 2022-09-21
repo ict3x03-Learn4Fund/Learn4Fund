@@ -25,6 +25,11 @@ const apiRegister = asyncHandler(async (req, res) => {
     throw new Error("please add all fields.");
   }
 
+  if (password <12) {
+    res.status(400);
+    throw new Error("Password should be at least 12 characters.");
+  }
+
   const accountExist = await Account.findOne({ email });
   if (accountExist) {
     res.status(400);

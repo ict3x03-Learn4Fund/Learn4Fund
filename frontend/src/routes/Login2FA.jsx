@@ -18,14 +18,13 @@ function Login2FA() {
   }
 
   const handleLogin2FA = () => {
-    if (currentUser) verify2FA(otp);
-    else setErrorMsg(authMsg);
+    verify2FA(otp);
   };
 
-  useEffect(() => {
-    if (authed) navigate("/");
-    else setErrorMsg(authMsg);
-  });
+  useEffect(()=>{
+    if (!currentUser)
+      navigate("/login")
+  })
 
   return (
     <main>

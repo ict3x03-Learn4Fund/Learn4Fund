@@ -11,7 +11,6 @@ const register = async (userData) => {
 const login = async (email, password) => {
   const userData = { email, password };
   const response = await http.post("/accounts/login", userData);
-
   return response.data;
 };
 
@@ -25,7 +24,7 @@ const verify2FA = async (email, token) => {
 const authService = {
   register,
   login,
-  verify2FA
+  verify2FA,
 };
 
 export default authService;
