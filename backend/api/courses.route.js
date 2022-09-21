@@ -1,26 +1,16 @@
-// const express = require('express')
+const express = require('express')
+const { apiGetCompanies } = require('../controller/companies.controller')
+const {
+    apiGetCourses,
+    apiCreateCourse,
+    apiUpdateCourse,
+    apiDeleteCourse,} = require('../controller/courses.controller')
+const {protect} = require('../middleware/authMiddleware')
+const router = express.Router()
 
-// const router = express.Router()
+router.route("/").get(apiGetCourses)
+router.route("/create").post(apiCreateCourse)
+router.route("/update/:id").put(apiUpdateCourse)
+router.route("/delete/:id").post(apiDeleteCourse)
 
-
-// // // verify login
-// // router.route("/accounts/login").get(asyncHandler(AccountsCtrl.apiLogin))
-// // // get all accounts <- for convenience, should delete later
-// // router.route("/accounts/getAll").get(asyncHandler(AccountsCtrl.apiGetAll))
-
-// // // get all courses
-// // router.route("/getAll").get(asyncHandler(CoursesCtrl.apiGetCourses))
-
-// // // create new course
-// // router.route("/createCourse").post(asyncHandler(CoursesCtrl.apiCreateCourse))
-
-// // // update existing course
-// // router.route("/updateCourse/:id").put(asyncHandler(CoursesCtrl.apiUpdateCourse))
-
-// // // delete existing course
-// // router.route("/deleteCourse/:id").delete(asyncHandler(CoursesCtrl.apiDeleteCourse))
-
-
-// router.route("/company").get(asyncHandler(CompaniesController.apiGetCompanies))
-
-// module.exports = router
+module.exports = router

@@ -1,66 +1,74 @@
-// import CoursesDAO from "../dao/coursesDAO.js"
+const asyncHandler = require("express-async-handler");
+const Course = require("../models/courseModel");
 
-// // highest layer that contain methods to interact with the frontend
-// export default class CoursesController {
-//     /***
-//      * @desc Get All courses
-//      * @route GET /v1/api/courses/getAll
-//      * @access Private
-//      */
-//     static async apiGetCourses(req,res,next){
-//         const coursesPerPage = req.query.restaurantsPerPage ? parseInt(req.query.coursesPerPage, 10) : 20
-//         const page = req.query.page ? parseInt(req.query.page, 10) : 0
+/***
+ * @desc Get All courses
+ * @route GET /v1/api/courses
+ * @access Private
+ */
+const apiGetCourses = asyncHandler(async (req, res) => {
+  const courses = await Course.find();
+  res.json(courses);
+});
 
-//         let filters = {}
-//         if (req.query.name){
-//             filters.name = req.query.name
-//         } else if (req.query.courseType) {
-//             filters.courseType = req.query.courseType
-//         }
+/***
+ * @desc Create new course
+ * @route POST /v1/api/courses/create
+ * @access Private
+ */
+const apiCreateCourse = asyncHandler(async (req, res) => {
+  const course = await Course.create({
+    courseName: req.body.courseName,
+    courseImg: req.body.courseImg,
+    courseOriginalPrice: req.body.courseOriginalPrice,
+    courseDiscountedPrice: req.body.courseDiscountedPrice,
+    canBeDiscounted: req.body.canBeDiscounted,
+    courseType: req.body.courseType,
+    courseDescription: req.body.courseDescription,
+    courseTutor: req.body.courseTutor,
+    quantity: req.body.quantity,
+  })
+  res.status(200).json(course);
+});
 
-//         const { coursesList, totalNumCourses } = await CoursesDAO.getCourses({
-//             filters, page, coursesPerPage,
-//         })
+/***
+ * @desc Update existing course
+ * @route PUT /v1/api/courses/update/:id
+ * @access Private
+ */
+const apiUpdateCourse = asyncHandler(async (req, res) => {
+  const course = await Course.find(req.params.id);
+  if (!course){
+    res.status(400);
+    throw new Error('Course not found');
+  }
+  if (!req.body){
+    res.status(400);
+    throw new Error('Please input your updated values');
+  }
+  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, req.body, {new: true,});
+  res.status(200).json(updatedCourse);
+});
 
-//         // create json payload
-//         let response = {
-//             courses: coursesList,
-//             page: page,
-//             filters: filters,
-//             entries_per_page: coursesPerPage,
-//             total_results: totalNumCourses,
-//         }
-//         res.json(response)
-//     }
+/***
+ * @desc Delete existing course
+ * @route PUT course /v1/api/courses/delete/:id
+ * @access Private
+ */
+const apiDeleteCourse = asyncHandler(async (req, res) => {
+  const course = await Course.find(req.params.id);
+  if (!course){
+    res.status(400);
+    throw new Error('Course not found');
+  }
+  const deleteIndicator = true;
+  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, deleteIndicator, {new: true,});
+  res.status(200).json(updatedCourse);
+});
 
-//     /***
-//      * @desc Create new course
-//      * @route POST /v1/api/courses/createCourse
-//      * @access Private
-//      */
-//     static async apiCreateCourse(req,res,next){
-//         if (!req.body.text) {
-//             res.status(400)
-//             throw new Error('Please add a text field')
-//         }
-//         res.status(200).json({ message: 'create course'})
-//     }
-
-//     /***
-//      * @desc Update existing course
-//      * @route PUT /v1/api/courses/updateCourse/:id
-//      * @access Private
-//      */
-//     static async apiUpdateCourse(req,res,next){
-//         res.status(200).json({message: `Update course ${req.params.id}`})
-//     }
-
-//     /***
-//      * @desc Delete existing course
-//      * @route DELETE /v1/api/courses/deleteCourse/:id
-//      * @access Private
-//      */
-//     static async apiDeleteCourse(req,res,next){
-//         res.status(200).json({message: `Delete course ${req.params.id}`}) 
-//     }
-// }
+module.exports = {
+  apiGetCourses,
+  apiCreateCourse,
+  apiUpdateCourse,
+  apiDeleteCourse,
+};

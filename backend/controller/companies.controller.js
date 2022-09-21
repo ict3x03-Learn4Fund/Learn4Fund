@@ -3,7 +3,7 @@ const Company = require("../models/companyModel");
 
 /***
  * @desc Get All companies
- * @route GET /v1/api/courses/company
+ * @route GET /v1/api/companies
  * @access Private
  */
 const apiGetCompanies = asyncHandler(async (req, res) => {
@@ -12,7 +12,7 @@ const apiGetCompanies = asyncHandler(async (req, res) => {
 });
 
 /***
- * @desc Get All companies
+ * @desc Create new company
  * @route GET /v1/api/courses/company
  * @access Private
  */

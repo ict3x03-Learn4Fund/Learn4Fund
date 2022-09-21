@@ -14,7 +14,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-// app.use("/v1/api/courses", require('./api/courses.route'))
+app.use("/v1/api/courses", require('./api/courses.route'))
 app.use("/v1/api/companies", require('./api/companies.route'))
 app.use("/v1/api/accounts", require('./api/accounts.route'))
 app.use("*", (req, res) => res.status(404).json({error: "not found"}))
