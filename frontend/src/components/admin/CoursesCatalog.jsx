@@ -11,10 +11,41 @@ const CoursesCatalog = () => {
 
       
       <div className="flex-row flex-nowrap w-full space-y-2 p-2">
-        <div className="flex w-full justify-between">
-        <div className="self-center">
-          <b>Delete my account</b> </div>
-          <button className="btn bg-red-500">Confirm Delete</button>
+        <div className="flex w-full">
+        <table class="flex-row w-full table-fixed text-center border-separate">
+  <thead>
+    <tr>
+      <th className='w-1/6 border'>ID</th>
+      <th className='w-1/6 border'>Name</th>
+      <th className='w-1/6 border'>Img</th>
+      <th className='w-1/6 border'>Quantity</th>
+      <th className='w-1/6 border'>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Some Course</td>
+      <td>Some Img</td>
+      <td>50</td>
+      <td>Edit/Delete</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Some Course</td>
+      <td>Some Img</td>
+      <td>50</td>
+      <td>Edit/Delete</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>Some Course</td>
+      <td>Some Img</td>
+      <td>50</td>
+      <td>Edit/Delete</td>
+    </tr>
+  </tbody>
+</table>
           </div>
       </div>
     </div>

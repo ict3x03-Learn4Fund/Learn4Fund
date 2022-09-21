@@ -19,8 +19,6 @@ function Nav() {
   const navigate = useNavigate();
   const [sessionItems, setSessionItems] = useState(0);
 
-  console.log(tab);
-
   const handleLogout = () => {
     logout();
     setTab('');
@@ -42,7 +40,7 @@ function Nav() {
     }
   }, []);
   return (
-    <section id="Nav" className="sticky top-0 flex w-full bg-w2">
+    <section id="Nav" className="sticky top-0 flex w-full bg-w2" style={{zIndex: 99}}>
       <div className="flex-row flex-wrap w-full px-[40px] text-black shadow-lg">
         <div className="flex flex-row flex-wrap w-full justify-between mb-2">
         {authed === true ? <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">

@@ -12,10 +12,8 @@ const SuspiciousActivities = () => {
       
       <div className="flex-row flex-nowrap w-full space-y-2 p-2">
         <div className="flex w-full justify-between">
-        <div className="self-center">
-          <b>Delete my account</b> </div>
-          <button className="btn bg-red-500">Confirm Delete</button>
-          </div>
+        Add some chartJS here
+        </div>
       </div>
     </div>
   )

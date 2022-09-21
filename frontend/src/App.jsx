@@ -1,28 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Link } from "react-router-dom";
-import Homepage from "./routes/Homepage";
-import Brands from "./routes/Brands";
-import Products from "./routes/Products";
-import Nav from "./components/nav/Nav";
-import ProductPage from "./components/product";
-import Footer from "./components/footer/Footer";
-import Login from "./routes/Login";
-import Login2FA from "./routes/Login2FA"
-import Signup from "./routes/Signup";
-import Toc from "./policies/Toc";
-import Privacy from "./policies/Privacy";
-import Cookie from "./policies/Cookie";
-import Cart from "./routes/Cart";
-import Settings from "./routes/Settings";
-import Banner from "./components/banner/Banner";
-import Donations from "./routes/Donations";
-import Admin from "./routes/Admin";
-import { AuthProvider, RequireAuth } from "./hooks/useAuth";
-import { NavProvider } from "./hooks/useNav";
-import { ToastContainer } from "react-toastify";
+import React, {useState, useEffect, useRef} from 'react'
+import {Routes,
+    Route,
+    Link} from "react-router-dom"
+    import Homepage from './routes/Homepage';
+    import Nav from './components/nav/Nav';
+import Footer from './components/footer/Footer';
+import Login from './routes/Login';
+import Login2FA from './routes/Login2FA';
+import Signup from './routes/Signup';
+import Toc from './policies/Toc';
+import Privacy from './policies/Privacy';
+import Cookie from './policies/Cookie';
+import Cart from './routes/Cart';
+import Settings from './routes/Settings';
+import Banner from './components/banner/Banner';
+import Donations from './routes/Donations';
+import Admin from './routes/Admin';
+import {AuthProvider, RequireAuth} from "./hooks/useAuth";
+import { NavProvider } from './hooks/useNav';
+import Catalog from './routes/Catalog';
+import CourseInfo from './components/catalog/CourseInfo';
+import { PromotionModal } from './modals/PromotionModal';
+import { NewsLetterModal } from './modals/NewsLetterModal';
+
+import { Toaster } from 'react-hot-toast';
+import { OTPModal } from './modals/OTPModal';
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
+  const [toggleModal, setToggleModal] = useState(false);
+  const [newsModal, setNewsModal] = useState(false);
+  const modalValue = useRef(false);
+
+  useEffect(() => {
+    modalValue.current = toggleModal;
+  }, [toggleModal]);
+
   useEffect(() => {
     if (sessionStorage.getItem("closeBanner") === true) {
       setBannerClose(true);
@@ -30,32 +43,24 @@ function App() {
   }, []);
   return (
     <AuthProvider>
-      <NavProvider>
-        <Nav />
-        <Routes>
-          <Route exact path="/" element={<Homepage />} />
-          <Route exact path="admin" element={<Admin />} />
-          <Route exact path="donate" element={<Donations />} />
-          <Route exact path="tos" element={<Toc />} />
-          <Route exact path="privacy" element={<Privacy />} />
-          <Route exact path="cookies" element={<Cookie />} />
-          <Route exact path="cart" element={<Cart />} />
+    <NavProvider>
+    <Nav/>
+      <Routes>
+        <Route exact path="/" element = {<Homepage setNewsModal={setNewsModal}/>}/>
+        <Route exact path="admin" element = {<RequireAuth><Admin/></RequireAuth>}/>
+        <Route exact path="donate" element = {<Donations/>}/>
+        <Route exact path="tos" element = {<Toc/>}/>
+        <Route exact path="privacy" element = {<Privacy/>}/>
+        <Route exact path="cookies" element = {<Cookie/>}/>
+        <Route exact path="cart" element = {<Cart/>}/>
 
-          <Route
-            exact
-            path="settings"
-            element={
-              <RequireAuth>
-                <Settings />
-              </RequireAuth>
-            }
-          />
-          <Route exact path="brands" element={<Brands />} />
-          <Route exact path="login" element={<Login />} />
-          <Route exact path="login2FA" element={<Login2FA />} />
-          <Route exact path="signup" element={<Signup />} />
-          <Route exact path="products" element={<Products />} />
-          <Route exact path="products/:productid" element={<ProductPage />} />
+        <Route exact path="settings" element = {<RequireAuth><Settings/></RequireAuth>}/>
+        <Route exact path="login" element = {<Login/>}/>
+        <Route exact path="login2FA" element={<Login2FA />} />
+        <Route exact path="signup" element = {<Signup/>}/>
+        <Route exact path="courses" element = {<Catalog/>}/>
+        <Route exact path="courses/:courseID" element = {<CourseInfo/>}/>
+        <Route exact path="promo" element = {<Homepage/>} />
 
           <Route
             path="*"
@@ -83,10 +88,16 @@ function App() {
               </main>
             }
           />
-        </Routes>
-        <ToastContainer />
-        {!bannerClose && <Banner closeBanner={setBannerClose} />}
-        <Footer />
+      </Routes>
+    {!bannerClose && <Banner closeBanner={setBannerClose} setPromoModal={setToggleModal}/>}
+    {toggleModal && <PromotionModal closeModal={setToggleModal}/>}
+    {newsModal && <NewsLetterModal closeModal={setNewsModal}/>}
+      <Toaster position="top-right" toastOptions={{
+    style: {
+      background: '#363636',
+      color: '#fff',
+    }}} />
+      <Footer/>
       </NavProvider>
     </AuthProvider>
   );
