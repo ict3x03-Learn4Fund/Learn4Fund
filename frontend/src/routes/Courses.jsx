@@ -88,9 +88,12 @@ function Courses() {
           return (
             <div class="max-w-sm rounded overflow-hidden shadow-lg bg-white">
               <div class="px-6 py-4">
-                <div class="font-bold text-xl mb-2">{course.storeLocation}</div>
+                <div class="font-bold text-xl mb-2">{course.name}</div>
                 <p class="text-gray-700 text-base">
-                  {course.saleDate}
+                  {course.price}
+                </p>                
+                <p class="text-gray-700 text-base">
+                  {course.quantity}
                 </p>
               </div>
             </div>

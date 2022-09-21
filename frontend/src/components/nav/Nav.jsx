@@ -14,7 +14,7 @@ import {useAuth} from "../../hooks/useAuth";
 import {useNav} from "../../hooks/useNav";
 
 function Nav() {
-  const { authed, logout } = useAuth();
+  const { authed, logout, currentUser } = useAuth();
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
   const [sessionItems, setSessionItems] = useState(0);
@@ -52,7 +52,7 @@ function Nav() {
                 className="w-[32px] h-[32px] mr-[8px] bg-w1 self-center"
                 style={{ borderRadius: "100%" }}
               />
-              <span className="font-type2 text-[32px]">Hi, John Doe</span>
+              <span className="font-type2 text-[32px]">{currentUser.firstName + " "+ currentUser.lastName}</span>
             </div>: <div
             className="flex w-full lg:w-1/2 justify-center lg:justify-start font-type4 my-2 text-[32px]"
             onClick={() => {
@@ -121,7 +121,6 @@ function Nav() {
                   Logout
                 </span>
               </div> : 
-                
               <div
               onClick={()=>{selectedTab('login')}}
                 className={"cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " + (tab === 'login' ? "underline" : "")}
