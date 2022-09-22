@@ -40,12 +40,7 @@ function Signup() {
     e.preventDefault();
     if (password === password2){
       const userForm = {email, phone, countryCode, password, firstName, lastName, emailSubscription};
-      // console.log(userForm)
-      await register(userForm).then(()=>{
-        navigate("/login2FA")
-      }).error((e)=>{
-        console.log(e.message)
-      })
+      register(userForm)
     } else {
       setErrorMsg("Password does not match");
     }

@@ -18,6 +18,7 @@ const accountSchema = mongoose.Schema(
     },
     password: {
       type: String,
+      min: [12, "Please enter at least 12 characters"],
       required: [true, "Please add a password"],
     },
     donation: {
