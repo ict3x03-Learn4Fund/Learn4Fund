@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
-import { AiOutlineSync } from "react-icons/ai";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [authed, setAuthed] = useState(false);
   const [authMsg, setAuthMsg] = useState("");
+  const navigate = useNavigate();
 
   const register = async (userForm) => {
     setAuthMsg("");
@@ -20,6 +21,8 @@ export function AuthProvider({ children }) {
       const verifyUser = await authService.register(userForm);
       console.log(verifyUser);
       setCurrentUser(verifyUser);
+      navigate("/login2FA");
+      return verifyUser;
     } catch (error) {
       const message =
         (error.response &&
@@ -28,15 +31,19 @@ export function AuthProvider({ children }) {
         error.message ||
         error.toString();
       setAuthMsg(message);
+      toast.error(message);
+      return message;
     }
   };
 
   const login = async (email, password) => {
     setAuthMsg("");
-    try {
+    try { 
       const verifyUser = await authService.login(email, password);
       console.log(verifyUser);
       setCurrentUser(verifyUser);
+      navigate("/login2FA");
+      return verifyUser;
     } catch (error) {
       const message =
         (error.response &&
@@ -45,6 +52,8 @@ export function AuthProvider({ children }) {
         error.message ||
         error.toString();
       setAuthMsg(message);
+      toast.error(message);
+      return message;
     }
   };
 
@@ -55,6 +64,7 @@ export function AuthProvider({ children }) {
       setAuthed(true);
       console.log("2fa", currentUser);
       console.log("2fa", authed);
+      navigate("/")
     } catch (error) {
       const message =
         (error.response &&
@@ -63,6 +73,7 @@ export function AuthProvider({ children }) {
         error.message ||
         error.toString();
       setAuthMsg(message);
+      toast.error(message);
     }
   };
 
@@ -74,7 +85,15 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ authed, currentUser, login, logout, authMsg, verify2FA, register }}
+      value={{
+        authed,
+        currentUser,
+        login,
+        logout,
+        authMsg,
+        verify2FA,
+        register,
+      }}
     >
       {children}
     </AuthContext.Provider>

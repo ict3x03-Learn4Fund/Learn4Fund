@@ -24,14 +24,9 @@ function Login() {
     setPassword(event.target.value);
   }
 
-  const handleLogin = () => {
-    login(email, password);
+  const handleLogin = async () => {
+    login(email,password)
   };
-
-  useEffect(() => {
-    if (currentUser) navigate("/login2FA");
-    else setErrorMsg(authMsg);
-  });
 
   return (
     <main>
