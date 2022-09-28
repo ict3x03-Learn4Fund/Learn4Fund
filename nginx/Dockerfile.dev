@@ -2,3 +2,7 @@ FROM nginx:latest
 
 # overwrite our custom conf to default one
 COPY ./default.dev.conf /etc/nginx/conf.d/default.conf
+COPY ./config/nginx/cloudflareCert.pem /etc/ssl/cloudflareCert.pem
+COPY ./config/nginx/learn4fund.key /etc/ssl/learn4fund.key
+COPY ./config/nginx/dhparam.pem /etc/ssl/dhparam.pem
+COPY ./ssl.conf /config/nginx/ssl.conf
