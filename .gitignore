@@ -173,5 +173,9 @@ sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/node,react,yarn
 
+frontend/package-lock.json
+backend/package-lock.json
+frontend/yarn.lock
+package-lock.json
 *.pem
 *.key
