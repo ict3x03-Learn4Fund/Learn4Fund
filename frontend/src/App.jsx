@@ -30,6 +30,8 @@ function App() {
   const [bannerClose, setBannerClose] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [newsModal, setNewsModal] = useState(false);
+const [showMobileWarning, setShowMobileWarning] = useState(false)
+
   const modalValue = useRef(false);
 
   useEffect(() => {
@@ -40,11 +42,15 @@ function App() {
     if (sessionStorage.getItem("closeBanner") === true) {
       setBannerClose(true);
     }
+    if(window.innerWidth <= 1025)
+    setShowMobileWarning(true)
   }, []);
   return (
     <AuthProvider>
     <NavProvider>
-    <Nav/>
+    {showMobileWarning ? <div>This site is only for desktop</div> :
+    <>
+      <Nav/>
       <Routes>
         <Route exact path="/" element = {<Homepage setNewsModal={setNewsModal}/>}/>
         <Route exact path="admin" element = {<RequireAuth><Admin/></RequireAuth>}/>
@@ -89,6 +95,8 @@ function App() {
             }
           />
       </Routes>
+      
+
     {!bannerClose && <Banner closeBanner={setBannerClose} setPromoModal={setToggleModal}/>}
     {toggleModal && <PromotionModal closeModal={setToggleModal}/>}
     {newsModal && <NewsLetterModal closeModal={setNewsModal}/>}
@@ -98,6 +106,8 @@ function App() {
       color: '#fff',
     }}} />
       <Footer/>
+      </>
+  }
       </NavProvider>
     </AuthProvider>
   );
