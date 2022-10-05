@@ -12,7 +12,6 @@ const accountSchema = mongoose.Schema(
       default: ""
     },
       avatarImg: {
-      data: Buffer,
       type: String,
       default: ""
     },
