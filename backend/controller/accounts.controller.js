@@ -96,7 +96,7 @@ const apiLogin = asyncHandler(async (req, res) => {
       throw new Error("Invalid credentials.");
     }
 
-    if (account.lockedOut) {
+    if (account.lockedOut) {        
         throw new Error("Your account has been locked.\nPlease contact the administrator.");        
     }
 
@@ -144,11 +144,7 @@ const apiLogin = asyncHandler(async (req, res) => {
       });
     } else {            
       console.log("Failed login")
-      // Get loginTimes from user that is logging in
-      
-      //const loginFailedCount = await Account.findOne({email: email}, {loginTimes:1, _id:0});
-      //const isAccLocked = await Account.findOne({email: email}, {lockedOut:1, _id:0});
-
+      /* ACCOUNT LOCKING START*/
       // If user attempts to login 5 times and account is not locked, lock the account
       if (account.loginTimes > 3 && account.lockedOut == false) {
           console.log("Locking account: " + email);
@@ -156,8 +152,37 @@ const apiLogin = asyncHandler(async (req, res) => {
             if (err){
                 console.log("Account lock failed. Error: " + err);
             }else{
-                console.log("Success! Account locked: " + email)
+                console.log("Success! Account locked: " + email);
                 //console.log(result)
+
+                /* SEND EMAIL TO ADMIN START*/
+                console.log("Sending email to admin...");
+                var nodemailer = require('nodemailer');
+                var transporter = nodemailer.createTransport({
+                  service: 'gmail',
+                  auth: {
+                    user: 'learn4fund@gmail.com',
+                    pass: process.env.NODEMAILER_GMAIL_PASS
+                  }
+                });
+                
+                const sgDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+
+                var mailOptions = {
+                  from: 'learn4fund@gmail.com',
+                  to: 'learn4fundadm1n@gmail.com',
+                  subject: 'ACCOUNT LOCK ISSUED at ' + sgDateTime,
+                  text: 'The following account was locked at '+ sgDateTime +": " + email
+                };
+                
+                transporter.sendMail(mailOptions, function(error, info){
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log('Email sent: ' + info.response);
+                  }
+                /* SEND EMAIL TO ADMIN END*/
+                });
             }
         });
       }else {// Else increment loginTimes by 1
@@ -170,18 +195,18 @@ const apiLogin = asyncHandler(async (req, res) => {
               // console.log(result)
           }
       });
-      }
-      /*ACCOUNT LOCKING END*/
+      }      
       const attemptsLeft = 4-account.loginTimes;
       if (attemptsLeft == 1){
         throw new Error("Invalid credentials.\nThis is your final attempt.");  
       }
       if (attemptsLeft > 0){
         throw new Error("Invalid credentials.\nAttempts left: " + attemptsLeft);
-      }else{
+      }else{        
         throw new Error("Your account has been locked.\nPlease contact the administrator.")
       }    
     }
+    /*ACCOUNT LOCKING END*/
   } catch (err) {
     res.status(400); 
     throw new Error(err); // NOTE: should not throw the specific error in production
