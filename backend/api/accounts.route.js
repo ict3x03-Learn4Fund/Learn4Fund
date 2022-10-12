@@ -6,10 +6,9 @@ const {protect} = require("../middleware/authMiddleware")
 
 const router = express.Router()
 
-router.post('/register', apiRegister)
-router.post('/login', apiLogin)
-router.post('/verify2FA', apiVerify2FA)
-router.get('/getAccount', protect, apiGetAccount)
-
+router.route('/register').post(apiRegister)
+router.route('/login').post(apiLogin)
+router.route('/verify2FA').post(apiVerify2FA)
+router.route('/getAccount').get(protect, apiGetAccount)
 
 module.exports = router
