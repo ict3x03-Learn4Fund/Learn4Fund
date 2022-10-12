@@ -92,6 +92,13 @@ const apiLogin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     const account = await Account.findOne({ email });
+    if (account == null){
+      throw new Error("Invalid credentials.");
+    }
+
+    if (account.lockedOut) {
+        throw new Error("Your account has been locked.\nPlease contact the administrator.");        
+    }
 
     if (account && (await bcrypt.compare(password, account.password))) {
       // uncheck the OTP for now, easier for development
@@ -114,6 +121,17 @@ const apiLogin = asyncHandler(async (req, res) => {
       // res
       // .status(200)
       // .json({ email: account.email, message: "OTP sent to user" });
+      
+      // IF SUCCEED RESET THE lockTimes
+      Account.updateOne({email: email},{ $set: {"loginTimes": 0}},function (err, result) {
+        if (err){
+            console.log("Set loginTimes failed. Error: " + err);
+        }else{
+            console.log("Success! loginTimes reset to 0: " + email)
+            console.log(result)
+        }
+    });
+
       // REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
       res.status(200).json({
         _id: account.id,
@@ -124,13 +142,49 @@ const apiLogin = asyncHandler(async (req, res) => {
         token: generateToken(account._id),
         message: "Token is valid",
       });
-    } else {
-      res.status(400);
-      throw new Error("Invalid credentials");
+    } else {            
+      console.log("Failed login")
+      // Get loginTimes from user that is logging in
+      
+      //const loginFailedCount = await Account.findOne({email: email}, {loginTimes:1, _id:0});
+      //const isAccLocked = await Account.findOne({email: email}, {lockedOut:1, _id:0});
+
+      // If user attempts to login 5 times and account is not locked, lock the account
+      if (account.loginTimes > 3 && account.lockedOut == false) {
+          console.log("Locking account: " + email);
+          Account.updateOne({email: email},{ $set: {"lockedOut": true}},function (err, result) {
+            if (err){
+                console.log("Account lock failed. Error: " + err);
+            }else{
+                console.log("Success! Account locked: " + email)
+                //console.log(result)
+            }
+        });
+      }else {// Else increment loginTimes by 1
+        console.log("Incrementing lockTimes: " + email);
+        Account.updateOne({email: email},{ $inc: {"loginTimes": 1}},function (err, result) {
+          if (err){
+              console.log("loginTimes increment failed. Error: " + err);
+          }else{
+              console.log("Success! loginTimes incremented for: " + email)
+              // console.log(result)
+          }
+      });
+      }
+      /*ACCOUNT LOCKING END*/
+      const attemptsLeft = 4-account.loginTimes;
+      if (attemptsLeft == 1){
+        throw new Error("Invalid credentials.\nThis is your final attempt.");  
+      }
+      if (attemptsLeft > 0){
+        throw new Error("Invalid credentials.\nAttempts left: " + attemptsLeft);
+      }else{
+        throw new Error("Your account has been locked.\nPlease contact the administrator.")
+      }    
     }
   } catch (err) {
-    res.status(400);
-    throw new Error(err);
+    res.status(400); 
+    throw new Error(err); // NOTE: should not throw the specific error in production
   }
 });
 
