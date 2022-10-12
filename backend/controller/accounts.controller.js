@@ -25,7 +25,7 @@ const apiRegister = asyncHandler(async (req, res) => {
     throw new Error("please add all fields.");
   }
 
-  if (password <12) {
+  if (password < 12) {
     res.status(400);
     throw new Error("Password should be at least 12 characters.");
   }
@@ -88,24 +88,49 @@ const apiRegister = asyncHandler(async (req, res) => {
  * @access Public
  */
 const apiLogin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const account = await Account.findOne({ email });
+    const account = await Account.findOne({ email });
 
-  if (account && (await bcrypt.compare(password, account.password))) {
-    authy.request_sms(account.authyId, { force: true }, function (err, smsRes) {
-      if (err) {
-        return res.json({
-          message: "An error occurred while sending OTP to user",
-        });
-      }
-    });
-    return res
-      .status(200)
-      .json({ email: account.email, message: "OTP sent to user" });
-  } else {
+    if (account && (await bcrypt.compare(password, account.password))) {
+      // uncheck the OTP for now, easier for development
+      // authy.request_sms(
+      //   account.authyId,
+      //   { force: true },
+      //   function (err, smsRes) {
+      //     console.log("123");
+      //     if (err) {
+      //       res.json({
+      //         message: err,
+      //       });
+      //     } else {
+      //       res
+      //       .status(200)
+      //       .json({ email: account.email, message: "OTP sent to user" });
+      //     }
+        // }        
+      // );
+      // res
+      // .status(200)
+      // .json({ email: account.email, message: "OTP sent to user" });
+      // REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
+      res.status(200).json({
+        _id: account.id,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        email: account.email,
+        role: account.role,
+        token: generateToken(account._id),
+        message: "Token is valid",
+      });
+    } else {
+      res.status(400);
+      throw new Error("Invalid credentials");
+    }
+  } catch (err) {
     res.status(400);
-    throw new Error("Invalid credentials");
+    throw new Error(err);
   }
 });
 

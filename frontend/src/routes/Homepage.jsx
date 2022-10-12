@@ -143,7 +143,7 @@ function Homepage({ setNewsModal }) {
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
                       {course.courseName} (
                       <span className="text-red-500">
-                        {course.quantityAvailable} left
+                        {course.quantity} left
                       </span>
                       )
                     </div>
@@ -202,10 +202,10 @@ function Homepage({ setNewsModal }) {
                 <div
                   key={index}
                   className="cursor-pointer flex flex-col flex-wrap w-1/4 bg-w1 border-[1px] border-w1 p-2 rounded"
-                  onClick={() => navigate("courses/" + course.courseID)}
+                  onClick={() => navigate("courses/" + course._id)}
                 >
                   <img
-                    src={courseImg}
+                    src={`http://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
                     alt={""}
                   />
@@ -213,7 +213,7 @@ function Homepage({ setNewsModal }) {
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
                       {course.courseName} (
                       <span className="text-red-500">
-                        {course.quantityAvailable} left
+                        {course.quantity} left
                       </span>
                       )
                     </div>
@@ -272,10 +272,10 @@ function Homepage({ setNewsModal }) {
                 <div
                   key={index}
                   className="cursor-pointer flex flex-col flex-wrap w-1/4 bg-w1 border-[1px] border-w1 p-2 rounded"
-                  onClick={() => navigate("courses/" + course.courseID)}
+                  onClick={() => navigate("courses/" + course._id)}
                 >
                   <img
-                    src={courseImg}
+                    src={`http://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
                     alt={""}
                   />
@@ -283,7 +283,7 @@ function Homepage({ setNewsModal }) {
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
                       {course.courseName} (
                       <span className="text-red-500">
-                        {course.quantityAvailable} left
+                        {course.quantity} left
                       </span>
                       )
                     </div>

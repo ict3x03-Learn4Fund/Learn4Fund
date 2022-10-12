@@ -21,7 +21,9 @@ export function AuthProvider({ children }) {
       const verifyUser = await authService.register(userForm);
       console.log(verifyUser);
       setCurrentUser(verifyUser);
-      navigate("/login2FA");
+      // navigate("/login2FA"); <- CHANGE TO GO TO HOMEPAGE STRAIGHT RMB CHANGE BACK 
+      navigate("/");
+      setAuthed(true); //delete later!!
       return verifyUser;
     } catch (error) {
       const message =
@@ -41,8 +43,10 @@ export function AuthProvider({ children }) {
     try { 
       const verifyUser = await authService.login(email, password);
       console.log(verifyUser);
-      setCurrentUser(verifyUser);
-      navigate("/login2FA");
+      setCurrentUser(verifyUser);setAuthed(true);
+      // navigate("/login2FA"); <- CHANGE TO GO TO HOMEPAGE STRAIGHT RMB CHANGE BACK 
+      navigate("/"); //delete later!!
+      setAuthed(true); //delete later!!
       return verifyUser;
     } catch (error) {
       const message =
