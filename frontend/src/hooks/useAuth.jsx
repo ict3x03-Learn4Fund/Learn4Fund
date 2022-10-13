@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
   const [authMsg, setAuthMsg] = useState("");
   const navigate = useNavigate();
 
-  const register = async (userForm) => {
+  const authRegister = async (userForm) => {
     setAuthMsg("");
     try {
       const verifyUser = await authService.register(userForm);
@@ -96,7 +96,7 @@ export function AuthProvider({ children }) {
         logout,
         authMsg,
         verify2FA,
-        register,
+        authRegister,
       }}
     >
       {children}
