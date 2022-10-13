@@ -28,13 +28,16 @@ router.route('/register').post(
             .isLength({ min: 12 }).withMessage("Password is too weak"),
         check('firstName')
             .notEmpty().withMessage('First name is required')
-            .isLength({ max: 20 }).withMessage('First name is too long'),
+            .isLength({ max: 20 }).withMessage('First name is too long')
+            .isAlpha().withMessage('First name must be alphabetic'),
         check('lastName')
             .notEmpty().withMessage('Last name is required')
-            .isLength({ max: 20 }).withMessage('Last name is too long'),
+            .isLength({ max: 20 }).withMessage('Last name is too long')
+            .isAlpha().withMessage('Last name must be alphabetic'),
         check('phone')
             .notEmpty().withMessage('Phone number is required')
-            .isMobilePhone().withMessage('Phone number is invalid'),
+            .isMobilePhone().withMessage('Phone number is invalid')
+            .matches(/^[0-9]*$/).withMessage('Phone number is invalid'),
         check('countryCode')
             .notEmpty().withMessage("Country code is required")
             .matches(/^(\+\d{2,3})$/).withMessage("Country code is invalid"),
