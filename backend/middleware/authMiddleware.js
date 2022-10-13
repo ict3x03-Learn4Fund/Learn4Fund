@@ -10,7 +10,10 @@ const protect = asyncHandler(async(req,res,next) =>{
             token = req.headers.authorization.split(' ')[1]
             
             //verify token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET)
+            const decoded = jwt.verify(
+                token,
+                process.env.JWT_SECRET,
+                { algorithm: "HS512", expiresIn: "1hr" })
 
             //get user from token
             req.account = await Account.findById(decoded.id).select('-password')
