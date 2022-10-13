@@ -26,7 +26,8 @@
     "mongoose": "^6.6.0",
     "mongoose-double": "0.0.1",
     "multer": "^1.4.4",
-    "multer-gridfs-storage": "^5.0.2"
+    "multer-gridfs-storage": "^5.0.2",
+    "nodemailer": "^6.8.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
