@@ -64,6 +64,7 @@ function Signup() {
                     <input
                       className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="text"
+                      maxLength={20}
                       {...register("firstName", { required: true, maxLength:20 })}
                       placeholder="Chuck"
                       id="firstName"
@@ -99,6 +100,7 @@ function Signup() {
                   <input
                     className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
                     type="text"
+                    maxLength={20}
                     {...register("lastName", { required: true, maxLength:20 })}
                     placeholder="Norris"
                     id="lastName"
@@ -115,6 +117,7 @@ function Signup() {
                   <input
                     className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
                     type="tel"
+                    maxLength={12}
                     {...register("phone", { required: true, pattern: /^[0-9]*$/, minLength: 6, maxLength: 12})}
                     placeholder="98765432"
                     id="phone"
@@ -134,6 +137,7 @@ function Signup() {
                   <input
                     className="flex-row w-full h-full order-2 border-2 border-g3 rounded-r text-center"
                     type="text"
+                    maxLength={255}
                     {...register("email", { required: true, pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
                     placeholder="ChuckWood@gmail.com"
                     id="email"
