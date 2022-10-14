@@ -42,12 +42,6 @@ function Signup() {
     // e.preventDefault();
     const userForm = {email, phone, countryCode, password, firstName, lastName, emailSubscription};
     authRegister(userForm);
-    // if (password === password2){
-    //   const userForm = {email, phone, countryCode, password, firstName, lastName, emailSubscription};
-    //   authRegister(userForm)
-    // } else {
-    //   setErrorMsg("Password does not match");
-    // }
 
   };
 

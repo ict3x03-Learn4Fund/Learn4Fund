@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
+//  Account Schema
 const Account = require("../models/accountModel");
 const authy = require("authy")(process.env.AUTHY_API_KEY);
 
@@ -10,6 +11,7 @@ const authy = require("authy")(process.env.AUTHY_API_KEY);
  * @access Public
  */
 const apiRegister = asyncHandler(async (req, res) => {
+  //  Getting the info from HTTP request body
   const {
     email,
     password,
@@ -24,7 +26,7 @@ const apiRegister = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // create account
+  // Creates new user in DB
   const account = await Account.create({
     email,
     firstName,
@@ -73,10 +75,11 @@ const apiRegister = asyncHandler(async (req, res) => {
  */
 const apiLogin = asyncHandler(async (req, res) => {
   try {
+    // Getting the info from HTTP request body
     const { email, password } = req.body;
-
+    // Check if user exists in DB using Account schema (Mongoose -> MongoDB)
     const account = await Account.findOne({ email });
-
+    // Able to find account, now check password
     if (account && (await bcrypt.compare(password, account.password))) {
       // uncheck the OTP for now, easier for development
       // authy.request_sms(
@@ -99,22 +102,30 @@ const apiLogin = asyncHandler(async (req, res) => {
       // .status(200)
       // .json({ email: account.email, message: "OTP sent to user" });
       // REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
-      res.status(200).json({
+      const token = generateToken(account._id)
+      return res.cookie("access_token", token, {
+        httpOnly: true,
+        secure: process.env.JWT_SECRET,
+        maxAge:  3600 * 1000,
+        secure: true
+      }).status(200).json({
         _id: account.id,
         firstName: account.firstName,
         lastName: account.lastName,
         email: account.email,
         role: account.role,
-        token: generateToken(account._id),
+        token: token,
         message: "Token is valid",
       });
-    } else {
+    }
+    else {
       res.status(400);
       throw new Error("Invalid credentials");
     }
-  } catch (err) {
-    res.status(400);
-    throw new Error(err);
+  }
+  catch (err) {
+    res.status(400).json({ message: err.message });
+    // throw new Error(err);
   }
 });
 
@@ -131,13 +142,19 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       if (err) {
         res.json({ message: "OTP verification failed" });
       }
-      res.status(200).json({
+      const token = generateToken(account._id)
+      return res.cookie("access_token", token, {
+        httpOnly: true,
+        secure: process.env.JWT_SECRET,
+        maxAge:  3600 * 1000,
+        secure: true
+      }).status(200).json({
         _id: account.id,
         firstName: account.firstName,
         lastName: account.lastName,
         email: account.email,
         role: account.role,
-        token: generateToken(account._id),
+        token: token,
         message: "Token is valid",
       });
     });
@@ -183,7 +200,7 @@ const generateToken = (id) => {
   return jwt.sign(
     { id },
     process.env.JWT_SECRET,
-    { algorithm: "HS512", expiresIn: "1hr" }
+    { algorithm: "HS512", expiresIn: "1h" }
   );
 };
 
