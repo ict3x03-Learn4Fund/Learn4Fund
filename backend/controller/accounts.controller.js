@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Account = require("../models/accountModel");
+const Logs = require("../models/logsModel");
 const authy = require("authy")(process.env.AUTHY_API_KEY);
 
 /***
@@ -133,13 +134,17 @@ const apiLogin = asyncHandler(async (req, res) => {
     });
 
       // REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
-      res.status(200).json({
+      const token = generateToken(account._id)
+      return res.cookie("access_token", token, {
+        httpOnly: true,
+        secure: process.env.JWT_SECRET        
+      }).status(200).json({
         _id: account.id,
         firstName: account.firstName,
         lastName: account.lastName,
         email: account.email,
         role: account.role,
-        token: generateToken(account._id),
+        token: token,
         message: "Token is valid",
       });
     } else {            
@@ -154,6 +159,10 @@ const apiLogin = asyncHandler(async (req, res) => {
             }else{
                 console.log("Success! Account locked: " + email);
                 //console.log(result)
+                const sgDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+                
+                // Send to logs db                
+                Logs.create({ email: account.email, type: "auth", reason: "Account Lockout", time: sgDateTime});
 
                 /* SEND EMAIL TO ADMIN START*/
                 console.log("Sending email to admin...");
@@ -164,9 +173,7 @@ const apiLogin = asyncHandler(async (req, res) => {
                     user: 'learn4fund@gmail.com',
                     pass: process.env.NODEMAILER_GMAIL_PASS
                   }
-                });
-                
-                const sgDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+                });                                
 
                 var mailOptions = {
                   from: 'learn4fund@gmail.com',
@@ -329,7 +336,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
 });
 
 //Generate JWT
-const generateToken = (id) => {
+const generateToken = (id) => {  
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 

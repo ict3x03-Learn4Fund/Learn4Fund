@@ -10,8 +10,8 @@ router.route('/register').post(apiRegister)
 router.route('/login').post(apiLogin)
 router.route('/verify2FA').post(apiVerify2FA)
 router.route('/getAccount').get(protect, apiGetAccount)
-router.route('/getAllAccounts').get(apiGetAllAccounts) // NEED TO BE PROTECTED
-router.route('/lockUnlockAccount').post(apiLockUnlockAccount) // NEED TO BE PROTECTED
-router.route('/removeAccount').post(apiRemoveAccount) // NEED TO BE PROTECTED
+router.route('/getAllAccounts').get(protect, apiGetAllAccounts)
+router.route('/lockUnlockAccount').post(protect, apiLockUnlockAccount)
+router.route('/removeAccount').post(apiRemoveAccount)
 
 module.exports = router

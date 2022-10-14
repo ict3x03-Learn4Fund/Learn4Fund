@@ -1,5 +1,5 @@
 import React from 'react'
-import ActivityList from './ActivityList'
+import ActivityList from './UserManagementActivityList'
 
 const BannedUsers = ({accounts, fetchData}) => {
   return (

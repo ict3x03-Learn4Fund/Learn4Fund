@@ -6,13 +6,32 @@ import { React, useState, useEffect } from "react";
 import http from "../http-common";
 // import { get } from 'mongoose';
 
+function testPostLog(){
+  const data = {'email': "addme@gmail.com", 'reason': "Account lockout"}
+  http.post("/accounts/addLog", data)
+}
+
 const Admin = () => {
   const [menu, setMenu] = useState(0)
   const [accounts, setAccounts] = useState([])
+  const [logs, setLogs] = useState([])
+
+  // Fetch log data
+  const fetchLogData = async () => {
+    console.log("Fetching logs")    
+    http.get('http://localhost:5000/v1/api/logs/getAllLogs')
+    .then(response => {
+      console.log(response.data)
+      setLogs(response.data)
+    })
+    .catch((error) => {      
+      console.error(error)
+    })
+  }
 
   // Fetch all accounts from /getAllAccounts
   const fetchData = async () => {
-    console.log("Fetching")    
+    console.log("Fetching accounts")    
     http.get('http://localhost:5000/v1/api/accounts/getAllAccounts')
     .then(response => {     
       setAccounts(response.data)      
@@ -25,6 +44,7 @@ const Admin = () => {
   // Fetch all accounts on initial load
   useEffect(() => {
     fetchData()
+    fetchLogData()
   }, [])
 
   return (
@@ -38,7 +58,7 @@ const Admin = () => {
             </div>
             </div>
             <div className='flex w-3/4 h-full'>
-              {menu === 0 && <SuspiciousActivities/>}
+              {menu === 0 && <SuspiciousActivities logs={logs} fetchLogData={fetchLogData}/>}
               {menu === 1 && <CoursesCatalog/>}
               {menu === 2 && <BannedUsers accounts={accounts} fetchData={fetchData}/>}
             </div>

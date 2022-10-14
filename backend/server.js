@@ -16,8 +16,7 @@ connectDB();
 
 
 const app = express();
-
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
@@ -31,6 +30,7 @@ app.use("/v1/api/companies", require("./api/companies.route"));
 app.use("/v1/api/accounts", require("./api/accounts.route"));
 app.use("/v1/api/images", require("./api/images.route"));
 app.use("/v1/api/carts", require("./api/carts.route"));
+app.use("/v1/api/logs", require("./api/logs.route"));
 app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 app.use(errorHandler);
 

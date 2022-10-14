@@ -2,7 +2,7 @@ import React from 'react'
 import http from "../../http-common";
 import toast from 'react-hot-toast';
 
-export default function Activity({account, fetchData}){
+export default function UserManagementActivity({account, fetchData}){
 
     // Lock/unlock the account depending on its current lockedOut value
     function handleLockUnlockClick() {                
