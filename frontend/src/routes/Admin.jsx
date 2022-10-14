@@ -1,10 +1,52 @@
-import {useState} from 'react'
+// import {useState} from 'react'
 import BannedUsers from '../components/admin/BannedUsers'
 import CoursesCatalog from '../components/admin/CoursesCatalog'
 import SuspiciousActivities from '../components/admin/SuspiciousActivities'
+import { React, useState, useEffect } from "react";
+import http from "../http-common";
+// import { get } from 'mongoose';
+
+function testPostLog(){
+  const data = {'email': "addme@gmail.com", 'reason': "Account lockout"}
+  http.post("/accounts/addLog", data)
+}
 
 const Admin = () => {
   const [menu, setMenu] = useState(0)
+  const [accounts, setAccounts] = useState([])
+  const [logs, setLogs] = useState([])
+
+  // Fetch log data
+  const fetchLogData = async () => {
+    console.log("Fetching logs")    
+    http.get('http://localhost:5000/v1/api/logs/getAllLogs')
+    .then(response => {
+      console.log(response.data)
+      setLogs(response.data)
+    })
+    .catch((error) => {      
+      console.error(error)
+    })
+  }
+
+  // Fetch all accounts from /getAllAccounts
+  const fetchData = async () => {
+    console.log("Fetching accounts")    
+    http.get('http://localhost:5000/v1/api/accounts/getAllAccounts')
+    .then(response => {     
+      setAccounts(response.data)      
+    })
+    .catch((error) => {      
+      console.error(error)
+    })
+  }
+
+  // Fetch all accounts on initial load
+  useEffect(() => {
+    fetchData()
+    fetchLogData()
+  }, [])
+
   return (
     <main>
         <div className='flex flex-col flex-wrap w-full h-screen bg-b1'>
@@ -16,9 +58,9 @@ const Admin = () => {
             </div>
             </div>
             <div className='flex w-3/4 h-full'>
-              {menu === 0 && <SuspiciousActivities/>}
+              {menu === 0 && <SuspiciousActivities logs={logs} fetchLogData={fetchLogData}/>}
               {menu === 1 && <CoursesCatalog/>}
-              {menu === 2 && <BannedUsers/>}
+              {menu === 2 && <BannedUsers accounts={accounts} fetchData={fetchData}/>}
             </div>
         </div>
     </main>

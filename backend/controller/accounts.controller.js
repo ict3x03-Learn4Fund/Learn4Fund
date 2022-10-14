@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 //  Account Schema
 const Account = require("../models/accountModel");
+const Logs = require("../models/logsModel");
 const authy = require("authy")(process.env.AUTHY_API_KEY);
 
 /***
@@ -79,7 +80,15 @@ const apiLogin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     // Check if user exists in DB using Account schema (Mongoose -> MongoDB)
     const account = await Account.findOne({ email });
-    // Able to find account, now check password
+
+    if (account == null){
+      throw new Error("Invalid credentials.");
+    }
+
+    if (account.lockedOut) {        
+        throw new Error("Your account has been locked.\nPlease contact the administrator.");        
+    }
+
     if (account && (await bcrypt.compare(password, account.password))) {
       // uncheck the OTP for now, easier for development
       // authy.request_sms(
@@ -101,6 +110,17 @@ const apiLogin = asyncHandler(async (req, res) => {
       // res
       // .status(200)
       // .json({ email: account.email, message: "OTP sent to user" });
+      
+      // IF SUCCEED RESET THE lockTimes
+      Account.updateOne({email: email},{ $set: {"loginTimes": 0}},function (err, result) {
+        if (err){
+            console.log("Set loginTimes failed. Error: " + err);
+        }else{
+            console.log("Success! loginTimes reset to 0: " + email)
+            console.log(result)
+        }
+    });
+
       // REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
       const token = generateToken(account._id)
       return res.cookie("access_token", token, {
@@ -117,15 +137,77 @@ const apiLogin = asyncHandler(async (req, res) => {
         token: token,
         message: "Token is valid",
       });
+
+    } else {            
+      console.log("Failed login")
+      /* ACCOUNT LOCKING START*/
+      // If user attempts to login 5 times and account is not locked, lock the account
+      if (account.loginTimes > 3 && account.lockedOut == false) {
+          console.log("Locking account: " + email);
+          Account.updateOne({email: email},{ $set: {"lockedOut": true}},function (err, result) {
+            if (err){
+                console.log("Account lock failed. Error: " + err);
+            }else{
+                console.log("Success! Account locked: " + email);
+                //console.log(result)
+                const sgDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+                
+                // Send to logs db                
+                Logs.create({ email: account.email, type: "auth", reason: "Account Lockout", time: sgDateTime});
+
+                /* SEND EMAIL TO ADMIN START*/
+                console.log("Sending email to admin...");
+                var nodemailer = require('nodemailer');
+                var transporter = nodemailer.createTransport({
+                  service: 'gmail',
+                  auth: {
+                    user: 'learn4fund@gmail.com',
+                    pass: process.env.NODEMAILER_GMAIL_PASS
+                  }
+                });                                
+
+                var mailOptions = {
+                  from: 'learn4fund@gmail.com',
+                  to: 'learn4fundadm1n@gmail.com',
+                  subject: 'ACCOUNT LOCK ISSUED at ' + sgDateTime,
+                  text: 'The following account was locked at '+ sgDateTime +": " + email
+                };
+                
+                transporter.sendMail(mailOptions, function(error, info){
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log('Email sent: ' + info.response);
+                  }
+                /* SEND EMAIL TO ADMIN END*/
+                });
+            }
+        });
+      }else {// Else increment loginTimes by 1
+        console.log("Incrementing lockTimes: " + email);
+        Account.updateOne({email: email},{ $inc: {"loginTimes": 1}},function (err, result) {
+          if (err){
+              console.log("loginTimes increment failed. Error: " + err);
+          }else{
+              console.log("Success! loginTimes incremented for: " + email)
+              // console.log(result)
+          }
+      });
+      }      
+      const attemptsLeft = 4-account.loginTimes;
+      if (attemptsLeft == 1){
+        throw new Error("Invalid credentials.\nThis is your final attempt.");  
+      }
+      if (attemptsLeft > 0){
+        throw new Error("Invalid credentials.\nAttempts left: " + attemptsLeft);
+      }else{        
+        throw new Error("Your account has been locked.\nPlease contact the administrator.")
+      }    
     }
-    else {
-      res.status(400);
-      throw new Error("Invalid credentials");
-    }
-  }
-  catch (err) {
-    res.status(400).json({ message: err.message });
-    // throw new Error(err);
+    /*ACCOUNT LOCKING END*/
+  } catch (err) {
+    res.status(400); 
+    throw new Error(err); // NOTE: should not throw the specific error in production
   }
 });
 
@@ -195,6 +277,61 @@ const apiGetAccount = asyncHandler(async (req, res) => {
   });
 });
 
+/***
+ * @desc Get Users
+ * @route GET /v1/api/accounts/getAllAccounts
+ * @access Private
+ */
+ const apiGetAllAccounts = asyncHandler(async (req, res) => {
+  const accounts = await Account.find();
+  res.json(accounts);
+});
+
+/***
+ * @desc Lock or unlock user
+ * @route POST /v1/api/accounts/lockUnlockAccount
+ * @access Private
+ */
+ const apiLockUnlockAccount = asyncHandler(async (req, res) => {  
+  console.log(req.body)
+  const { email, lockedOut } = req.body;  
+  
+  var isLock = null
+  if (lockedOut == false){
+    isLock = true
+    console.log("isLock is true")
+  }else{
+    isLock = false
+    console.log("isLock is false")
+  }
+  if (email == null){
+    console.log(email)
+    res.status(200).json({"msg": "Failed" });
+  }else{    
+    Account.updateOne({email: email},{ $set: {"lockedOut": isLock }},function (err, result) {      
+      res.status(200).json({"msg": "success" });
+      console.log(result);
+    });  
+  }
+
+});
+
+/***
+ * @desc Remove a user
+ * @route POST /v1/api/accounts/removeAccount
+ * @access Private
+ */
+ const apiRemoveAccount = asyncHandler(async (req, res) => {  
+  console.log(req.body)
+  const { email } = req.body;  
+  
+  Account.deleteOne({email: email},function (err, result) {      
+    res.status(200).json({"msg": "success" });
+    console.log(result);
+  });
+
+});
+
 //Generate JWT
 const generateToken = (id) => {
   return jwt.sign(
@@ -202,11 +339,15 @@ const generateToken = (id) => {
     process.env.JWT_SECRET,
     { algorithm: "HS512", expiresIn: "1h" }
   );
+
 };
 
 module.exports = {
   apiRegister,
   apiLogin,
   apiGetAccount,
+  apiGetAllAccounts,
+  apiLockUnlockAccount,
+  apiRemoveAccount,
   apiVerify2FA,
 };

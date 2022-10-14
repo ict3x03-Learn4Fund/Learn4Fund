@@ -8,7 +8,7 @@ const Course = require("../models/courseModel");
  */
 const apiGetCourses = asyncHandler(async (req, res) => {
   const courses = await Course.find();
-  console.log(courses)
+  // console.log(courses)
   res.json(courses);
 });
 
