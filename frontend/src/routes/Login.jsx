@@ -7,8 +7,10 @@ import { BsShieldLockFill } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useNav } from "../hooks/useNav";
+import { useForm } from "react-hook-form";
 
 function Login() {
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const {auth, authed, authMsg, login, currentUser} = useAuth();
   const { setTab } = useNav();
   const [email, setEmail] = useState("");
@@ -44,11 +46,15 @@ function Login() {
             <input
               className="flex w-3/4 h-[40px] input"
               type="text"
+              {...register("email", { required: true, pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
               placeholder="Email ID"
               value={email}
               onChange={handleEmailChange}
             />
           </div>
+          <div className="flex flex-nowrap w-full justify-center mt-4">
+            {errors.email && <div><p style={{ color: "red" }}><b>Please enter a valid Email address</b></p></div>}
+            </div>
           <div className="flex flex-nowrap w-full justify-center mt-4">
             <span className="self-center w-1/4 h-[40px] bg-b1 rounded-l">
               <div className="flex w-full h-full content-center justify-center">
@@ -58,17 +64,20 @@ function Login() {
             <input
               className="flex w-3/4 h-[40px] input"
               type="password"
+              {...register("password", { required: true})}
               placeholder="Password"
               value={password}
               onChange={handlePasswordChange}
             />
-            <p id="errorMsg" name="errorMsg" value={errorMsg}></p>
+            {/* <p id="errorMsg" name="errorMsg" value={errorMsg}></p> */}
           </div>
+          <div className="flex flex-nowrap w-full justify-center mt-4">
+            {errors.password && <div><p style={{ color: "red" }}><b>Password is empty!</b></p></div>}
+            </div>
           <div className="flex flex-col w-full space-y-2 mt-6">
             <button
               className="p-2 w-full rounded bg-success text-w1 font-bold"
-              onClick={handleLogin}
-            >
+              onClick={handleSubmit(handleLogin)}>
               Login with Email
             </button>
             <button className="flex flex-wrap p-2 w-full rounded bg-[#FFCE44] text-w1 font-bold justify-center">
