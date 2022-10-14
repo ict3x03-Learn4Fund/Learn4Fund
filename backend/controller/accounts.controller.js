@@ -20,22 +20,6 @@ const apiRegister = asyncHandler(async (req, res) => {
     countryCode,
   } = req.body;
 
-  if (!firstName || !lastName || !email || !password) {
-    res.status(400);
-    throw new Error("please add all fields.");
-  }
-
-  if (password < 12) {
-    res.status(400);
-    throw new Error("Password should be at least 12 characters.");
-  }
-
-  const accountExist = await Account.findOne({ email });
-  if (accountExist) {
-    res.status(400);
-    throw new Error("Account already exists.");
-  }
-
   //hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -196,7 +180,11 @@ const apiGetAccount = asyncHandler(async (req, res) => {
 
 //Generate JWT
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign(
+    { id },
+    process.env.JWT_SECRET,
+    { algorithm: "HS512", expiresIn: "1hr" }
+  );
 };
 
 module.exports = {
