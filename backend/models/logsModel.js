@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 const logsSchema = mongoose.Schema(
   {
     email: {
-      type: String,      
-      unique: true
+      type: String
     },
     type: {
       type: String,

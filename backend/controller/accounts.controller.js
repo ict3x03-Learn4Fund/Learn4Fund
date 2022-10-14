@@ -206,8 +206,7 @@ const apiLogin = asyncHandler(async (req, res) => {
     }
     /*ACCOUNT LOCKING END*/
   } catch (err) {
-    res.status(400); 
-    throw new Error(err); // NOTE: should not throw the specific error in production
+    res.status(400).json({ message: err.message}) // NOTE: should not throw the specific error in production
   }
 });
 
