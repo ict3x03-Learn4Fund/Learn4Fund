@@ -46,14 +46,28 @@ router.route('/register').post(
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            res.status(400);
-            throw new Error(errMessage);
+            res.status(400).json({ message: errMessage });
         }
         else {
             apiRegister (req, res);
         }
     })
-router.route('/login').post(apiLogin)
+router.route('/login').post(
+    [
+        check('email')
+            .notEmpty().withMessage('Email is required'),
+        check('password').notEmpty().withMessage('Password is required'),
+    ], (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errArray = errors.array();
+            const errMessage = errArray.map((err) => err.msg).join("\n");
+            res.status(400).json({ message: errMessage });
+        }
+        else {
+            apiLogin(req, res);
+        }
+    })
 router.route('/verify2FA').post(apiVerify2FA)
 router.route('/getAccount').get(protect, apiGetAccount)
 

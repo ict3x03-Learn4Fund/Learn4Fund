@@ -117,13 +117,15 @@ const apiLogin = asyncHandler(async (req, res) => {
         token: token,
         message: "Token is valid",
       });
-    } else {
+    }
+    else {
       res.status(400);
       throw new Error("Invalid credentials");
     }
-  } catch (err) {
-    res.status(400);
-    throw new Error(err);
+  }
+  catch (err) {
+    res.status(400).json({ message: err.message });
+    // throw new Error(err);
   }
 });
 
