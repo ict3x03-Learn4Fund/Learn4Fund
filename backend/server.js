@@ -17,8 +17,9 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+// parse application/x-www-form-urlencoded, false can only parse incoming Request Object if strings or arrays
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 // app.set("view engine", "ejs");
