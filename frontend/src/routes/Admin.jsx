@@ -1,10 +1,32 @@
-import {useState} from 'react'
+// import {useState} from 'react'
 import BannedUsers from '../components/admin/BannedUsers'
 import CoursesCatalog from '../components/admin/CoursesCatalog'
 import SuspiciousActivities from '../components/admin/SuspiciousActivities'
+import { React, useState, useEffect } from "react";
+import http from "../http-common";
+// import { get } from 'mongoose';
 
 const Admin = () => {
   const [menu, setMenu] = useState(0)
+  const [accounts, setAccounts] = useState([])
+
+  // Fetch all accounts from /getAllAccounts
+  const fetchData = async () => {
+    console.log("Fetching")    
+    http.get('http://localhost:5000/v1/api/accounts/getAllAccounts')
+    .then(response => {     
+      setAccounts(response.data)      
+    })
+    .catch((error) => {      
+      console.error(error)
+    })
+  }
+
+  // Fetch all accounts on initial load
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return (
     <main>
         <div className='flex flex-col flex-wrap w-full h-screen bg-b1'>
@@ -18,7 +40,7 @@ const Admin = () => {
             <div className='flex w-3/4 h-full'>
               {menu === 0 && <SuspiciousActivities/>}
               {menu === 1 && <CoursesCatalog/>}
-              {menu === 2 && <BannedUsers/>}
+              {menu === 2 && <BannedUsers accounts={accounts} fetchData={fetchData}/>}
             </div>
         </div>
     </main>

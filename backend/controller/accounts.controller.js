@@ -273,6 +273,61 @@ const apiGetAccount = asyncHandler(async (req, res) => {
   });
 });
 
+/***
+ * @desc Get Users
+ * @route GET /v1/api/accounts/getAllAccounts
+ * @access Private
+ */
+ const apiGetAllAccounts = asyncHandler(async (req, res) => {
+  const accounts = await Account.find();
+  res.json(accounts);
+});
+
+/***
+ * @desc Lock or unlock user
+ * @route POST /v1/api/accounts/lockUnlockAccount
+ * @access Private
+ */
+ const apiLockUnlockAccount = asyncHandler(async (req, res) => {  
+  console.log(req.body)
+  const { email, lockedOut } = req.body;  
+  
+  var isLock = null
+  if (lockedOut == false){
+    isLock = true
+    console.log("isLock is true")
+  }else{
+    isLock = false
+    console.log("isLock is false")
+  }
+  if (email == null){
+    console.log(email)
+    res.status(200).json({"msg": "Failed" });
+  }else{    
+    Account.updateOne({email: email},{ $set: {"lockedOut": isLock }},function (err, result) {      
+      res.status(200).json({"msg": "success" });
+      console.log(result);
+    });  
+  }
+
+});
+
+/***
+ * @desc Remove a user
+ * @route POST /v1/api/accounts/removeAccount
+ * @access Private
+ */
+ const apiRemoveAccount = asyncHandler(async (req, res) => {  
+  console.log(req.body)
+  const { email } = req.body;  
+  
+  Account.deleteOne({email: email},function (err, result) {      
+    res.status(200).json({"msg": "success" });
+    console.log(result);
+  });
+
+});
+
 //Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -282,5 +337,8 @@ module.exports = {
   apiRegister,
   apiLogin,
   apiGetAccount,
+  apiGetAllAccounts,
+  apiLockUnlockAccount,
+  apiRemoveAccount,
   apiVerify2FA,
 };
