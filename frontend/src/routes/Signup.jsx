@@ -81,6 +81,7 @@ function Signup() {
                     <input
                       className="flex-none w-2/4 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="text"
+                      maxLength={4}
                       {...register("countryCode", { required: true, pattern: /^(\+\d{2,3})$/ })}
                       placeholder="+65"
                       id="countryCode"
