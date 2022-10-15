@@ -67,8 +67,22 @@ router.route('/login').post(
         else {
             apiLogin(req, res);
         }
+})
+// TODO: Remember to test this route
+router.route('/verify2FA').post(
+    [
+        check('token', 'Invalid code').isNumeric().isLength({ min: 7, max: 7 }),
+    ], (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const errArray = errors.array();
+            const errMessage = errArray.map((err) => err.msg).join("\n");
+            res.status(400).json({ message: errMessage });
+        }
+        else {
+            apiVerify2FA(req, res);
+        }
     })
-router.route('/verify2FA').post(apiVerify2FA)
 router.route('/getAccount').get(protect, apiGetAccount)
 router.route('/getAllAccounts').get(protect, apiGetAllAccounts)
 router.route('/lockUnlockAccount').post(protect, apiLockUnlockAccount)

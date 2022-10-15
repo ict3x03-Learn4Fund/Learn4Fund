@@ -121,9 +121,9 @@ const apiLogin = asyncHandler(async (req, res) => {
         }
     });
 
-      // REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
-      const token = generateToken(account._id)
-      return res.cookie("access_token", token, {
+      // TODO: REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
+      const acess_token = generateToken(account._id)
+      return res.cookie("access_token", acess_token, {
         httpOnly: true,
         secure: process.env.JWT_SECRET,
         maxAge:  3600 * 1000,
@@ -134,12 +134,13 @@ const apiLogin = asyncHandler(async (req, res) => {
         lastName: account.lastName,
         email: account.email,
         role: account.role,
-        token: token,
+        token: acess_token,
         message: "Token is valid",
       });
 
     } else {            
       console.log("Failed login")
+
       /* ACCOUNT LOCKING START*/
       // If user attempts to login 5 times and account is not locked, lock the account
       if (account.loginTimes > 3 && account.lockedOut == false) {
@@ -223,8 +224,8 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       if (err) {
         res.json({ message: "OTP verification failed" });
       }
-      const token = generateToken(account._id)
-      return res.cookie("access_token", token, {
+      const acess_token = generateToken(account._id)
+      return res.cookie("access_token", acess_token, {
         httpOnly: true,
         secure: process.env.JWT_SECRET,
         maxAge:  3600 * 1000,
@@ -235,7 +236,7 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
         lastName: account.lastName,
         email: account.email,
         role: account.role,
-        token: token,
+        token: acess_token,
         message: "Token is valid",
       });
     });

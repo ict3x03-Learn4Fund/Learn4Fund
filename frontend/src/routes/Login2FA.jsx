@@ -42,13 +42,18 @@ function Login2FA() {
             </span>
             <input
               className="flex w-3/4 h-[40px] input"
+              maxLength={7} // Code is 7 digits
               type="password"
+              {...register("code", { required: true, pattern: /^[0-9]*$/})} 
               placeholder="Token"
               value={otp}
               onChange={handleOtp}
             />
             <p id="errorMsg" name="errorMsg" value={errorMsg}></p>
           </div>
+          <div className="flex flex-nowrap w-full justify-center mt-4">
+            {errors.code && <div><p style={{ color: "red" }}><b>Invalid format, numbers only</b></p></div>}
+            </div>
           <div className="flex flex-col w-full space-y-2 mt-6">
             <button
               className="p-2 w-full rounded bg-success text-w1 font-bold"
