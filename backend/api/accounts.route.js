@@ -19,8 +19,8 @@ const createAccountLimiter = rateLimit({                                // [DoS]
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 const verify2FALimiter = rateLimit({                                    // [DoS] Prevent brute force attacks on 2FA
-	windowMs: 30 * 60 * 1000, // 30 mins
-	max: 5, // Limit each IP to 5 code verification requests per 30 mins
+	windowMs: 15 * 60 * 1000, // 30 mins
+	max: 3, // Limit each IP to 5 code verification requests per 30 mins
 	message: 'Too much tries, please try again in 30 mins',
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
