@@ -4,8 +4,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useNav } from "../hooks/useNav";
 import { BsShieldLockFill } from "react-icons/bs";
+import { useForm } from "react-hook-form";
 
 function Login2FA() {
+  const { register, handleSubmit, formState: { errors } } = useForm()
   const { auth, authed, authMsg, verify2FA, currentUser } = useAuth();
   const { setTab } = useNav();
   const [otp, setOtp] = useState("");
