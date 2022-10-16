@@ -45,7 +45,9 @@ function Login() {
             </span>
             <input
               className="flex w-3/4 h-[40px] input"
+              autoComplete="off"
               type="text"
+              maxLength={255}
               {...register("email", { required: true, pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
               placeholder="Email ID"
               value={email}
@@ -63,6 +65,7 @@ function Login() {
             </span>
             <input
               className="flex w-3/4 h-[40px] input"
+              autoComplete="off"
               type="password"
               {...register("password", { required: true})}
               placeholder="Password"

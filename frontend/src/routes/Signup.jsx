@@ -52,7 +52,7 @@ function Signup() {
           <span className="font-type2 text-2xl">
             Register an account with us
           </span>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-wrap w-full justify-center mt-4">
               <div className="flex flex-row w-full">
               <div className="flex w-1/2">

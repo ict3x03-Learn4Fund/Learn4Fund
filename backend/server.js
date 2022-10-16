@@ -1,4 +1,6 @@
 const express = require("express");
+const mongoSanitize = require('express-mongo-sanitize');    // [Sanitization] Prevent NoSQL injection
+const rateLimit = require('express-rate-limit');            // [DoS] Rate limiting
 const cors = require("cors");
 const { errorHandler } = require("./middleware/errorMiddleware");
 const {connectDB} = require("./config/db");
@@ -14,12 +16,23 @@ const bodyParser = require('body-parser');
 
 connectDB();
 
+const apiLimiter = rateLimit({                              // [DoS] Prevent brute force attacks on APIs
+	windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per 15 minutes
+    message: 'Please try again later',
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
 
 const app = express();
 
+// TODO: Uncomment this line in production
+// app.set('trust proxy', 2);                               // [DoS] trust 2 , cloudflare and nginx
+
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
-// parse application/x-www-form-urlencoded, false can only parse incoming Request Object if strings or arrays
+// parse application/x-www-form-urlencoded, false can only parse incoming Request Object of strings or arrays
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 // app.set("view engine", "ejs");
@@ -27,12 +40,24 @@ app.use(methodOverride("_method"));
 
 app.use(bodyParser.json());
 
-app.use("/v1/api/courses", require("./api/courses.route"));
-app.use("/v1/api/companies", require("./api/companies.route"));
-app.use("/v1/api/accounts", require("./api/accounts.route"));
-app.use("/v1/api/images", require("./api/images.route"));
-app.use("/v1/api/carts", require("./api/carts.route"));
-app.use("/v1/api/logs", require("./api/logs.route"));
+// For object type only - By default, $ and . characters are removed completely from user-supplied input in the following places:
+// - req.body
+// - req.params
+// - req.headers
+// - req.query
+app.use(mongoSanitize({                                     // [Sanitization] Prevent NoSQL injection
+    onSanitize: ({ req, key }) => {
+      console.warn(`This request[${key}] is sanitized`, req);
+    },
+  }));
+
+
+app.use("/v1/api/courses", apiLimiter, require("./api/courses.route"));
+app.use("/v1/api/companies", apiLimiter, require("./api/companies.route"));
+app.use("/v1/api/accounts", apiLimiter, require("./api/accounts.route"));
+app.use("/v1/api/images", apiLimiter, require("./api/images.route"));
+app.use("/v1/api/carts", apiLimiter, require("./api/carts.route"));
+app.use("/v1/api/logs", apiLimiter, require("./api/logs.route"));
 app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 app.use(errorHandler);
 

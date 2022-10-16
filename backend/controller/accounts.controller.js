@@ -127,7 +127,8 @@ const apiLogin = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: process.env.JWT_SECRET,
         maxAge:  3600 * 1000,
-        secure: true
+        secure: true,
+        sameSite: 'strict'
       }).status(200).json({
         _id: account.id,
         firstName: account.firstName,
@@ -229,7 +230,8 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: process.env.JWT_SECRET,
         maxAge:  3600 * 1000,
-        secure: true
+        secure: true,
+        sameSite: 'strict'
       }).status(200).json({
         _id: account.id,
         firstName: account.firstName,
