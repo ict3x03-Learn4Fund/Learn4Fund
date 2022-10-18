@@ -4,10 +4,10 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
 import { useAuth } from "../../hooks/useAuth";
 import { useParams, useNavigate } from "react-router-dom";
+import cartsService from "../../services/carts";
+import toast from "react-hot-toast";
 
 function CourseInfo() {
-  // useEffect(() => {
-  // }, [])
   const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(0);
   const [stars, setStars] = useState(0);
@@ -15,7 +15,7 @@ function CourseInfo() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [courseDetails, setCourseDetails] = useState({});
-  const { authed } = useAuth();
+  const { authed, currentUser } = useAuth();
 
   // retrieve all courses
   const retrieveCourses = () => {
@@ -26,8 +26,6 @@ function CourseInfo() {
         setCourses(response.data);
         const course = response.data.find((course) => course._id.toString() === courseID);
         setCourseDetails(course)
-        console.log("courses:", courses)
-        console.log("course details:", courseDetails)
       })
       .catch((e) => {
         console.log(e);
@@ -46,24 +44,33 @@ function CourseInfo() {
 
   // Check if there is any cart items in session storage
   useEffect(() => {
-    let sessionItems = sessionStorage.getItem("cartItems");
-    if (sessionItems > 0) {
-      setQuantitySelected(sessionItems);
-    } else {
-      setQuantitySelected(0);
-    }
+
   }, []);
 
   // save quantity to cart
-  function addToCart() {
+  function addToCart(e) {
+    e.preventDefault();
     if (quantitySelected > courseDetails.quantity) {
-      alert("amount exceeded");
-      return;
+      toast.error("amount exceeded");
     }
     console.log("save to cart");
-    sessionStorage.setItem("cartItems", quantitySelected);
-    navigate(0);
-  }
+    // sessionStorage.setItem("cartItems", quantitySelected);
+    addCartItem()
+  }  
+  
+  // add cart item
+  const addCartItem = () => {
+    cartsService
+      .addCart(currentUser._id, courseDetails._id, quantitySelected)
+      .then((response) => {
+        console.log(response.data)
+        toast.success("Item added into cart.");
+      })
+      .catch((e) => {
+        toast.success(e.message);
+        console.log(e);
+      });
+  };
 
   // store stars
   function highlightStars(number) {
@@ -203,7 +210,7 @@ function CourseInfo() {
           </div>
           <button
             className="flex w-full h-[40px] rounded-sm bg-b3 justify-center items-center"
-            onClick={() => addToCart()}
+            onClick={addToCart}
           >
             <span className="font-type1 font-normal text-[14px] leading-[22px] text-white">
               Add to Cart
