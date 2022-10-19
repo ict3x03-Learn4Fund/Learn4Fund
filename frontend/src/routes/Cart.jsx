@@ -9,6 +9,7 @@ const Cart = () => {
   const { currentUser } = useAuth();
   useEffect(() => {
     window.scrollTo(0, 0);
+    console.log(currentUser)
     getCart();
   }, []);
 

@@ -58,7 +58,7 @@ const [showMobileWarning, setShowMobileWarning] = useState(false)
         <Route exact path="tos" element = {<Toc/>}/>
         <Route exact path="privacy" element = {<Privacy/>}/>
         <Route exact path="cookies" element = {<Cookie/>}/>
-        <Route exact path="cart" element = {<Cart/>}/>
+        <Route exact path="cart" element = {<Cart />}/>
 
         <Route exact path="settings" element = {<RequireAuth><Settings/></RequireAuth>}/>
         <Route exact path="login" element = {<Login/>}/>

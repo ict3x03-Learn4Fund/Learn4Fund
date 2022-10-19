@@ -14,7 +14,7 @@ import {useAuth} from "../../hooks/useAuth";
 import {useNav} from "../../hooks/useNav";
 
 function Nav() {
-  const { authed, logout, currentUser } = useAuth();
+  const { authed, logout, currentUser} = useAuth();
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
   const [sessionItems, setSessionItems] = useState(0);
