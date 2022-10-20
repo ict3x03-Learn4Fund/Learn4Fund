@@ -4,26 +4,34 @@ import CoursesCatalog from '../components/admin/CoursesCatalog'
 import SuspiciousActivities from '../components/admin/SuspiciousActivities'
 import { React, useState, useEffect } from "react";
 import http from "../http-common";
+import { useAuth } from "../hooks/useAuth";
+import { Navigate, useNavigate } from 'react-router-dom';
 // import { get } from 'mongoose';
 
-function testPostLog(){
+function testPostLog() {
   const data = {'email': "addme@gmail.com", 'reason': "Account lockout"}
   http.post("/accounts/addLog", data)
 }
 
 const Admin = () => {
+  const {getAllAccounts, getAllLogs} = useAuth();           // [Logging] Get all accounts and logs /hooks/useAuth.jsx
   const [menu, setMenu] = useState(0)
   const [accounts, setAccounts] = useState([])
   const [logs, setLogs] = useState([])
+  const navigate = useNavigate();
 
   // Fetch log data
   const fetchLogData = async () => {
-    console.log("Fetching logs")    
-    http.get('http://localhost:5000/v1/api/logs/getAllLogs')
-    .then(response => {
-      console.log(response.data)
-      setLogs(response.data)
-    })
+    console.log("Fetching logs")
+    getAllLogs()                                            // [Logging] Get all logs /hooks/useAuth.jsx
+      .then(response => {
+        if (response.status === 200) {
+          setLogs(response.data)
+        }
+        else {
+          navigate("/");
+        }
+      })
     .catch((error) => {      
       console.error(error)
     })
@@ -31,10 +39,15 @@ const Admin = () => {
 
   // Fetch all accounts from /getAllAccounts
   const fetchData = async () => {
-    console.log("Fetching accounts")    
-    http.get('http://localhost:5000/v1/api/accounts/getAllAccounts')
-    .then(response => {     
-      setAccounts(response.data)      
+    console.log("Fetching accounts")   
+    getAllAccounts()                                        // [Logging] Get all accounts /hooks/useAuth.jsx
+      .then(response => {     
+        if (response.status === 200) {
+          setAccounts(response.data)
+        }
+        else {
+          navigate("/");
+        }
     })
     .catch((error) => {      
       console.error(error)

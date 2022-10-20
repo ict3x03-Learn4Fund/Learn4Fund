@@ -1,13 +1,16 @@
 import React from 'react'
 import http from "../../http-common";
 import toast from 'react-hot-toast';
+import { useAuth } from "../../hooks/useAuth";
 
 export default function UserManagementActivity({account, fetchData}){
-
+    const {lockUnlockAccount, deleteAccount } = useAuth();                  // [Logging & Management] Routes for admin management page only
     // Lock/unlock the account depending on its current lockedOut value
-    function handleLockUnlockClick() {                
-        const data = {'email': account.email, 'lockedOut': account.lockedOut}
-        http.post("/accounts/lockUnlockAccount", data)
+    function HandleLockUnlockClick() {   
+        
+        const data = { 'email': account.email, 'lockedOut': account.lockedOut }
+        lockUnlockAccount(data);                                            // [Logging] Lock or unlock account
+        // http.post("/admin/lockUnlockAccount", data)
         refreshData()
 
         if (account.lockedOut){
@@ -18,9 +21,10 @@ export default function UserManagementActivity({account, fetchData}){
     }
 
     // Remove account
-    function handleRemoveClick() {
-        const data = {'email': account.email, 'lockedOut': account.lockedOut}
-        http.post("/accounts/removeAccount", data)
+    function HandleRemoveClick() {
+        const data = { 'email': account.email, 'lockedOut': account.lockedOut }
+        deleteAccount(data);                                                // [Management] Delete account
+        // http.post("/admin/removeAccount", data)
         toast.success("Account successfully deleted")
         refreshData()
     }
@@ -44,8 +48,8 @@ export default function UserManagementActivity({account, fetchData}){
             <td>{account.firstName}</td>
             <td>{account.lockedOut+ ''}</td>            
             <td>                
-                <td><button onClick = {handleLockUnlockClick}> {value} </button></td>                
-                <td><button onClick = {handleRemoveClick}> REMOVE </button></td>
+                <td><button onClick = {HandleLockUnlockClick}> {value} </button></td>                
+                <td><button onClick = {HandleRemoveClick}> REMOVE </button></td>
             </td>            
         </tr>
     )
