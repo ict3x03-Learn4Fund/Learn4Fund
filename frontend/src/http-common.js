@@ -6,5 +6,6 @@ export default axios.create({
     headers: {
         "Content-type": "application/json"
     },
-    withCredentials: true    
+    withCredentials: true     // to send cookies
 });
+axios.defaults.withCredentials = true; // to send cookies
