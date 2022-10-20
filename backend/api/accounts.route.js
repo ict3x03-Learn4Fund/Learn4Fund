@@ -1,6 +1,6 @@
 const express =  require("express")
 
-const { apiRegister, apiLogin, apiGetAccount, apiVerify2FA, apiGetAllAccounts, apiLockUnlockAccount, apiRemoveAccount} = require("../controller/accounts.controller")
+const {apiRegister, apiLogin, apiGetAccount, apiVerify2FA} = require("../controller/accounts.controller")
 
 const {protect} = require("../middleware/authMiddleware")
 
@@ -19,9 +19,9 @@ const createAccountLimiter = rateLimit({                                // [DoS]
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 const verify2FALimiter = rateLimit({                                    // [DoS] Prevent brute force attacks on 2FA
-	windowMs: 15 * 60 * 1000, // 30 mins
-	max: 3, // Limit each IP to 5 code verification requests per 30 mins
-	message: 'Too much tries, please try again in 30 mins',
+	windowMs: 15 * 60 * 1000, // 15 mins
+	max: 3, // Limit each IP to 3 code verification requests per 15 mins
+	message: 'Too much tries, please try again in 15 mins',
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
@@ -78,7 +78,7 @@ router.route('/register').post(createAccountLimiter,
 })
 
 // @route   POST api/accounts/login
-router.route('/login').post(
+router.route('/login').post(                                            // Not protected by rate limiter since there is account lock
     [
         check('email')
             .notEmpty().withMessage('Email is required')                // [Validation] check if email is empty
@@ -117,11 +117,5 @@ router.route('/verify2FA').post(verify2FALimiter,
 })
 // @route   GET api/getAccount
 router.route('/getAccount').get(protect, apiGetAccount)
-// @route   GET api/getAllAccounts
-router.route('/getAllAccounts').get(protect, apiGetAllAccounts)
-// @route   PUT api/accounts/lockUnlockAccount
-router.route('/lockUnlockAccount').post(protect, apiLockUnlockAccount)
-// @route   DELETE api/accounts/removeAccount
-router.route('/removeAccount').post(apiRemoveAccount)
 
 module.exports = router
