@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useForm } from "react-hook-form";
 
 function Signup() {
-  const {auth, authed, authMsg, register, currentUser} = useAuth();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const {auth, authed, authMsg, authRegister, currentUser} = useAuth();
   const [errorMsg, setErrorMsg] = useState("") 
   const navigate = useNavigate();
   const [accountForm, setAccountForm] = useState({
@@ -37,13 +39,9 @@ function Signup() {
   };
 
   const onSubmit = async (e) => {
-    e.preventDefault();
-    if (password === password2){
-      const userForm = {email, phone, countryCode, password, firstName, lastName, emailSubscription};
-      register(userForm)
-    } else {
-      setErrorMsg("Password does not match");
-    }
+    // e.preventDefault();
+    const userForm = {email, phone, countryCode, password, firstName, lastName, emailSubscription};
+    authRegister(userForm);
 
   };
 
@@ -54,8 +52,9 @@ function Signup() {
           <span className="font-type2 text-2xl">
             Register an account with us
           </span>
-          <form onSubmit={onSubmit}>
+          <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-wrap w-full justify-center mt-4">
+              <div className="flex flex-row w-full">
               <div className="flex w-1/2">
                 <div className="flex flex-col w-full">
                   <div className="flex pr-2 my-2">
@@ -64,39 +63,98 @@ function Signup() {
                     </span>
                     <input
                       className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
+                      type="text"
+                      maxLength={20}
+                      {...register("firstName", { required: true, maxLength:20 })}
                       placeholder="Chuck"
                       id="firstName"
                       name="firstName"
                       value={firstName}
                       onChange={onChange}
-                    />
+                    />                
                   </div>
+                  {errors.firstName && <div><p style={{color: "red"}}><b>Please check the First Name</b></p></div>}
                   <div className="flex pr-2 my-2">
-                    <span className="flex-none font-type1 order-1 w-1/3 text-center bg-g1 h-full text-w1 rounded-l py-2">
-                      Last Name
+                    <span className="flex-none font-type1 order-1 w-2/4 text-center bg-g1 h-full text-w1 rounded-l py-2">
+                    Country Code
                     </span>
                     <input
-                      className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
-                      placeholder="Norris"
-                      id="lastName"
-                      name="lastName"
-                      value={lastName}
-                      onChange={onChange}
-                    />
+                      className="flex-none w-2/4 h-full order-2 border-2 border-g3 rounded-r text-center"
+                      type="text"
+                      maxLength={4}
+                      {...register("countryCode", { required: true, pattern: /^(\+\d{2,3})$/ })}
+                      placeholder="+65"
+                      id="countryCode"
+                      name="countryCode"
+                      value={countryCode}
+                      onChange={onChange}               
+                    />                  
                   </div>
-                  <div className="flex pr-2 my-2">
-                    <span className="flex-none font-type1 order-1 w-1/3 text-center bg-g1 h-full text-w1 rounded-l py-2">
-                      Email
-                    </span>
-                    <input
-                      className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
-                      placeholder="ChuckWood@gmail.com"
-                      id="email"
-                      name="email"
-                      value={email}
-                      onChange={onChange}
-                    />
+                  {errors.countryCode && <div><p style={{color: "red"}}><b>Check country code</b></p></div>}
                   </div>
+                </div>
+              <div className="flex flex-col  w-1/2">
+              <div className="flex pl-2 my-2">
+                  <span className="flex-none font-type1 order-1 w-1/3 text-center bg-g1 h-full text-w1 rounded-l py-2">
+                    Last Name
+                  </span>
+                  <input
+                    className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
+                    type="text"
+                    maxLength={20}
+                    {...register("lastName", { required: true, maxLength:20 })}
+                    placeholder="Norris"
+                    id="lastName"
+                    name="lastName"
+                    value={lastName}
+                    onChange={onChange}               
+                  />               
+                  </div>
+                  {errors.lastName && <div><p style={{color: "red"}}><b>Please check the Last Name</b></p></div>}       
+                <div className="flex pl-2 my-2">
+                  <span className="flex-none font-type1 order-1 w-1/3 text-center bg-g1 h-full text-w1 rounded-l py-2">
+                    Phone
+                  </span>
+                  <input
+                    className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
+                    type="tel"
+                    maxLength={12}
+                    {...register("phone", { required: true, pattern: /^[0-9]*$/, minLength: 6, maxLength: 12})}
+                    placeholder="98765432"
+                    id="phone"
+                    name="phone"
+                    value={phone}
+                    onChange={onChange}              
+                  />                 
+                </div>
+                {errors.phone && <div><p style={{ color: "red" }}><b>Check phone number</b></p></div>}
+                </div>
+              </div>
+              <div className="flex flex-col w-full">
+                <div className="flex flex-row w-full my-2">
+                  <span className="flex-none font-type1 order-1 w-1/6 text-center bg-g1 h-full text-w1 rounded-l py-2">
+                    Email
+                  </span>
+                  <input
+                    className="flex-row w-full h-full order-2 border-2 border-g3 rounded-r text-center"
+                    type="text"
+                    maxLength={255}
+                    {...register("email", { required: true, pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
+                    placeholder="ChuckWood@gmail.com"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={onChange}
+                  />                  
+                </div>
+                <div className="flex flex-row w-full my-2">
+                {errors.email && <div><p style={{color: "red"}}><b>Please enter a valid Email address</b></p></div>}
+                </div>
+              </div>
+              <div className="flex flex-row w-full">
+              <div className="flex w-1/2">
+                <div className="flex flex-col w-full">
+              
                   <div className="flex pr-2 my-2">
                     <span className="flex-none font-type1 order-1 w-1/3 text-center bg-g1 h-full text-w1 rounded-l py-2">
                       Password
@@ -104,59 +162,44 @@ function Signup() {
                     <input
                       className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="password"
+                      {...register("password", { required: true, pattern: /.{12,}/ })}
                       placeholder="*************"
                       id="password"
                       name="password"
                       value={password}
-                      onChange={onChange}
-                    />
+                      onChange={onChange}              
+                    />                
+                  </div>
+                    {errors.password && <div><p style={{ color: "red" }}><b>Password too short</b></p></div>}
                   </div>
                 </div>
-              </div>
-              <div className="flex flex-col  w-1/2">
-              <div className="flex pl-2 my-2">
-                  <span className="flex-none font-type1 order-1 w-1/2 text-center bg-g1 h-full text-w1 rounded-l py-2">
-                    Country Code
-                  </span>
-                  <input
-                    className="flex-none w-1/2 h-full order-2 border-2 border-g3 rounded-r text-center"
-                    type="text"
-                    placeholder="+65"
-                    id="countryCode"
-                    name="countryCode"
-                    value={countryCode}
-                    onChange={onChange}
-                  />
+                <div className="flex w-1/2">
+                  <div className="flex flex-col w-full">
+                    <div className="flex pl-2 my-2">
+                      <span className="flex-none font-type1 order-1 w-1/3 text-center bg-g1 h-full text-w1 rounded-l py-2">
+                        Confirm Password
+                      </span>
+                      <input
+                        className="flex-none w-2/3 h-full order-2 border-2 border-g3 rounded-r text-center"
+                        type="password"
+                        {...register("password2", {
+                          required: true, validate: (val) => {
+                          if( watch("password") != val) {
+                            return "Passwords do not match"
+                          }
+                        } })}
+                        placeholder="*************"
+                        id="password2"
+                        name="password2"
+                        value={password2}
+                        onChange={onChange}           
+                      />           
+                    </div>
+                    {errors.password2 && <div><p style={{color: "red"}}><b>Passwords do not match</b></p></div>}
+                  </div>
                 </div>
-                <div className="flex pl-2 my-2">
-                  <span className="flex-none font-type1 order-1 w-1/2 text-center bg-g1 h-full text-w1 rounded-l py-2">
-                    Phone
-                  </span>
-                  <input
-                    className="flex-none w-1/2 h-full order-2 border-2 border-g3 rounded-r text-center"
-                    type="text"
-                    placeholder="98765432"
-                    id="phone"
-                    name="phone"
-                    value={phone}
-                    onChange={onChange}
-                  />
                 </div>
-
-                <div className="flex pl-2 my-2">
-                  <span className="flex-none font-type1 order-1 w-1/2 text-center bg-g1 h-full text-w1 rounded-l py-2">
-                    Confirm Password
-                  </span>
-                  <input
-                    className="flex-none w-1/2 h-full order-2 border-2 border-g3 rounded-r text-center"
-                    type="password"
-                    placeholder="*************"
-                    id="password2"
-                    name="password2"
-                    value={password2}
-                    onChange={onChange}
-                  />
-                </div>
+              <div className="flex flex-col  w-1/2">      
                 <div className="flex flex-col flex-wrap ml-2 my-2">
                   <div className="flex w-full">
                     password strength: {passwordStrength}%

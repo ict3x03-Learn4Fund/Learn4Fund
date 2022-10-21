@@ -6,47 +6,44 @@ const CoursesCatalog = () => {
       <span className="flex w-full font-type1 text-[20px] font-bold">
         Courses Catalog
       </span>
-      <p className="flex w-full">Add, update, deactivate courses</p>
+      <p className="flex mt-2 mb-2 w-full">Add, update, deactivate courses</p>
       <span className="h-[2px] bg-[black] w-full my-2" />
 
-      
-      <div className="flex-row flex-nowrap w-full space-y-2 p-2">
-        <div className="flex w-full">
-        <table class="flex-row w-full table-fixed text-center border-separate">
-  <thead>
-    <tr>
-      <th className='w-1/6 border'>ID</th>
-      <th className='w-1/6 border'>Name</th>
-      <th className='w-1/6 border'>Img</th>
-      <th className='w-1/6 border'>Quantity</th>
-      <th className='w-1/6 border'>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>Some Course</td>
-      <td>Some Img</td>
-      <td>50</td>
-      <td>Edit/Delete</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Some Course</td>
-      <td>Some Img</td>
-      <td>50</td>
-      <td>Edit/Delete</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>Some Course</td>
-      <td>Some Img</td>
-      <td>50</td>
-      <td>Edit/Delete</td>
-    </tr>
-  </tbody>
-</table>
-          </div>
+      <div class="w-full table-responsive">
+        <table class="table w-full table-striped table-bordered table-hover table">
+          <thead>
+            <tr>
+              <th className='w-1/6 border'>ID</th>
+              <th className='w-1/6 border'>Name</th>
+              <th className='w-1/6 border'>Img</th>
+              <th className='w-1/6 border'>Quantity</th>
+              <th className='w-1/6 border'>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr>
+              <td>1</td>
+              <td>Some Course</td>
+              <td>Some Img</td>
+              <td>50</td>
+              <td>Edit/Delete</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Some Course</td>
+              <td>Some Img</td>
+              <td>50</td>
+              <td>Edit/Delete</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Some Course</td>
+              <td>Some Img</td>
+              <td>50</td>
+              <td>Edit/Delete</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   )

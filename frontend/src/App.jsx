@@ -16,7 +16,7 @@ import Settings from './routes/Settings';
 import Banner from './components/banner/Banner';
 import Donations from './routes/Donations';
 import Admin from './routes/Admin';
-import {AuthProvider, RequireAuth} from "./hooks/useAuth";
+import {AuthProvider, RequireAuth, RequireAdmin} from "./hooks/useAuth";
 import { NavProvider } from './hooks/useNav';
 import Catalog from './routes/Catalog';
 import CourseInfo from './components/catalog/CourseInfo';
@@ -53,14 +53,14 @@ const [showMobileWarning, setShowMobileWarning] = useState(false)
       <Nav/>
       <Routes>
         <Route exact path="/" element = {<Homepage setNewsModal={setNewsModal}/>}/>
-        <Route exact path="admin" element = {<RequireAuth><Admin/></RequireAuth>}/>
+        <Route exact path="admin" element = {<RequireAdmin><Admin/></RequireAdmin>}/> 
         <Route exact path="donate" element = {<Donations/>}/>
         <Route exact path="tos" element = {<Toc/>}/>
         <Route exact path="privacy" element = {<Privacy/>}/>
         <Route exact path="cookies" element = {<Cookie/>}/>
         <Route exact path="cart" element = {<Cart/>}/>
 
-        <Route exact path="settings" element = {<RequireAuth><Settings/></RequireAuth>}/>
+        <Route exact path="settings" element = {<RequireAdmin><Settings/></RequireAdmin>}/>
         <Route exact path="login" element = {<Login/>}/>
         <Route exact path="login2FA" element={<Login2FA />} />
         <Route exact path="signup" element = {<Signup/>}/>

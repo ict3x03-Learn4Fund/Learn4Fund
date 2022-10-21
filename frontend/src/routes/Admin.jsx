@@ -1,10 +1,65 @@
-import {useState} from 'react'
+// import {useState} from 'react'
 import BannedUsers from '../components/admin/BannedUsers'
 import CoursesCatalog from '../components/admin/CoursesCatalog'
 import SuspiciousActivities from '../components/admin/SuspiciousActivities'
+import { React, useState, useEffect } from "react";
+import http from "../http-common";
+import { useAuth } from "../hooks/useAuth";
+import { Navigate, useNavigate } from 'react-router-dom';
+// import { get } from 'mongoose';
+
+function testPostLog() {
+  const data = {'email': "addme@gmail.com", 'reason': "Account lockout"}
+  http.post("/accounts/addLog", data)
+}
 
 const Admin = () => {
+  const {getAllAccounts, getAllLogs} = useAuth();           // [Logging] Get all accounts and logs /hooks/useAuth.jsx
   const [menu, setMenu] = useState(0)
+  const [accounts, setAccounts] = useState([])
+  const [logs, setLogs] = useState([])
+  const navigate = useNavigate();
+
+  // Fetch log data
+  const fetchLogData = async () => {
+    console.log("Fetching logs")
+    getAllLogs()                                            // [Logging] Get all logs /hooks/useAuth.jsx
+      .then(response => {
+        if (response.status === 200) {
+          setLogs(response.data)
+        }
+        else {
+          navigate("/");
+        }
+      })
+    .catch((error) => {      
+      console.error(error)
+    })
+  }
+
+  // Fetch all accounts from /getAllAccounts
+  const fetchData = async () => {
+    console.log("Fetching accounts")   
+    getAllAccounts()                                        // [Logging] Get all accounts /hooks/useAuth.jsx
+      .then(response => {     
+        if (response.status === 200) {
+          setAccounts(response.data)
+        }
+        else {
+          navigate("/");
+        }
+    })
+    .catch((error) => {      
+      console.error(error)
+    })
+  }
+
+  // Fetch all accounts on initial load
+  useEffect(() => {
+    fetchData()
+    fetchLogData()
+  }, [])
+
   return (
     <main>
         <div className='flex flex-col flex-wrap w-full h-screen bg-b1'>
@@ -16,9 +71,9 @@ const Admin = () => {
             </div>
             </div>
             <div className='flex w-3/4 h-full'>
-              {menu === 0 && <SuspiciousActivities/>}
+              {menu === 0 && <SuspiciousActivities logs={logs} fetchLogData={fetchLogData}/>}
               {menu === 1 && <CoursesCatalog/>}
-              {menu === 2 && <BannedUsers/>}
+              {menu === 2 && <BannedUsers accounts={accounts} fetchData={fetchData}/>}
             </div>
         </div>
     </main>
