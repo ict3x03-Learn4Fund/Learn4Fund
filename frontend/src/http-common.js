@@ -2,7 +2,7 @@ import axios from "axios";
 
 // connection to the backend using axios
 export default axios.create({
-    baseURL: "http://localhost:5000/v1/api",
+    baseURL: "http://128.199.99.77:5000/v1/api", //modified,was http://localhost:5000
     headers: {
         "Content-type": "application/json"
     },
