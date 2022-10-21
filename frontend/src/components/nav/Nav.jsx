@@ -63,7 +63,7 @@ function Nav() {
           
           
           <div className="flex w-full lg:w-1/2 justify-center lg:justify-end self-center">
-          {authed && <div
+          {authed &&  <div
                 onClick={()=>{selectedTab('admin')}}
                 className={"cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " + (tab === 'admin' ? "underline" : "")}
               >

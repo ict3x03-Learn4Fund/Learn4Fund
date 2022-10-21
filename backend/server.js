@@ -52,12 +52,13 @@ app.use(mongoSanitize({                                     // [Sanitization] Pr
   }));
 
 
-app.use("/v1/api/courses", apiLimiter, require("./api/courses.route"));
-app.use("/v1/api/companies", apiLimiter, require("./api/companies.route"));
-app.use("/v1/api/accounts", apiLimiter, require("./api/accounts.route"));
-app.use("/v1/api/images", apiLimiter, require("./api/images.route"));
-app.use("/v1/api/carts", apiLimiter, require("./api/carts.route"));
-app.use("/v1/api/logs", apiLimiter, require("./api/logs.route"));
+app.use("/v1/api/courses", require("./api/courses.route"));
+app.use("/v1/api/companies", require("./api/companies.route"));
+app.use("/v1/api/accounts", require("./api/accounts.route"));
+app.use("/v1/api/images", require("./api/images.route"));
+app.use("/v1/api/carts", require("./api/carts.route"));
+app.use("/v1/api/logs", require("./api/logs.route"));
+app.use("/v1/api/reviews", require("./api/reviews.route"));
 app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 app.use(errorHandler);
 
