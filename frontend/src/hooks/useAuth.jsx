@@ -41,6 +41,7 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
+
     setAuthMsg("");
     try { 
       const verifyUser = await authService.login(email, password);

@@ -16,7 +16,8 @@ import Settings from './routes/Settings';
 import Banner from './components/banner/Banner';
 import Donations from './routes/Donations';
 import Admin from './routes/Admin';
-import {AuthProvider, RequireAuth, RequireAdmin} from "./hooks/useAuth";
+import {Provider} from "react-redux";
+import store from "./app/store";
 import { NavProvider } from './hooks/useNav';
 import Catalog from './routes/Catalog';
 import CourseInfo from './components/catalog/CourseInfo';
@@ -25,12 +26,13 @@ import { NewsLetterModal } from './modals/NewsLetterModal';
 
 import { Toaster } from 'react-hot-toast';
 import { OTPModal } from './modals/OTPModal';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
   const [newsModal, setNewsModal] = useState(false);
-const [showMobileWarning, setShowMobileWarning] = useState(false)
+  const [showMobileWarning, setShowMobileWarning] = useState(false)
 
   const modalValue = useRef(false);
 
@@ -46,23 +48,24 @@ const [showMobileWarning, setShowMobileWarning] = useState(false)
     setShowMobileWarning(true)
   }, []);
   return (
-    <AuthProvider>
+    <Provider store={store}>
     <NavProvider>
     {showMobileWarning ? <div>This site is only for desktop</div> :
     <>
       <Nav/>
       <Routes>
         <Route exact path="/" element = {<Homepage setNewsModal={setNewsModal}/>}/>
-        <Route exact path="admin" element = {<RequireAdmin><Admin/></RequireAdmin>}/> 
         <Route exact path="donate" element = {<Donations/>}/>
         <Route exact path="tos" element = {<Toc/>}/>
         <Route exact path="privacy" element = {<Privacy/>}/>
         <Route exact path="cookies" element = {<Cookie/>}/>
         <Route exact path="cart" element = {<Cart/>}/>
-
-        <Route exact path="settings" element = {<RequireAdmin><Settings/></RequireAdmin>}/>
-        <Route exact path="login" element = {<Login/>}/>
+        <Route element={<ProtectedRoute />}>
         <Route exact path="login2FA" element={<Login2FA />} />
+        <Route exact path="settings" element = {<Settings/>}/>
+        <Route exact path="admin" element = {<Admin/>}/>
+        </Route>
+        <Route exact path="login" element = {<Login/>}/>
         <Route exact path="signup" element = {<Signup/>}/>
         <Route exact path="courses" element = {<Catalog/>}/>
         <Route exact path="courses/:courseID" element = {<CourseInfo/>}/>
@@ -109,7 +112,7 @@ const [showMobileWarning, setShowMobileWarning] = useState(false)
       </>
   }
       </NavProvider>
-    </AuthProvider>
+</Provider>
   );
 }
 

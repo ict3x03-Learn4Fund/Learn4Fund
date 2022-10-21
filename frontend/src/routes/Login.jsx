@@ -5,18 +5,20 @@ import { FaFacebookF } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useDispatch, useSelector } from 'react-redux'
+import { userLogin } from '../features/user/userActions'
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const {auth, authed, authMsg, login, currentUser} = useAuth();
+  const { loading, userInfo, error } = useSelector((state) => state.user)
   const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { state } = useLocation();
+  const dispatch = useDispatch()
   const [errorMsg, setErrorMsg] = useState("");
 
   function handleEmailChange(event) {
@@ -26,18 +28,27 @@ function Login() {
     setPassword(event.target.value);
   }
 
-  const handleLogin = async () => {
-    login(email,password)
-  };
+  // redirect authenticated user to profile screen
+  useEffect(() => {
+    if (userInfo) {
+      navigate('/')
+    }
+  }, [navigate, userInfo])
+
+
+  const submitForm = (data) => {
+    dispatch(userLogin(data))
+  }
 
   return (
     <main>
       <div className="flex flex-col items-center justify-center h-screen bg-[url('assets/images/background.jpg')] bg-cover bg-no-repeat backdrop-blur-sm">
-        <div className="flex flex-col items-center w-96 h-auto p-2 bg-w2 rounded-lg border-2 border-black">
-          <span className="flex w-16 h-16 bg-b1 rounded-full items-center justify-center">
+      <form onSubmit={handleSubmit(submitForm)}>
+        <div className="flex flex-col items-center w-96 align-center p-2 bg-w2 rounded-lg border-2 border-black space-y-2">
+          <span className="flex w-16 h-16 bg-b1 rounded-full items-center justify-center my-2">
             <IoPersonCircleOutline className="text-w1" size="100" />
           </span>
-          <div className="flex flex-nowrap w-full justify-center mt-4">
+          <div className="flex flex-nowrap w-full justify-center">
             <span className="self-center w-1/4 h-[40px] bg-b1 rounded-l">
               <div className="flex w-full h-full content-center justify-center">
                 <MdAlternateEmail className="self-center text-w1" />
@@ -54,10 +65,10 @@ function Login() {
               onChange={handleEmailChange}
             />
           </div>
-          <div className="flex flex-nowrap w-full justify-center mt-4">
+          <div className="flex flex-nowrap w-full justify-center">
             {errors.email && <div><p style={{ color: "red" }}><b>Please enter a valid Email address</b></p></div>}
             </div>
-          <div className="flex flex-nowrap w-full justify-center mt-4">
+          <div className="flex flex-nowrap w-full justify-center">
             <span className="self-center w-1/4 h-[40px] bg-b1 rounded-l">
               <div className="flex w-full h-full content-center justify-center">
                 <BsShieldLockFill className="self-center text-w1" />
@@ -74,23 +85,16 @@ function Login() {
             />
             {/* <p id="errorMsg" name="errorMsg" value={errorMsg}></p> */}
           </div>
-          <div className="flex flex-nowrap w-full justify-center mt-4">
+          <div className="flex flex-nowrap w-full justify-center">
             {errors.password && <div><p style={{ color: "red" }}><b>Password is empty!</b></p></div>}
             </div>
-          <div className="flex flex-col w-full space-y-2 mt-6">
+          <div className="flex flex-col w-full space-y-2">
             <button
-              className="p-2 w-full rounded bg-success text-w1 font-bold"
-              onClick={handleSubmit(handleLogin)}>
+              className="p-2 w-full rounded bg-b1 border-2 hover:bg-b2 text-w1 font-bold"
+              type='submit' disabled={loading}>
               Login with Email
             </button>
-            <button className="flex flex-wrap p-2 w-full rounded bg-[#FFCE44] text-w1 font-bold justify-center">
-              <AiOutlineGoogle className="self-center" />
-              Login with Google
-            </button>
-            <button className="flex flex-wrap p-2 w-full rounded text-w1 font-bold justify-center bg-[#4267B2]">
-              <FaFacebookF className="self-center" />
-              Login with Facebook
-            </button>
+            
           </div>
 
           <div className="flex flex-row flex-nowrap w-full my-1">
@@ -100,11 +104,12 @@ function Login() {
           </div>
           <Link
             to="/signup"
-            className="cursor-pointer p-2 w-full rounded bg-g2 text-w1 font-bold text-center"
+            className="cursor-pointer p-2 w-full rounded bg-g2 text-w1 font-bold hover:text-w1 hover:bg-orange-500 text-center"
           >
             Sign up
           </Link>
         </div>
+      </form>
       </div>
     </main>
   );

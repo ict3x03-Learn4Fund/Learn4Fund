@@ -57,9 +57,9 @@ function Homepage({ setNewsModal }) {
     courseService
       .getAll()
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setDataCourses(response.data);
-        console.log("Course1: ", response.data[0]._id);
+        // console.log("Course1: ", response.data[0]._id);
       })
       .catch((e) => {
         console.log(e);

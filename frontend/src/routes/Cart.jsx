@@ -1,7 +1,10 @@
 import {useEffect, useState} from 'react'
-
+import { CreditCardModal } from '../modals/CreditCardModal'
+import toast from 'react-hot-toast';
 
 const Cart = () => {
+  const [showModal, setShowModal] = useState(false)
+
   const [cartList, setCartList] = useState([{
     id: 1,
     courseName: 'Course On Web Security',
@@ -54,6 +57,12 @@ const handleOnChange = (position) => {
   
   function checkOutItems(){
     console.log("call stripe api")
+    if (checkout.length > 0){
+    setShowModal(true)
+    }else{
+      toast.error('Select items to checkout');
+    }
+
   }
 
   function removeItem(item, position){
@@ -80,7 +89,7 @@ const handleOnChange = (position) => {
   
 
   return (
-    <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 ">
+    <main className="flex w-full h-full min-h-[600px] px-[40px] lg:px-[120px] pb-[24px] bg-b1 ">
       <div className="flex flex-row flex-wrap w-2/3 h-fit mt-[24px] p-[40px] bg-white rounded">
         <div className="flex flex-col w-full">
           <span className="font-type3 font-medium text-[2vw] text-b3 leading-[32px]">
@@ -107,7 +116,7 @@ const handleOnChange = (position) => {
   <tbody>
     {cartList.map((item, index) => (
       <tr key={index}>
-      <td><input type="checkbox" className="w-[20px] h-[20px]" checked={checkedState[index]}
+      <td><input type="checkbox" className="w-[20px] h-[20px] mt-4" checked={checkedState[index]}
   onChange={() => handleOnChange(index)} onClick={()=>addToCheckout(item)}/></td>
       <td>{item.courseName}</td>
       <td>{item.quantity}</td>
@@ -137,8 +146,8 @@ const handleOnChange = (position) => {
         <div className="flex flex-wrap w-full my-4">
             {checkout.map((item, index) => (
               <div key={index} className="flex flex-row justify-between w-full h-fit">
-                <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">{item.courseName}</span>
-                <span className="font-type1 text-[1vw] text-b1 font-bold">${item.discountedPrice}</span>
+                <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">{item.courseName} x{item.quantity}</span>
+                <span className="font-type1 text-[1vw] text-b1 font-bold">${item.usualPrice}</span>
               </div>
             ))}
             </div>
@@ -147,27 +156,28 @@ const handleOnChange = (position) => {
             <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2"/>
               
                 <div className="flex flex-row justify-between w-full h-fit">
-                <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">Discounts</span>
-                <span className="font-type1 text-[1vw] text-b1 font-bold">$0.00</span>
-                </div>
-                <div className="flex flex-row justify-between w-full h-fit">
-                <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">Donated ($1 per $10)</span>
-                <span className="font-type1 text-[1vw] text-b1 font-bold">$0.00</span>
-                </div>
-                <div className="flex flex-row justify-between w-full h-fit">
                 <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">Subtotal</span>
-                <span className="font-type1 text-[1vw] text-b1 font-bold">$0.00</span>
+                <span className="font-type1 text-[1vw] text-b1 font-bold">${checkout.reduce((partialSum, a) => partialSum + parseFloat(a.usualPrice), 0.00).toFixed(2)}</span>
+                </div>
+                <div className="flex flex-row justify-between w-full h-fit">
+                <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">Discounts</span>
+                <span className="font-type1 text-[1vw] text-b1 font-bold">- ${checkout.reduce((partialSum, a) => partialSum + parseFloat(a.usualPrice - a.discountedPrice), 0.00).toFixed(2)}
+                </span>     
                 </div>
                 <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2"/>
                 <div className="flex flex-row justify-between w-full h-fit my-2">
                 <span className="font-type1 font-bold text-[1vw] text-black leading-[22px] self-center">Grand Total</span>
-                <span className="font-type1 text-[1vw] text-b1 font-bold">$0.00</span>
+                <span className="font-type1 text-[1vw] text-b1 font-bold">${checkout.reduce((partialSum, a) => partialSum + parseFloat(a.discountedPrice), 0.00).toFixed(2)}</span>
+                </div>
+                <div className="flex flex-row justify-between w-full h-fit">
+                <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">Donated ($1 per $10)</span>
+                <span className="font-type1 text-[1vw] text-b1 font-bold">${(checkout.reduce((partialSum, a) => partialSum + parseFloat(a.discountedPrice), 0.00)/10).toFixed(0)}</span>
                 </div>
                 
             </div>
 
         <button
-          className="flex w-full h-[40px] rounded-sm bg-red-500 justify-center items-center"
+          className="flex w-full h-[40px] rounded-sm bg-green-500 justify-center items-center mt-4"
           onClick={() => checkOutItems()}
         >
           <span className="font-type1 font-bold text-[14px] leading-[22px] text-white">
@@ -177,7 +187,7 @@ const handleOnChange = (position) => {
 
       </div>
       </div>
-      
+      {showModal && <CreditCardModal closeModal={setShowModal}/>}
     </main>
   )
 }

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
-import { useAuth } from "../../hooks/useAuth";
 import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux'
 
 function CourseInfo() {
-  // useEffect(() => {
-  // }, [])
+  const { loading, userInfo, error, success } = useSelector(
+    (state) => state.user
+  )
+
   const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(0);
   const [stars, setStars] = useState(0);
@@ -15,7 +17,6 @@ function CourseInfo() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [courseDetails, setCourseDetails] = useState({});
-  const { authed } = useAuth();
 
   // retrieve all courses
   const retrieveCourses = () => {
@@ -252,7 +253,7 @@ function CourseInfo() {
               </p>
             </div>
           </div>
-          {authed && (
+          {userInfo && (
             <div className="flex flex-row flex-wrap w-full h-auto my-4">
               <span className="font-type1 text-[20px] font-semibold">
                 My review

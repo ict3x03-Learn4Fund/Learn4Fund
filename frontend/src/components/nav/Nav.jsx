@@ -10,17 +10,27 @@ import { useNavigate } from "react-router-dom";
 import picture from "../../assets/images/default_person.jpg";
 import { BiDonateHeart } from "react-icons/bi";
 import { AiOutlineHome } from "react-icons/ai";
-import {useAuth} from "../../hooks/useAuth";
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserDetails } from '../../features/user/userActions'
+import { logout } from '../../features/user/userSlice'
 import {useNav} from "../../hooks/useNav";
 
 function Nav() {
-  const { authed, logout, currentUser } = useAuth();
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
   const [sessionItems, setSessionItems] = useState(0);
+  const { userInfo, userId } = useSelector((state) => state.user)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getUserDetails())
+    }
+  }, [userId, dispatch])
 
   const handleLogout = () => {
-    logout();
+    // logout();
+    dispatch(logout())
     setTab('');
     navigate("/");
   };
@@ -43,14 +53,15 @@ function Nav() {
     <section id="Nav" className="sticky top-0 flex w-full bg-w2" style={{zIndex: 99}}>
       <div className="flex-row flex-wrap w-full px-[40px] text-black shadow-lg">
         <div className="flex flex-row flex-wrap w-full justify-between mb-2">
-        {authed === true ? <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
+        {userInfo ?
+        <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
               <img
                 src={picture}
                 alt={"user profile"}
                 className="w-[32px] h-[32px] mr-[8px] bg-w1 self-center"
                 style={{ borderRadius: "100%" }}
               />
-              <span className="font-type2 text-[32px]">{currentUser.firstName + " "+ currentUser.lastName}</span>
+              <span className="font-type2 text-[32px]">{userInfo?.firstName + " "+ userInfo?.lastName}</span>
             </div>: <div
             className="flex w-full lg:w-1/2 justify-center lg:justify-start font-type4 my-2 text-[32px]"
             onClick={() => {
@@ -58,20 +69,22 @@ function Nav() {
             }}
           >
             Learn4Fund
-          </div>}
+          </div>
+          }
           
           
           
           <div className="flex w-full lg:w-1/2 justify-center lg:justify-end self-center">
-          {authed && <div
-                onClick={()=>{selectedTab('admin')}}
+          {userInfo && 
+          <div onClick={()=>{selectedTab('admin')}}
                 className={"cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " + (tab === 'admin' ? "underline" : "")}
               >
                 <RiAdminLine className="w-[18px] h-[18px] mr-[8px] self-center" />
                 <span className=" h-[22px] font-normal leading-[22px] font-type1">
                   Settings
                 </span>
-              </div>}
+              </div>
+          }
               <div onClick={()=>{selectedTab('')}}
                 className={"cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " + (tab === '' ? "underline" : "")}
 
@@ -90,14 +103,16 @@ function Nav() {
                   Donate
                 </span>
               </div>
-              {authed && <div onClick={()=>{selectedTab('settings')}}
+              {userInfo && 
+              <div onClick={()=>{selectedTab('settings')}}
                 className={"cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " + (tab === 'settings' ? "underline" : "")}
               >
                 <RiUserSettingsFill className="w-[18px] h-[18px] mr-[8px] self-center" />
                 <span className=" h-[22px] font-normal leading-[22px] font-type1">
                   Profile
                 </span>
-              </div>}
+              </div>
+              }
               <div onClick={()=>{selectedTab('cart')}} 
                 className={"cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " + (tab === 'cart' ? "underline" : "")}
                 >
@@ -110,7 +125,8 @@ function Nav() {
                 </span>
               </div>
 
-              {authed == true ? <div
+              {userInfo ? 
+              <div
                 onClick={handleLogout}
                 className="cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px]"
               >
@@ -128,7 +144,8 @@ function Nav() {
                 <span className=" h-[22px] font-normal leading-[22px] font-type1">
                   Login
                 </span>
-              </div>}
+              </div>
+              }
               
           </div>
         </div>
