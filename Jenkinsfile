@@ -1,11 +1,21 @@
 pipeline {
-  agent any
-  stages {
-    stage('Checkout code') {
-      steps {
-        git(url: 'https://github.com/ict3x03-Learn4Fund/Learn4Fund', branch: 'test/vm')
-      }
-    }
+    agent any
 
-  }
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
 }
