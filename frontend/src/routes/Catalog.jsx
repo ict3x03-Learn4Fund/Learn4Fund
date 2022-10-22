@@ -166,7 +166,8 @@ function Catalog() {
                     onClick={() => navigate("" + course._id)}
                   >
                     <img
-                      src={`https://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
+                      src={`../../../backend/api/images/getImg/${course.courseImg}`}
+                      // src={`https://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
                       className="flex  h-[120px] w-full object-stretch"
                       alt={""}
                     />
