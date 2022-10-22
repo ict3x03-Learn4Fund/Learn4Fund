@@ -135,7 +135,7 @@ function Homepage({ setNewsModal }) {
                 >
                   <img
                     // src={`/api/image/${images.getImg(course.courseImg)}`}
-                    src={`https://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
+                    src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
                     alt={"exmaple"}
                   />
@@ -205,7 +205,7 @@ function Homepage({ setNewsModal }) {
                   onClick={() => navigate("courses/" + course._id)}
                 >
                   <img
-                    src={`https://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
+                    src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
                     alt={""}
                   />
@@ -275,7 +275,7 @@ function Homepage({ setNewsModal }) {
                   onClick={() => navigate("courses/" + course._id)}
                 >
                   <img
-                    src={`https://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
+                    src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
                     alt={""}
                   />
