@@ -15,9 +15,9 @@ const Signup = () => {
 
   useEffect(() => {
     // redirect user to login page if registration was successful
-    if (success) navigate('/login2FA')
+    if (userInfo) navigate('/')  // change to /login2fa
     // redirect authenticated user to profile screen
-    if (userInfo) navigate('/login2FA')
+    // if (userInfo) navigate('/login2FA')
   }, [navigate, userInfo, success])
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();

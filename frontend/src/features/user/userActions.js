@@ -8,8 +8,9 @@ export const registerUser = createAsyncThunk(
     // callback function
     async (newUserInfo, { rejectWithValue }) => {
         try {
-            await authService.register(newUserInfo);
-
+            const verifyUser = await authService.register(newUserInfo); // change to set local storage at 2fa
+            localStorage.setItem('userId', verifyUser._id)
+            return verifyUser
         } catch (error) {
             // return custom error message from API if any
             if (error.response && error.response.data && error.response.data.message) {

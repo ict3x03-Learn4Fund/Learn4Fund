@@ -3,14 +3,10 @@ const mongoose = require('mongoose')
 const reviewSchema = mongoose.Schema(
   {
     rating: {
-      type: mongoose.Schema.Types.Double,
+      type: Number,
       default: 4.0,
     },
     description: {
-      type: String,
-      default: "",
-    },
-    title: {
       type: String,
       default: "",
     },

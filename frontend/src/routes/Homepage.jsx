@@ -48,7 +48,6 @@ function Homepage({ setNewsModal }) {
   }
 
   useEffect(() => {
-    console.log('test')
     retrieveCourses();
   },[]);
 
@@ -57,9 +56,7 @@ function Homepage({ setNewsModal }) {
     courseService
       .getAll()
       .then((response) => {
-        // console.log(response.data);
         setDataCourses(response.data);
-        // console.log("Course1: ", response.data[0]._id);
       })
       .catch((e) => {
         console.log(e);
