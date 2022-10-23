@@ -54,6 +54,8 @@ const apiGetCart = asyncHandler(async (req, res) => {
   try {
     let cart = await Cart.findOne({ accountId: accountId });
 
+    if (!cart) cart = await Cart.create({ accountId: accountId });
+
     let cartArray = [];
     for (const existingCart in cart.coursesAdded) {
       const courseId = cart.coursesAdded[existingCart].cartItem.courseId;
