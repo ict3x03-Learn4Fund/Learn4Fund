@@ -49,7 +49,7 @@ const Admin = () => {
           navigate("/");
         }
       );
-      setLogs(response);
+      setLogs(response.data);
     } catch (error) {
       const message =
         (error.response &&
@@ -91,7 +91,7 @@ const Admin = () => {
         }
       );
       if (response.status === 200) {
-        setAccounts(response);          // [Logging] Got all accounts successfully
+        setAccounts(response.data);          // [Logging] Got all accounts successfully
       } else {
         navigate("/");
       }

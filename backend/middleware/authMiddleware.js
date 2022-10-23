@@ -31,9 +31,9 @@ const protect = asyncHandler((req,res,next) =>{
                         if (req.account.role !== 'admin') {
                             return res.status(403).json({ message: 'Not authorized' });
                         }
-                        else {
-                            next();
-                        }
+                        // else {
+                        //     next();
+                        // }
                     }
                     
                     next() // Move on from the middleware
