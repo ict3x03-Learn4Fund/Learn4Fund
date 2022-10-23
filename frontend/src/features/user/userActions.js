@@ -1,5 +1,6 @@
 import authService from "../../services/accounts";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import cartsService from "../../services/carts";
 
 // userAction.js
 export const registerUser = createAsyncThunk(
@@ -47,6 +48,7 @@ export const getUserDetails = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
+            console.log("userdetails: ", user._id)
             // send user's id to retrieve account information
             const data = await authService.getAccount(user._id);
             return data
@@ -69,6 +71,23 @@ export const user2FA = createAsyncThunk(
             return response
         } catch (error) {
             // return custom error message from API if any
+            if (error.response && error.response.data.message) {
+                return rejectWithValue(error.response.data.message)
+            } else {
+                return rejectWithValue(error.message)
+            }
+        }
+    }
+)
+
+export const getCartNumber = createAsyncThunk(
+    'user/cartNo',
+    async (arg, {getState, rejectWithValue}) => {
+        try {
+            let {user} = getState()
+            console.log("user id at sliceee: ", arg)
+            return await cartsService.getTotal(arg)
+        } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
             } else {

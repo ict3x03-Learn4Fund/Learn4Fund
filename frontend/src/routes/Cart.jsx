@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails } from "../features/user/userActions";
+import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import { CreditCardModal } from '../modals/CreditCardModal'
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
   const [checkout, setCheckout] = useState([]);
+  const [showModal, setShowModal] = useState(false)
   const { userInfo, userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-    const [checkedState, setCheckedState] = useState();
+  const [checkedState, setCheckedState] = useState();
   useEffect(() => {
     dispatch(getUserDetails());
     window.scrollTo(0, 0);
@@ -18,9 +20,9 @@ const Cart = () => {
     getCart();
   }, []);
 
-  useEffect(()=> {
-    setCheckedState(new Array(cartList.length).fill(false))
-  }, cartList)
+  useEffect(() => {
+    setCheckedState(new Array(cartList.length).fill(false));
+  }, cartList);
 
   // retrieve cart
   const getCart = () => {
@@ -35,7 +37,6 @@ const Cart = () => {
         console.log(e);
       });
   };
-
 
   const handleOnChange = (position) => {
     const updatedCheckedState = checkedState.map((item, index) =>
@@ -56,9 +57,15 @@ const Cart = () => {
 
     // setTotal(totalPrice);
   };
+  
+  function checkOutItems(){
+    console.log("call stripe api")
+    if (checkout.length > 0){
+    setShowModal(true)
+    }else{
+      toast.error('Select items to checkout');
+    }
 
-  function checkOutItems() {
-    console.log("call stripe api");
   }
 
   // retrieve cart
@@ -78,6 +85,7 @@ const Cart = () => {
 
   function removeItem(item, position) {
     deleteCart(item.courseId);
+    dispatch(getCartNumber(userId));
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? !item : item
     );
@@ -186,26 +194,46 @@ const Cart = () => {
 
             <div className="flex flex-row justify-between w-full h-fit">
               <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
-                Discounts
-              </span>
-              <span className="font-type1 text-[1vw] text-b1 font-bold">
-                $0.00
-              </span>
-            </div>
-            <div className="flex flex-row justify-between w-full h-fit">
-              <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
-                Donated ($1 per $10)
-              </span>
-              <span className="font-type1 text-[1vw] text-b1 font-bold">
-                $0.00
-              </span>
-            </div>
-            <div className="flex flex-row justify-between w-full h-fit">
-              <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
                 Subtotal
               </span>
               <span className="font-type1 text-[1vw] text-b1 font-bold">
-                $0.00
+                $
+                {checkout
+                  .reduce(
+                    (partialSum, a) => partialSum + parseFloat(a.usualPrice),
+                    0.0
+                  )
+                  .toFixed(2)}
+              </span>
+            </div>
+            <div className="flex flex-row justify-between w-full h-fit">
+              <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
+                Discounts
+              </span>
+              <span className="font-type1 text-[1vw] text-b1 font-bold">
+                - $
+                {checkout
+                  .reduce(
+                    (partialSum, a) =>
+                      partialSum + parseFloat(a.usualPrice - a.discountedPrice),
+                    0.0
+                  )
+                  .toFixed(2)}
+              </span>
+            </div>
+            <div className="flex flex-row justify-between w-full h-fit">
+              <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
+                GrandTotal
+              </span>
+              <span className="font-type1 text-[1vw] text-b1 font-bold">
+                $
+                {checkout
+                  .reduce(
+                    (partialSum, a) =>
+                      partialSum + parseFloat(a.discountedPrice),
+                    0.0
+                  )
+                  .toFixed(2)}
               </span>
             </div>
             <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2" />
@@ -214,7 +242,14 @@ const Cart = () => {
                 Grand Total
               </span>
               <span className="font-type1 text-[1vw] text-b1 font-bold">
-                $0.00
+                $
+                {(
+                  checkout.reduce(
+                    (partialSum, a) =>
+                      partialSum + parseFloat(a.discountedPrice),
+                    0.0
+                  ) / 10
+                ).toFixed(0)}
               </span>
             </div>
           </div>
@@ -229,6 +264,7 @@ const Cart = () => {
           </button>
         </div>
       </div>
+      {showModal && <CreditCardModal closeModal={setShowModal}/>}
     </main>
   );
 };

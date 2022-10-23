@@ -17,10 +17,15 @@ const deleteCart = async (accountId, courseId) => {
   return await http.post(`/carts/delete`, cart);
 };
 
+const getTotal = async (accoundId) => {
+  return await http.get(`carts/${accoundId}/totalNo`)
+}
+
 const cartsService = {
   getCart,
   addCart,
   deleteCart,
+  getTotal
 };
 
 export default cartsService;

@@ -1,6 +1,6 @@
 // features/user/userSlice.js
 import { createSlice } from '@reduxjs/toolkit'
-import { userLogin, registerUser, getUserDetails, user2FA } from './userActions'
+import { userLogin, registerUser, getUserDetails, user2FA, getCartNumber } from './userActions'
 
 // initialize userToken from local storage
 const userId = localStorage.getItem('userId')
@@ -13,6 +13,7 @@ const initialState = {
   userId, // for storing the user Id
   error: null,
   success: false, // for monitoring the registration process.
+  cartNo: 0,
 }
 
 const userSlice = createSlice({
@@ -25,6 +26,7 @@ const userSlice = createSlice({
         state.userInfo = null
         state.userId = null
         state.error = null
+        state.cartNo = 0
       },
   },
   extraReducers: {
@@ -76,6 +78,19 @@ const userSlice = createSlice({
         state.userInfo = payload
       },
       [user2FA.rejected]: (state, { payload }) => {
+        state.loading = false
+      },
+
+      [getCartNumber.pending]: (state) => {
+        state.loading = true
+      },
+      [getCartNumber.fulfilled]: (state, { payload }) => {
+        console.log("helosoasd ",payload)
+        state.loading = false
+        state.cartNo = payload.data.totalNo
+      },
+      [getCartNumber.rejected]: (state, { payload }) => {
+        console.log("reject: ", payload)
         state.loading = false
       },
   },

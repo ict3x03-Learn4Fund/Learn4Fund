@@ -3,14 +3,14 @@ import { BsDash, BsPlus } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
 import { useDispatch, useSelector } from 'react-redux';
-import reviewsService from "../../services/services";
+import reviewsService from "../../services/reviews";
 import { useParams, useNavigate } from "react-router-dom";
 import cartsService from "../../services/carts";
 import toast from "react-hot-toast";
-import { getUserDetails } from '../../features/user/userActions'
+import { getUserDetails, getCartNumber } from '../../features/user/userActions'
 
 function CourseInfo() {  
-  const { loading, userInfo, error, success } = useSelector(
+  const { loading, userInfo, error, success, cartNo } = useSelector(
     (state) => state.user
   )
   const parse = require("html-react-parser");
@@ -71,15 +71,15 @@ function CourseInfo() {
     if (quantitySelected > courseDetails.quantity) {
       toast.error("amount exceeded");
     }
-    console.log("save to cart");
     // sessionStorage.setItem("cartItems", quantitySelected);
     addCartItem();
+    dispatch(getCartNumber(courseID))
   }
 
   // add cart item
   const addCartItem = () => {
     cartsService
-      .addCart(userInfo._id, courseDetails._id, quantitySelected)
+      .addCart(userInfo.id, courseDetails._id, quantitySelected)
       .then((response) => {
         console.log(response.data);
         toast.success("Item added into cart.");

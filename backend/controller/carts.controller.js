@@ -12,6 +12,10 @@ const apiAddCart = asyncHandler(async (req, res) => {
   try {
     const { cartItem, accountId } = req.body;
 
+    if (!accountId){
+      return res.status(400).json({message: "Account Id is null."})
+    }
+
     let cart = await Cart.findOne({ accountId: accountId });
     console.log("cart: ", cart);
     if (!cart) cart = await Cart.create({ accountId: accountId });
@@ -38,7 +42,7 @@ const apiAddCart = asyncHandler(async (req, res) => {
     cart.markModified("coursesAdded");
     cart.save();
 
-    return res.status(200).json({ message: `Item added.` });
+    return res.status(200).json(cart);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -83,6 +87,29 @@ const apiGetCart = asyncHandler(async (req, res) => {
     return res.status(400).json(error.message);
   }
 });
+
+/***
+ * @desc Get Cart Total number
+ * @route Get /v1/api/carts/:id/totalNo
+ * @access Private
+ */
+ const apiGetNo = asyncHandler(async (req, res) => {
+  const accountId = mongoose.Types.ObjectId(req.params.id);
+  try {
+    let cart = await Cart.findOne({ accountId: accountId });
+
+    if (!cart) cart = await Cart.create({ accountId: accountId });
+
+    const total = cart.coursesAdded.length
+
+    return res
+      .status(200)
+      .json({ accountId: accountId, totalNo: total });
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+});
+
 
 /***
  * @desc Delete Cart items
@@ -137,4 +164,5 @@ module.exports = {
   apiAddCart,
   apiGetCart,
   apiDeleteCart,
+  apiGetNo
 };
