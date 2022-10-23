@@ -6,6 +6,7 @@ import { getUserDetails, getCartNumber } from "../features/user/userActions";
 import { CreditCardModal } from '../modals/CreditCardModal'
 
 const Cart = () => {
+  
   const [cartList, setCartList] = useState([]);
   const [checkout, setCheckout] = useState([]);
   const [showModal, setShowModal] = useState(false)
@@ -14,11 +15,12 @@ const Cart = () => {
 
   const [checkedState, setCheckedState] = useState();
   useEffect(() => {
-    dispatch(getUserDetails());
+    if(userInfo) dispatch(getUserDetails());
     window.scrollTo(0, 0);
-    console.log(userInfo);
-    getCart();
-  }, []);
+    
+    if(userInfo) {getCart()} else {toast.error('Please login to view cart')};
+
+  }, [userInfo]);
 
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));

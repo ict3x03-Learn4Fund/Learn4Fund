@@ -136,7 +136,7 @@ function CourseInfo() {
                   Course ID: &nbsp;
                 </span>
                 <span className="font-type1 font-bold text-[1.5vw] lg:text-[1rem] leading-[20px]">
-                  {courseDetails._id}
+                  {courseDetails._id && courseDetails._id.substring(courseDetails._id.length - 8)}
                 </span>{" "}
               </div>
 
@@ -145,7 +145,7 @@ function CourseInfo() {
                   Company: &nbsp;
                 </span>
                 <span className="font-type1 font-bold text-[1.5vw] lg:text-[1rem] leading-[20px]">
-                  {courseDetails.companyName}
+                  {courseDetails.company}
                 </span>
               </div>
             </div>
@@ -207,7 +207,7 @@ function CourseInfo() {
             </div>
           </div>
           <div className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
-            Available: {courseDetails.quantityAvailable}
+            Available: {courseDetails.quantity}
           </div>
 
           <div className="flex flex-nowrap w-full justify-between">
@@ -266,7 +266,7 @@ function CourseInfo() {
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
             <span className="font-type1 text-[1.4vw] text-b3 font-bold">
-              Customer Reviews - {calculateAverageStars}/5{" "}
+              Customer Reviews - {calculateAverageStars? calculateAverageStars: "-"}/5{" "}
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />
           </div>

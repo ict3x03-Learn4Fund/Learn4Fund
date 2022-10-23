@@ -12,10 +12,10 @@ const BannedUsers = ({accounts, fetchData}) => {
       <span className="h-[2px] bg-[black] w-full my-2" />
 
       
-      <div class="w-full table-responsive">
-        <table class="table w-full table-striped table-bordered table-hover table">
+      <div className="w-full table-responsive">
+        <table className="table w-full table-striped table-bordered table-hover table">
           <thead>
-            <tr class="align-middle">
+            <tr className="align-middle">
               <th>ID</th>
               <th>Email</th>
               <th>Name</th>
@@ -23,7 +23,7 @@ const BannedUsers = ({accounts, fetchData}) => {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody class="table-group-divider">
+          <tbody className="table-group-divider">
             <ActivityList accounts={accounts} fetchData={fetchData}/>
           </tbody>
         </table>

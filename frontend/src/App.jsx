@@ -47,9 +47,7 @@ function App() {
   return (
     <Provider store={store}>
       <NavProvider>
-        {showMobileWarning ? (
-          <div>This site is only for desktop</div>
-        ) : (
+        
           <>
             <Nav />
             <Routes>
@@ -63,12 +61,12 @@ function App() {
               <Route exact path="privacy" element={<Privacy />} />
               <Route exact path="cookies" element={<Cookie />} />
               <Route element={<ProtectedRoute />}>
-                <Route exact path="cart" element={<Cart />} />
                 <Route exact path="settings" element={<Settings />} />
                 <Route exact path="login2FA" element={<Login2FA />} />
                 <Route exact path="settings" element={<Settings />} />
                 <Route exact path="admin" element={<Admin />} />
               </Route>
+              <Route exact path="cart" element={<Cart />} />
               <Route exact path="login" element={<Login />} />
               <Route exact path="signup" element={<Signup />} />
               <Route exact path="courses" element={<Catalog />} />
@@ -125,7 +123,7 @@ function App() {
             />
             <Footer />
           </>
-        )}
+        
       </NavProvider>
     </Provider>
   );
