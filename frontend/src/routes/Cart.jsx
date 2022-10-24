@@ -16,7 +16,6 @@ const Cart = () => {
   useEffect(() => {
     dispatch(getUserDetails());
     window.scrollTo(0, 0);
-    console.log(userInfo);
     getCart();
   }, []);
 
@@ -29,8 +28,6 @@ const Cart = () => {
     cartsService
       .getCart(userId)
       .then((response) => {
-        console.log(userId);
-        console.log(response.data);
         setCartList(response.data.coursesAdded);
       })
       .catch((e) => {
@@ -73,7 +70,6 @@ const Cart = () => {
     cartsService
       .deleteCart(userId, courseId)
       .then((response) => {
-        console.log(response.data);
         setCartList(response.data.coursesAdded);
         toast.success("Items successfully deleted from cart.");
       })
@@ -110,6 +106,7 @@ const Cart = () => {
     } else {
       setCheckout([...checkout, item]);
     }
+    console.log("checkout: ",checkout)
   }
 
   return (
@@ -200,7 +197,7 @@ const Cart = () => {
                 $
                 {checkout
                   .reduce(
-                    (partialSum, a) => partialSum + parseFloat(a.usualPrice),
+                    (partialSum, a) => partialSum + parseFloat(a.usualPriceTotal),
                     0.0
                   )
                   .toFixed(2)}
@@ -215,7 +212,7 @@ const Cart = () => {
                 {checkout
                   .reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.usualPrice - a.discountedPrice),
+                      partialSum + parseFloat(a.usualPriceTotal - a.currentPriceTotal),
                     0.0
                   )
                   .toFixed(2)}
@@ -230,7 +227,7 @@ const Cart = () => {
                 {checkout
                   .reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.discountedPrice),
+                      partialSum + parseFloat(a.currentPriceTotal),
                     0.0
                   )
                   .toFixed(2)}

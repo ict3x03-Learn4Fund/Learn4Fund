@@ -2,10 +2,6 @@ const mongoose = require('mongoose')
 
 const transactionSchema = mongoose.Schema(
   {
-    statusAvailability: {
-      type: Boolean,
-      default: false,
-    },
     donationAmount: {
       type: mongoose.Schema.Types.Double,
       default: 0.0,
@@ -14,12 +10,10 @@ const transactionSchema = mongoose.Schema(
       type: mongoose.Schema.Types.Double,
       required: [true, "Total amount cannot be null."]
     },
+    checkedOutCart: Array,
     voucherLists: {
         type: Array,
         default: [],
-    },
-    cartId: {
-        type: mongoose.SchemaTypes.ObjectId,
     },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
@@ -36,4 +30,4 @@ const setExpiryDate = () => {
   return newDate
 }
 
-module.exports = mongoose.model('Voucher', voucherSchema)
+module.exports = mongoose.model('Transaction', transactionSchema)
