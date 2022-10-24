@@ -14,7 +14,10 @@ services:
              # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
              # container service name and port on which it is running
             - CHOKIDAR_USEPOLLING=true #for hot reloading
-        restart: always    
+        restart: always
+        #added    
+        ports:
+            - 5000:5000
 
     frontend:   
         stdin_open: true
@@ -39,9 +42,18 @@ services:
             context: ./nginx
             dockerfile: Dockerfile.dev
         ports: 
-            - 3000:80
-        restart: always
-
+            - 80:80 #modified (was 3000:80)
+            - 443:443 #added for ssl
+        restart: unless-stopped
+        volumes:
+            - ./nginx/ssl.conf:/config/nginx/ssl.conf
+        environment: 
+            - PUID=1000
+            - PGID=1000
+            - TZ=Singapore
+            - URL=learn4fund.tk
+            - VALIDATION=http 
+            - EMAIL=2002692@sit.singaporetech.edu.sg
         # volumes are defined here
 volumes: 
     db-volume:        

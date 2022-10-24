@@ -1,8 +1,11 @@
 import {useEffect, useRef} from 'react'
+import toast from 'react-hot-toast'
 import { BsAward } from 'react-icons/bs'
+import { useSelector } from 'react-redux'
 import Banner from '../assets/images/donation banner.png'
 
 function Donations() {
+  const { userInfo } = useSelector((state) => state.user)
   const offerAmtRef = useRef(0.00)
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -20,8 +23,12 @@ function Donations() {
   }
   }
   function addToCart(){
-    console.log("added to cart")
+    if(userInfo){
+      console.log("added to cart")
     console.log(offerAmtRef.current.value)
+    }else{
+      toast.error("Please login to continue")
+    }
   }
   return (
     <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 items-center">

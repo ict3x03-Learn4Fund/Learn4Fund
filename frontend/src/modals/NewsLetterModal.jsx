@@ -1,13 +1,14 @@
 import { AiOutlineCloseSquare } from "react-icons/ai"
-import { useAuth } from "../hooks/useAuth"
 import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux'
 
 export const NewsLetterModal = ({closeModal}) => {
-    const {authed} = useAuth();
-
+  const { loading, userInfo, error, success } = useSelector(
+    (state) => state.user
+  )
 
     function registerNewsLetter(){
-        if (!authed){
+        if (!userInfo){
             toast.error("Please sign in first")
             return;
         }

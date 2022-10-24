@@ -9,8 +9,8 @@ const courseSchema = mongoose.Schema(
       required: [true, "Please add a course name."],
     },
     courseImg: {
-      data: Buffer,
       type: String,
+      default: "",
     },
     courseOriginalPrice: {
       type: SchemaTypes.Double,

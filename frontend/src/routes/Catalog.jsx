@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
-import dataCourses from "../assets/datasets/courses.json";
+import courseService from "../services/courses";
 import { BsSearch } from "react-icons/bs";
 
-// temporary image
-import courseImg from "../assets/images/download.jpeg";
-
 function Catalog() {
+  const [dataCourses, setDataCourses] = useState([]);
   const { state } = useLocation();
   const [selectedTab, setSelectedTab] = useState(0);
   const navigate = useNavigate();
@@ -15,17 +12,29 @@ function Catalog() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    if(state && state.filter){
+    retrieveCourses();
+    if (state && state.filter) {
       console.log(state.filter);
       setSelectedTab(state.filter);
-      }
+    }
   }, [state]);
+
+  // retrieve all courses
+  const retrieveCourses = () => {
+    courseService
+      .getAll()
+      .then((response) => {
+        setDataCourses(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   function handleSearchChange(event) {
     setSearch(event.target.value);
   }
-  
+
   // Add the sort condition and randomise if relevance is chosen
   function arrangeProducts(option) {
     if (option === 0) {
@@ -33,9 +42,8 @@ function Catalog() {
       return dataCourses.sort(() => Math.random() - 0.5);
     } else if (option === 1) {
       // lowest stock
-      return dataCourses.sort(
-      (a,b)=>(a.quantityAvailable >
-        b.quantityAvailable?1:-1)
+      return dataCourses.sort((a, b) =>
+        a.quantityAvailable > b.quantityAvailable ? 1 : -1
       );
     } else if (option === 2) {
       // discount
@@ -60,32 +68,28 @@ function Catalog() {
   return (
     <main className="flex flex-row flex-wrap w-full h-full px-[40px] pb-[119px] bg-b1 items-center">
       <div className="flex flex-row flex-wrap w-full h-full mt-[24px] self-start p-2">
-        
         <div className="flex flex-nowrap w-full justify-between mt-[8px]">
-        <span className="font-type1 font-bold text-[2vw] leading-[28px] tracking-[0.3px] w-1/2 text-w1 self-center">
-          Courses
-        </span>
-        <div className="flex w-1/4 justify-end">
-        <button className="flex bg-black p-2 w-[50px] justify-center">
-            <BsSearch className="self-center text-w1" />
-          </button>
-          <input
-            className="flex bg-w1 text-black p-2 w-full rounded text-center border-2 border-b1"
-            placeholder="Search for courses"
-            value={search}
-            onChange={handleSearchChange}
-          />
+          <span className="font-type1 font-bold text-[2vw] leading-[28px] tracking-[0.3px] w-1/2 text-w1 self-center">
+            Courses
+          </span>
+          <div className="flex w-1/4 justify-end">
+            <button className="flex bg-black p-2 w-[50px] justify-center">
+              <BsSearch className="self-center text-w1" />
+            </button>
+            <input
+              className="flex bg-w1 text-black p-2 w-full rounded text-center border-2 border-b1"
+              placeholder="Search for courses"
+              value={search}
+              onChange={handleSearchChange}
+            />
           </div>
         </div>
 
-          
         <div className="flex flex-nowrap w-full items-center font-type1 font-normal text-[12px] leading-[20px] mt-[24px] space-x-2">
           <div
             className={
               "border-[1px] w-1/5 border-[#D9D9D9] rounded-l-sm py-[6px] px-[16px] bg-w1" +
-              (selectedTab === 0
-                ? "border-w1 bg-black text-w1"
-                : "")
+              (selectedTab === 0 ? "border-w1 bg-black text-w1" : "")
             }
             onClick={() => {
               setSelectedTab(0);
@@ -96,9 +100,7 @@ function Catalog() {
           <div
             className={
               "flex border-[1px] w-1/5 border-[#D9D9D9] rounded-l-sm py-[6px] px-[16px] bg-w1" +
-              (selectedTab === 1
-                ? "border-w1 bg-black text-w1"
-                : "")
+              (selectedTab === 1 ? "border-w1 bg-black text-w1" : "")
             }
             onClick={() => {
               setSelectedTab(1);
@@ -109,9 +111,7 @@ function Catalog() {
           <div
             className={
               "flex border-[1px] w-1/5 border-[#D9D9D9] rounded-sm py-[6px] px-[16px] bg-w1" +
-              (selectedTab === 2
-                ? "border-w1 bg-black text-w1"
-                : "")
+              (selectedTab === 2 ? "border-w1 bg-black text-w1" : "")
             }
             onClick={() => {
               setSelectedTab(2);
@@ -122,9 +122,7 @@ function Catalog() {
           <div
             className={
               "flex border-[1px] w-1/5 border-[#D9D9D9] rounded-sm py-[6px] px-[16px] bg-w1" +
-              (selectedTab === 3
-                ? "border-w1 bg-black text-w1"
-                : "")
+              (selectedTab === 3 ? "border-w1 bg-black text-w1" : "")
             }
             onClick={() => {
               setSelectedTab(3);
@@ -135,9 +133,7 @@ function Catalog() {
           <div
             className={
               "flex border-[1px] w-1/5 border-[#D9D9D9] rounded-r-sm py-[6px] px-[16px] bg-w1" +
-              (selectedTab === 4
-                ? "border-w1 bg-black text-w1"
-                : "")
+              (selectedTab === 4 ? "border-w1 bg-black text-w1" : "")
             }
             onClick={() => {
               setSelectedTab(4);
@@ -152,22 +148,25 @@ function Catalog() {
           Page 1 of 1 about 10 results
         </span>
 
-          <div className="flex flex-row flex-wrap w-full mt-[8px]">
-            {arrangeProducts(selectedTab)
-              .filter(
-                (a) =>
-                  a.courseName.toLowerCase().includes(search.toLowerCase()) || a.courseDescription.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((course, index) => {
-                return (
+        <div className="flex flex-row flex-wrap w-full mt-[8px]">
+          {arrangeProducts(selectedTab)
+            .filter(
+              (a) =>
+                a.courseName.toLowerCase().includes(search.toLowerCase()) ||
+                a.courseDescription.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((course, index) => {
+              return (
+                <div
+                  key={index}
+                  className="cursor-pointer flex flex-col flex-wrap w-1/4 p-2 rounded"
+                >
                   <div
-                    key={index}
-                    className="cursor-pointer flex flex-col flex-wrap w-1/4 p-2 rounded"
+                    className="flex flex-wrap w-full h-full border-[1px] border-w1 p-2 bg-w1"
+                    onClick={() => navigate("" + course._id)}
                   >
-                    <div className="flex flex-wrap w-full h-full border-[1px] border-w1 p-2 bg-w1" 
-                    onClick={() => navigate(""+course.courseID)}>
                     <img
-                      src={courseImg}
+                      src={`http://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
                       className="flex  h-[120px] w-full object-stretch"
                       alt={""}
                     />
@@ -175,7 +174,7 @@ function Catalog() {
                       <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
                         {course.courseName}(
                         <span className="text-red-500">
-                          {course.quantityAvailable} left
+                          {course.quantity} left
                         </span>
                         )
                       </div>
@@ -203,12 +202,11 @@ function Catalog() {
                         </button>
                       </div>
                     </div>
-                    </div>
                   </div>
-                );
-              })}
-          </div>
-        
+                </div>
+              );
+            })}
+        </div>
       </div>
     </main>
   );
