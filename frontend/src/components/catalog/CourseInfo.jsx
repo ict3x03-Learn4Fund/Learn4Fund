@@ -2,20 +2,37 @@ import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
-import { useAuth } from "../../hooks/useAuth";
+import { useDispatch, useSelector } from 'react-redux';
+import reviewsService from "../../services/reviews";
 import { useParams, useNavigate } from "react-router-dom";
+import cartsService from "../../services/carts";
+import toast from "react-hot-toast";
+import { getUserDetails, getCartNumber } from '../../features/user/userActions'
 
-function CourseInfo() {
-  // useEffect(() => {
-  // }, [])
+function CourseInfo() {  
+  const { loading, userInfo, error, success, cartNo } = useSelector(
+    (state) => state.user
+  )
   const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(0);
-  const [stars, setStars] = useState(0);
   const { courseID } = useParams();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [courseDetails, setCourseDetails] = useState({});
-  const { authed } = useAuth();
+
+  const [reviews, setReviews] = useState([]);
+  const [stars, setStars] = useState(0);
+  const [reviewDescription, setReviewDescription] = useState("");
+  const dispatch = useDispatch()
+
+
+  // retrieve all reviews
+  const retrieveReviews = () => {
+    reviewsService.getReviews(courseID).then((response) => {
+      console.log(response.data.reviews);
+      setReviews(response.data.reviews);
+    });
+  };
 
   // retrieve all courses
   const retrieveCourses = () => {
@@ -24,10 +41,10 @@ function CourseInfo() {
       .then((response) => {
         console.log(response.data);
         setCourses(response.data);
-        const course = response.data.find((course) => course._id.toString() === courseID);
-        setCourseDetails(course)
-        console.log("courses:", courses)
-        console.log("course details:", courseDetails)
+        const course = response.data.find(
+          (course) => course._id.toString() === courseID
+        );
+        setCourseDetails(course);
       })
       .catch((e) => {
         console.log(e);
@@ -37,6 +54,7 @@ function CourseInfo() {
   useEffect(() => {
     window.scrollTo(0, 0);
     retrieveCourses();
+    retrieveReviews();
   }, [courseID]);
 
   // Add quantity to const variable
@@ -45,29 +63,63 @@ function CourseInfo() {
   }
 
   // Check if there is any cart items in session storage
-  useEffect(() => {
-    let sessionItems = sessionStorage.getItem("cartItems");
-    if (sessionItems > 0) {
-      setQuantitySelected(sessionItems);
-    } else {
-      setQuantitySelected(0);
-    }
-  }, []);
+  useEffect(() => {}, []);
 
   // save quantity to cart
-  function addToCart() {
+  function addToCart(e) {
+    e.preventDefault();
     if (quantitySelected > courseDetails.quantity) {
-      alert("amount exceeded");
-      return;
+      toast.error("amount exceeded");
     }
-    console.log("save to cart");
-    sessionStorage.setItem("cartItems", quantitySelected);
-    navigate(0);
+    // sessionStorage.setItem("cartItems", quantitySelected);
+    addCartItem();
+    dispatch(getCartNumber(courseID))
   }
+
+  // add cart item
+  const addCartItem = () => {
+    cartsService
+      .addCart(userInfo.id, courseDetails._id, quantitySelected)
+      .then((response) => {
+        console.log(response.data);
+        toast.success("Item added into cart.");
+      })
+      .catch((e) => {
+        toast.success(e.message);
+        console.log(e);
+      });
+  };
 
   // store stars
   function highlightStars(number) {
     setStars(number);
+  }
+
+  const handleReviewDescription = (e) => {
+    setReviewDescription(e.target.value)
+  }
+
+  // calculate stars
+  const calculateAverageStars = () => {
+    let sum = 0;
+    reviews.map((review, index) => {
+       sum += review.rating
+    },0)
+    return sum
+  }
+
+  const handleNewReview = () => {
+    const newReview = {
+      rating: stars,
+      description: reviewDescription,
+      accountId: userInfo._id,
+      courseId: courseID,
+    }
+    reviewsService.getCreateReview(newReview).then((response) => {
+      toast.success("A review has been added successfully.")
+    }).error((error) => {
+      toast.error(error.response)
+    })
   }
 
   return (
@@ -84,7 +136,7 @@ function CourseInfo() {
                   Course ID: &nbsp;
                 </span>
                 <span className="font-type1 font-bold text-[1.5vw] lg:text-[1rem] leading-[20px]">
-                  {courseDetails._id}
+                  {courseDetails._id && courseDetails._id.substring(courseDetails._id.length - 8)}
                 </span>{" "}
               </div>
 
@@ -93,7 +145,7 @@ function CourseInfo() {
                   Company: &nbsp;
                 </span>
                 <span className="font-type1 font-bold text-[1.5vw] lg:text-[1rem] leading-[20px]">
-                  {courseDetails.companyName}
+                  {courseDetails.company}
                 </span>
               </div>
             </div>
@@ -155,7 +207,7 @@ function CourseInfo() {
             </div>
           </div>
           <div className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
-            Available: {courseDetails.quantityAvailable}
+            Available: {courseDetails.quantity}
           </div>
 
           <div className="flex flex-nowrap w-full justify-between">
@@ -203,7 +255,7 @@ function CourseInfo() {
           </div>
           <button
             className="flex w-full h-[40px] rounded-sm bg-b3 justify-center items-center"
-            onClick={() => addToCart()}
+            onClick={addToCart}
           >
             <span className="font-type1 font-normal text-[14px] leading-[22px] text-white">
               Add to Cart
@@ -214,45 +266,28 @@ function CourseInfo() {
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
             <span className="font-type1 text-[1.4vw] text-b3 font-bold">
-              Customer Reviews - 4.5/5{" "}
+              Customer Reviews - {calculateAverageStars? calculateAverageStars: "-"}/5{" "}
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />
           </div>
 
           <div className="flex flex-wrap h-[300px] overflow-y-scroll">
-            <div className="flex-row flex-wrap w-full my-2 text-[1vw]">
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  John [3 <AiFillStar className="self-center text-yellow-500" />
-                  ]
+            {reviews.map((review, index) => {
+              return (
+                <div className="flex-row flex-wrap w-full my-2 text-[1vw]">
+                  <div className="flex w-full justify-between">
+                    <div className="flex flex-nowrap font-type1 font-bold">
+                      {review.name} [{review.rating}{" "}
+                      <AiFillStar className="self-center text-yellow-500" />]
+                    </div>
+                    <div>{review.date}</div>
+                  </div>
+                  <p>{review.description}</p>
                 </div>
-                <div>14/9</div>
-              </div>
-              <p>"I love this course"</p>
-            </div>
-            <div className="flex-row flex-wrap w-full my-2 text-[1vw]">
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Samantha [4{" "}
-                  <AiFillStar className="self-center text-yellow-500" />]
-                </div>
-                <div>14/9</div>
-              </div>
-              <p>
-                "Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy text ever since the 1500s, when an unknown
-                printer took a galley of type and scrambled it to make a type
-                specimen book. It has survived not only five centuries, but also
-                the leap into electronic typesetting, remaining essentially
-                unchanged. It was popularised in the 1960s with the release of
-                Letraset sheets containing Lorem Ipsum passages, and more
-                recently with desktop publishing software like Aldus PageMaker
-                including versions of Lorem Ipsum."
-              </p>
-            </div>
+              );
+            })}
           </div>
-          {authed && (
+          {userInfo && (
             <div className="flex flex-row flex-wrap w-full h-auto my-4">
               <span className="font-type1 text-[20px] font-semibold">
                 My review
@@ -294,8 +329,12 @@ function CourseInfo() {
                   }}
                 />
               </div>
-              <textarea className="flex w-full h-[80px] border-2 border-b2 rounded text-start my-2" />
-              <button className="bg-g2 text-w1 p-2 rounded">
+              <textarea className="flex w-full h-[80px] border-2 border-b2 rounded text-start my-2" 
+                  onChange={(e) => handleReviewDescription(e)}/>
+              <button
+                className="bg-g2 text-w1 p-2 rounded"
+                onClick={() => handleNewReview()}
+              >
                 Submit review
               </button>
             </div>

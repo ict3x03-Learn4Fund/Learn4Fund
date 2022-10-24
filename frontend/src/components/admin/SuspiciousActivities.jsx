@@ -20,8 +20,8 @@ const SuspiciousActivities = ({logs, fetchLogData}) => {
       <span className="h-[2px] bg-[black] w-full my-2" />
 
       
-      <div class="w-full table-responsive">
-        <table class="table w-full table-striped table-bordered table-hover table">
+      <div className="w-full table-responsive">
+        <table className="table w-full table-striped table-bordered table-hover">
           <thead>
             <tr>
               <th className='border'>Time</th>          
@@ -29,7 +29,7 @@ const SuspiciousActivities = ({logs, fetchLogData}) => {
               <th className='border'>Reason</th>      
             </tr>
           </thead>
-          <tbody class="table-group-divider">
+          <tbody className="table-group-divider">
             <SuspiciousActivityList logs={logs}/>
           </tbody>
         </table>

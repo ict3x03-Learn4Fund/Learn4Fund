@@ -35,38 +35,46 @@ const apiRegister = asyncHandler(async (req, res) => {
     emailSubscription,
     password: hashedPassword,
   });
+  return res.status(200).json({
+    _id: account.id,
+    firstName: account.firstName,
+    lastName: account.lastName,
+    role: account.role,
+  });
+  // ACCOUNT SUSPENDED FOR AUTHY, CANNOT WORK
+  // if (account) {
+  //   authy.register_user(email, phone, countryCode, (err, regRes) => {
+  //     if (err) {
+  //       return res.json({ message: err.message });
+  //     }
+  //     account.authyId = regRes.user.id;
+  //     account.save((err, user) => {
+  //       if (err) {
+  //         return res.json({ message: err.message });
+  //       }
+  //     });
 
-  if (account) {
-    authy.register_user(email, phone, countryCode, (err, regRes) => {
-      if (err) {
-        return res.json({ message: err.message });
-      }
-      account.authyId = regRes.user.id;
-      account.save((err, user) => {
-        if (err) {
-          return res.json({ message: err.message });
-        }
-      });
+  //     authy.request_sms(
+  //       account.authyId,
+  //       { force: true },
+  //       function (err, smsRes) {
+  //         if (err) {
+  //           return res.json({
+  //             message: "An error occurred while sending OTP to user",
+  //           });
+  //         }
+  //       }
+  //     );
+  //     return res
+  //       .status(200)
+  //       .json({ email: account.email, message: "OTP sent to user" });
 
-      authy.request_sms(
-        account.authyId,
-        { force: true },
-        function (err, smsRes) {
-          if (err) {
-            return res.json({
-              message: "An error occurred while sending OTP to user",
-            });
-          }
-        }
-      );
-      return res
-        .status(200)
-        .json({ email: account.email, message: "OTP sent to user" });
-    });
-  } else {
-    res.status(400);
-    throw new Error("Invalid account data");
-  }
+  //   });
+
+  // } else {
+  //   res.status(400);
+  //   throw new Error("Invalid account data");
+  // }
 });
 
 /***
@@ -134,7 +142,6 @@ const apiLogin = asyncHandler(async (req, res) => {
         _id: account.id,
         firstName: account.firstName,
         lastName: account.lastName,
-        email: account.email,
         role: account.role,
         token: access_token,
         message: "Token is valid",

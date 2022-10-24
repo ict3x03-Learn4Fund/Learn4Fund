@@ -1,9 +1,11 @@
 import { AiOutlineCloseSquare } from "react-icons/ai"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth";
+import { useDispatch, useSelector } from 'react-redux'
 
 export const PromotionModal = ({closeModal}) => {
-  const {authed} = useAuth();
+  const { loading, userInfo, error, success } = useSelector(
+    (state) => state.user
+  )
   const navigate = useNavigate();
   function goToSignup(){
     navigate('/signup');
@@ -32,10 +34,10 @@ export const PromotionModal = ({closeModal}) => {
               <p>Please contact us at <a href="mailto:contact@learn4fund.com">contact@learn4fund.com</a>, for further details or transaction errors.</p>
             </div>
             <div className="flex w-full justify-center text-[1vw] m-4">
-            {authed && <button className="bg-red-500 text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>closeModal(false)}>
+            {userInfo && <button className="bg-red-500 text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>closeModal(false)}>
                     Okay
                 </button>}
-                {!authed && <button className="bg-b3 text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>goToSignup()}>
+                {!userInfo && <button className="bg-b3 text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>goToSignup()}>
                     Sign up
                 </button>}
             </div>
