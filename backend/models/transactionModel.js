@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
+
 
 const transactionSchema = mongoose.Schema(
   {
@@ -8,16 +9,25 @@ const transactionSchema = mongoose.Schema(
     },
     totalAmount: {
       type: mongoose.Schema.Types.Double,
-      required: [true, "Total amount cannot be null."]
+      required: [true, "Total amount cannot be null."],
     },
     checkedOutCart: Array,
     accountId: {
-        type: mongoose.SchemaTypes.ObjectId,
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Account'
+    },
+    cardId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'CreditCard'
+    },
+    billAddressId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'BillAddress'
     },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Transaction', transactionSchema)
+module.exports = mongoose.model("Transaction", transactionSchema);

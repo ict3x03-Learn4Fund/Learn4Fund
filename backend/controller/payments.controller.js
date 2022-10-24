@@ -54,7 +54,14 @@ const apiGetMethods = asyncHandler(async (req, res) => {
  */
 const apiMakePayment = asyncHandler(async (req, res) => {
   try {
-    const { accountId, donationAmount, totalAmount, checkedOutCart } = req.body;
+    const {
+      accountId,
+      donationAmount,
+      totalAmount,
+      checkedOutCart,
+      billAddressId,
+      cardId,
+    } = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "AccountId cannot be null." });
     }
@@ -102,6 +109,8 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       totalAmount: totalAmount,
       checkedOutCart: checkedOutCart,
       accountId: accountId,
+      billAddressId: billAddressId,
+      cardId: cardId,
     });
 
     // create vouchers using uuid
@@ -126,7 +135,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     }
     console.log(voucherList);
 
-    return res.json({ message: "make payment" });
+    return res.json({ transaction, voucherList });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -198,34 +207,77 @@ const apiAddMethod = asyncHandler(async (req, res) => {
 });
 
 /***
- * @desc Delete payment method
- * @route DELETE /v1/api/payments/delete/:id
+ * @desc Delete payment addr
+ * @route GET /v1/api/payments/deleteAddr/:id
  * @access Private
  */
 const apiDeleteAddr = asyncHandler(async (req, res) => {
   try {
     const addrId = req.params.id;
     const addr = await BillAddress.deleteOne({ _id: addrId });
-    if (!addr){
-      return res.status(400).json({message: "address not found."})
+    if (!addr) {
+      return res.status(400).json({ message: "address not found." });
     }
-    return res
-      .status(200)
-      .json(`Address with id ${addrId} is deleted`);
+    return res.status(200).json(`Address with id ${addrId} is deleted`);
   } catch (e) {
     return res.status(400).json({ message: e.message });
   }
 });
 
+/***
+ * @desc Delete payment card
+ * @route GET /v1/api/payments/deleteCard/:id
+ * @access Private
+ */
 const apiDeleteCard = asyncHandler(async (req, res) => {
   try {
     const cardId = req.params.id;
     const card = await CreditCard.deleteOne({ _id: cardId });
-    if (!card){
-      return res.status(400).json({message: "card not found."})
+    if (!card) {
+      return res.status(400).json({ message: "card not found." });
     }
-    console.log(card)
+    console.log(card);
     return res.status(200).json(`card ${card.last4No} is deleted`);
+  } catch (e) {
+    return res.status(400).json({ message: e.message });
+  }
+});
+
+/***
+ * @desc Delete payment card
+ * @route GET /v1/api/payments/deleteCard/:id
+ * @access Private
+ */
+const apiGetTransactions = asyncHandler(async (req, res) => {
+  try {
+    const accountId = req.params.id;
+    const transactions = await Transaction.find({
+      accountId: accountId,
+    })
+      .populate("billAddressId")
+      .populate({ path: "cardId", select: ["cardType", "last4No"] });
+    
+    const filteredTrans = transactions;
+    console.log(transactions[0].checkedOutCart[0]);
+    for (const transaction in transactions) {
+      for (const cart in transactions[transaction].checkedOutCart) {
+        // const courseInfo = await Course.findById()
+        const courseId =
+          transactions[transaction].checkedOutCart[cart].cartItem.courseId;
+        const course = await Course.findById(courseId);
+        const newCartItem = {
+          courseId: courseId,
+          courseName: course.courseName,
+          quantity: transactions[transaction].checkedOutCart[cart].cartItem.quantity,
+          totalPrice: (course.courseDiscountedPrice * transactions[transaction].checkedOutCart[cart].cartItem.quantity).toFixed(2)
+        }
+        transactions[transaction].checkedOutCart[cart].cartItem = newCartItem
+        // transactions[transaction].checkedOutCart[cart].cartItem.courseName = course.CourseName;
+        
+      }
+    }
+
+    return res.status(200).json(transactions);
   } catch (e) {
     return res.status(400).json({ message: e.message });
   }
@@ -237,4 +289,5 @@ module.exports = {
   apiDeleteCard,
   apiDeleteAddr,
   apiGetMethods,
+  apiGetTransactions,
 };

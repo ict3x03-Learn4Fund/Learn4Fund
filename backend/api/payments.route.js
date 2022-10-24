@@ -4,7 +4,8 @@ const {
     apiAddMethod,
     apiDeleteCard,
     apiDeleteAddr,
-    apiGetMethods} = require('../controller/payments.controller')
+    apiGetMethods,
+    apiGetTransactions} = require('../controller/payments.controller')
 const {protect} = require('../middleware/authMiddleware')
 const router = express.Router()
 
@@ -13,5 +14,6 @@ router.route("/pay").post(apiMakePayment)
 router.route("/addMethod").post(apiAddMethod)
 router.route("/deleteCard/:id").get(apiDeleteCard)
 router.route("/deleteAddr/:id").get(apiDeleteAddr)
+router.route("/getTransactions/:id").get(apiGetTransactions)
 
 module.exports = router

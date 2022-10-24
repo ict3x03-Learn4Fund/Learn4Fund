@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 
-const cartItem = mongoose.Schema({
-  courseId: mongoose.SchemaTypes.ObjectId,
-  quantity: Number,
-});
+
 
 const cartModel = mongoose.Schema(
   {
