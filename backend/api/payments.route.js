@@ -2,7 +2,8 @@ const express = require('express')
 const {
     apiMakePayment,
     apiAddMethod,
-    apiDeleteMethod,
+    apiDeleteCard,
+    apiDeleteAddr,
     apiGetMethods} = require('../controller/payments.controller')
 const {protect} = require('../middleware/authMiddleware')
 const router = express.Router()
@@ -10,6 +11,7 @@ const router = express.Router()
 router.route("/:id").get(apiGetMethods)
 router.route("/pay").post(apiMakePayment)
 router.route("/addMethod").post(apiAddMethod)
-router.route("/deleteMethod").post(apiDeleteMethod)
+router.route("/deleteCard/:id").get(apiDeleteCard)
+router.route("/deleteAddr/:id").get(apiDeleteAddr)
 
 module.exports = router

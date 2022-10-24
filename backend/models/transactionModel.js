@@ -11,10 +11,6 @@ const transactionSchema = mongoose.Schema(
       required: [true, "Total amount cannot be null."]
     },
     checkedOutCart: Array,
-    voucherLists: {
-        type: Array,
-        default: [],
-    },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
     },
@@ -23,11 +19,5 @@ const transactionSchema = mongoose.Schema(
     timestamps: true
   }
 );
-
-const setExpiryDate = () => {
-  const date = Date.now()
-  const newDate = date.setFullYear(date.getFullYear() + 1)
-  return newDate
-}
 
 module.exports = mongoose.model('Transaction', transactionSchema)
