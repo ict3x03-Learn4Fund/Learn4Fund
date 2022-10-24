@@ -21,7 +21,6 @@ const CoursesCatalog = () => {
       .getAll()
       .then((response) => {
         setDataCourses(response.data);
-        console.log(dataCourses)
       })
       .catch((e) => {
         console.log(e);

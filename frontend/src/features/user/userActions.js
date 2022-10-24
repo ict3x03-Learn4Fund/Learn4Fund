@@ -45,12 +45,10 @@ export const userLogin = createAsyncThunk(
 
 export const getUserDetails = createAsyncThunk(
     'user/getUserDetails',
-    async (arg, {getState, rejectWithValue}) => {
+    async (arg, {rejectWithValue}) => {
         try {
-            let {user} = getState()
-            console.log("userdetails: ", user._id)
             // send user's id to retrieve account information
-            const data = await authService.getAccount(user._id);
+            const data = await authService.getAccount();
             return data
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -86,7 +84,8 @@ export const getCartNumber = createAsyncThunk(
         try {
             let {user} = getState()
             console.log("user id at sliceee: ", arg)
-            return await cartsService.getTotal(arg)
+            const response = await cartsService.getTotal(arg)
+            return response
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)

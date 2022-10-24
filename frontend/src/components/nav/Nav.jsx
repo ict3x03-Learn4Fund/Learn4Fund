@@ -26,6 +26,7 @@ function Nav() {
   const [adminStatus, setAdmin] = useState(false);
 
   useEffect(() => {
+
     if (userId) {
       dispatch(getUserDetails());
       dispatch(getCartNumber(userId))

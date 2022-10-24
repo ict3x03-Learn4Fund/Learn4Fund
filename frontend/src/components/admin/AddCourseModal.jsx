@@ -5,11 +5,25 @@ import { AiOutlineCloseSquare } from 'react-icons/ai';
 export const AddCourseModal = ({closeModal, courseInfo}) => {
     
     const { loading, userInfo, error, success } = useSelector(state => state.user)
-    const [updatedList,setUpdatedList] = React.useState([]);
+    const [updatedList,setUpdatedList] = React.useState({
+      canBeDiscounted: false,
+      company: "",
+      courseDescription: "",
+      courseDiscountedPrice: 0.00,
+      courseImg: "",
+      courseName: "",
+      courseOriginalPrice: 0.00,
+      courseTutor: "",
+      courseType: "",
+      quantity: 0,
+      _id: ""
+    });
     
 
     useEffect(() => {
+      if (courseInfo._id){
         setUpdatedList(courseInfo)
+      }
     }, [courseInfo, setUpdatedList])
 
     const editInput = (e) => {
@@ -41,7 +55,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
         <div className="flex-column w-3/4 py-4 bg-white rounded-lg shadow-lg m-[16px] space-y-4">
           <div className="flex w-full rounded-lg h-1/5 px-[16px]">
           <div className="text-black text-center w-full font-bold self-center text-[24px]">
-              {courseInfo._id ? 'Update Existing Course' : 'Add A New Course'}
+              {updatedList._id ? 'Update Existing Course' : 'Add A New Course'}
           </div>
 
             <button
@@ -78,7 +92,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             </div>
             <div className='flex-col w-1/2 space-y-2'>
             <div className='flex h-[80px] flex-wrap mr-8 mt-2'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={courseInfo.courseImg ? `http://localhost:5000/v1/api/images/getImg/${courseInfo.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={updatedList.courseImg ? `http://localhost:5000/v1/api/images/getImg/${updatedList.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
                 <button className='btn h-[40px] self-center m-auto'>Upload image</button>
                 </div>
                 <div className='flex h-[40px] flex-wrap mr-8'>
@@ -86,7 +100,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 </div>
                 <div className='flex h-[40px] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Discounted Price</label> <input type="text" name="courseDiscountedPrice" className='border-2 border-b1 w-1/2 text-center' onChange={editInput} value={updatedList.courseDiscountedPrice}/>
-                <input type="checkbox" className='border-2 border-b1 w-[50px] text-center' checked={courseInfo.canBeDiscounted} onChange={()=>swapSelection()}/>
+                <input type="checkbox" className='border-2 border-b1 w-[50px] text-center' checked={updatedList.canBeDiscounted} onChange={()=>swapSelection()}/>
                 </div>
                 <div className='flex h-[40px] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Quantity</label> <input name="quantity" type="number" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.quantity}/>
@@ -100,7 +114,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
           
           <div className="flex w-full justify-center text-[1vw]">
             {userInfo.role === 'admin' && <button className="bg-success text-w1 font-bold py-2 px-4 rounded-full" onClick={()=>addOrUpdateCourse()}>
-                    Confirm {courseInfo._id ? 'Update' : 'Add'}
+                    Confirm {updatedList._id ? 'Update' : 'Add'}
                 </button>}
                 
             </div>
