@@ -10,10 +10,8 @@ pipeline {
     stage('Build') {
       steps {
         git(url: 'https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git', branch: 'test/vm')
-        sh 'var=$(ls -la /var/jenkins_home/workspace/Learn4fund_github)'
-        sh 'echo $var'
-//         sh 'cd /Learn4Fund/backend && npm i'
-//         sh 'cd /Learn4Fund/frontend && npm i'
+        sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm i'
+        sh 'cd var/jenkins_home/workspace/Learn4fund_github/frontend && npm i'
       }
     }
 
@@ -23,12 +21,12 @@ pipeline {
       }
     }
 
-//     stage('Deployment') {
-//       steps {
-//         sh 'cd /Learn4Fund/backend && npm i'
-//         sh 'cd /Learn4Fund/frontend && npm i'
-//       }
-//     }
+    stage('Deployment') {
+      steps {
+        sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm run start'
+        sh 'cd var/jenkins_home/workspace/Learn4fund_github/frontend && npm run start'
+      }
+    }
 
   }
   environment {
