@@ -10,14 +10,8 @@ pipeline {
     stage('Build') {
       steps {
         git(url: 'https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git', branch: 'test/vm')
-        dir(path: '/Learn4Fund/backend') {
-          sh 'npm install'
-        }
-
-        dir(path: '/Learn4Fund/frontend') {
-          sh 'npm install'
-        }
-
+        sh 'cd /Learn4Fund/backend && npm i'
+        sh 'cd /Learn4Fund/frontend && npm i'
       }
     }
 
@@ -29,14 +23,8 @@ pipeline {
 
     stage('Deployment') {
       steps {
-        dir(path: '/Learn4Fund/backend') {
-          sh 'npm run start'
-        }
-
-        dir(path: '/Learn4Fund/frontend') {
-          sh 'npm run start'
-        }
-
+        sh 'cd /Learn4Fund/backend && npm i'
+        sh 'cd /Learn4Fund/frontend && npm i'
       }
     }
 
