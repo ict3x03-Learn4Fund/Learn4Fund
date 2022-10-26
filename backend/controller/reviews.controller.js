@@ -10,7 +10,7 @@ const mongoose = require("mongoose");
  */
 const apiGetReviews = asyncHandler(async (req, res) => {
   try {
-    const reviews = await Review.find();
+    const reviews = await Review.find().populate("accountId");
     const reviewList = [];
     for (const review in reviews) {
       if (reviews[review].courseId.toString() === req.params.id) {
@@ -38,6 +38,9 @@ const apiGetReviews = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiCreateReview = asyncHandler(async (req, res) => {
+  if (!req.body.accountId){
+    return res.status(400).json({message: "account id cannot be null."})
+  }
   const review = await Review.create({
     rating: req.body.rating,
     description: req.body.description,

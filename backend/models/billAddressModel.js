@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 
 const billAddressSchema = mongoose.Schema(
   {
-    accountId: mongoose.SchemaTypes.ObjectId,
+    accountId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Account"
+    },
     firstName: {
       type: String,
       default: "",

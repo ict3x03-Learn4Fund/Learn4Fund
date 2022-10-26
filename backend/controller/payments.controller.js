@@ -5,6 +5,7 @@ const Transaction = require("../models/transactionModel");
 const Course = require("../models/courseModel");
 const Voucher = require("../models/voucherModel");
 const Cart = require("../models/cartModel");
+const Donation = require("../models/donationModel");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
@@ -29,10 +30,11 @@ const apiGetMethods = asyncHandler(async (req, res) => {
   try {
     const accountId = req.params.id;
     const creditCards = await CreditCard.find({ accountId: accountId });
-    const billAdrrs = await BillAddress.find({ accountId: accountId });
+    const billAddrs = await BillAddress.find({ accountId: accountId });
     const filteredCards = [];
     for (const card in creditCards) {
       const filteredCard = {
+        _id: creditCards[card]._id,
         last4No: creditCards[card].last4No,
         cardType: creditCards[card].cardType,
         expiryDate: creditCards[card].expiryDate,
@@ -41,7 +43,7 @@ const apiGetMethods = asyncHandler(async (req, res) => {
       filteredCards.push(filteredCard);
     }
 
-    res.json({ accountId, billAdrrs, filteredCards });
+    res.json({ accountId, billAddrs, filteredCards });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -57,6 +59,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     const {
       accountId,
       donationAmount,
+      showDonation,
       totalAmount,
       checkedOutCart,
       billAddressId,
@@ -99,6 +102,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     let newCartList = existingCart.coursesAdded.filter(
       (cart) => !idArray.includes(cart.cartItem.courseId)
     );
+    existingCart.donationAmount = 0;
     existingCart.coursesAdded = newCartList;
     existingCart.markModified("coursesAdded");
     existingCart.save();
@@ -112,6 +116,16 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       billAddressId: billAddressId,
       cardId: cardId,
     });
+
+    // create donation document
+    let donor = await Donation.findOne({accountId: accountId});
+    if (!donor) {
+      donor = await Donation.create({accountId: accountId});
+    }
+    const newDonation = {amount: donationAmount, showDonation: showDonation};
+    donor.donationList.push(newDonation);
+    donor.save();
+
 
     // create vouchers using uuid
     // encrypt vouchers and save to voucher document

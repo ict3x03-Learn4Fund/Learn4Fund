@@ -13,7 +13,7 @@ function TransactionHistory() {
     paymentsService.getTransactions(userId).then((response) => {
       if (response.status == 200) {
         console.log(response.data);
-        setTransaction(response.data);
+        setTransaction(response.data.reverse());
       }
     });
   };
@@ -23,7 +23,7 @@ function TransactionHistory() {
     window.scrollTo(0, 0);
 
     if (!userInfo) toast.error("Please login to view cart");
-  }, [userInfo]);
+  }, []);
 
   useEffect(() => {
     retrieveTransactions();

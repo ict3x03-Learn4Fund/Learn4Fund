@@ -1,6 +1,6 @@
 const express =  require("express")
 
-const {apiGetCart, apiAddCart, apiDeleteCart, apiGetNo} = require("../controller/carts.controller")
+const {apiGetCart, apiAddCart, apiDeleteCart, apiGetNo, apiAddDonationToCart} = require("../controller/carts.controller")
 
 const {protect} = require("../middleware/authMiddleware")
 
@@ -10,5 +10,6 @@ router.route("/:id").get(apiGetCart)
 router.route("/add").post(apiAddCart)
 router.route("/delete").post(apiDeleteCart)
 router.route("/:id/totalNo").get(apiGetNo)
+router.route("/addDonation").post(apiAddDonationToCart)
 
 module.exports = router

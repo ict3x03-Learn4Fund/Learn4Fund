@@ -20,8 +20,9 @@ const accountSchema = mongoose.Schema(
       min: [12, "Please enter at least 12 characters"],
       required: [true, "Please add a password"],
     },
-    donation: {
+    donationId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Donation'
     },
     firstName: {
         type: String,

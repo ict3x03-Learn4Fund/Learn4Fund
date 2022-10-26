@@ -26,11 +26,12 @@ function Nav() {
   const [adminStatus, setAdmin] = useState(false);
 
   useEffect(() => {
-    if (userId) {
+    if (userInfo) {
+      console.log("testing 123")
       dispatch(getUserDetails());
-      dispatch(getCartNumber(userId))
+      dispatch(getCartNumber())
     }
-  }, [userId, cartNo, dispatch]);
+  }, []);
 
   useEffect(() => {
     if (userInfo != null && userInfo.role == "admin") {

@@ -9,6 +9,14 @@ const cartModel = mongoose.Schema(
       type: Array,
       default: [],
     },
+    donationAmt: {
+      type: Number,
+      default: 0,
+    },
+    showDonation: {
+      type: Boolean,
+      default: false, 
+    }
   },
   {
     timestamps: true,

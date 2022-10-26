@@ -12,8 +12,8 @@ const apiAddCart = asyncHandler(async (req, res) => {
   try {
     const { cartItem, accountId } = req.body;
 
-    if (!accountId){
-      return res.status(400).json({message: "Account Id is null."})
+    if (!accountId) {
+      return res.status(400).json({ message: "Account Id is null." });
     }
 
     let cart = await Cart.findOne({ accountId: accountId });
@@ -82,7 +82,12 @@ const apiGetCart = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json({ accountId: accountId, coursesAdded: cartArray });
+      .json({
+        accountId: accountId,
+        coursesAdded: cartArray,
+        donationAmt: cart.donationAmt,
+        showDonation: cart.showDonation,
+      });
   } catch (error) {
     return res.status(400).json(error.message);
   }
@@ -93,23 +98,20 @@ const apiGetCart = asyncHandler(async (req, res) => {
  * @route Get /v1/api/carts/:id/totalNo
  * @access Private
  */
- const apiGetNo = asyncHandler(async (req, res) => {
+const apiGetNo = asyncHandler(async (req, res) => {
   const accountId = mongoose.Types.ObjectId(req.params.id);
   try {
     let cart = await Cart.findOne({ accountId: accountId });
 
     if (!cart) cart = await Cart.create({ accountId: accountId });
 
-    const total = cart.coursesAdded.length
+    const total = cart.coursesAdded.length;
 
-    return res
-      .status(200)
-      .json({ accountId: accountId, totalNo: total });
+    return res.status(200).json({ accountId: accountId, totalNo: total });
   } catch (error) {
     return res.status(400).json(error.message);
   }
 });
-
 
 /***
  * @desc Delete Cart items
@@ -118,7 +120,7 @@ const apiGetCart = asyncHandler(async (req, res) => {
  */
 const apiDeleteCart = asyncHandler(async (req, res) => {
   const { accountId, courseId } = req.body;
-  const accId = mongoose.Types.ObjectId(accountId)
+  const accId = mongoose.Types.ObjectId(accountId);
   try {
     let cart = await Cart.findOne({ accountId: accId });
     if (!cart) {
@@ -160,9 +162,34 @@ const apiDeleteCart = asyncHandler(async (req, res) => {
   }
 });
 
+/***
+ * @desc Add Donations to cart
+ * @route Post /v1/api/carts/donate
+ * @access Private
+ */
+const apiAddDonationToCart = asyncHandler(async (req, res) => {
+  try {
+    const { accountId, donationAmt, showDonation} = req.body;
+    if (!accountId) {
+      return res.status(400).json({message: "Account Id cannot be null."})
+    }
+    let cart = await Cart.findOne({accountId: accountId})
+    if (!cart){
+      cart = await Cart.create({accountId: accountId})
+    }
+    cart.showDonation = showDonation;
+    cart.donationAmt = parseFloat(cart.donationAmt) +  parseFloat(donationAmt);
+    cart.save()
+    return res.status(200).json(cart)
+  } catch (e) {
+    return res.status(400).json({message: e.message })
+  }
+});
+
 module.exports = {
   apiAddCart,
   apiGetCart,
   apiDeleteCart,
-  apiGetNo
+  apiGetNo,
+  apiAddDonationToCart,
 };
