@@ -7,6 +7,11 @@ pipeline {
 
   }
   stages {
+    stage('OWASP DependencyCheck') {
+      steps {
+        dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+      }
+    }
     stage('Build') {
       steps {
         sh 'pwd_path=$(pwd)'
@@ -16,13 +21,6 @@ pipeline {
         sh 'cd frontend && npm i'
       }
     }
-
-    stage('OWASP DependencyCheck') {
-      steps {
-        dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
-      }
-    }
-
     stage('Deployment') {
       parallel {
         stage('Deploy backend') {
