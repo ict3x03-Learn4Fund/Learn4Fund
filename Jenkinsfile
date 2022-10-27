@@ -23,13 +23,13 @@ pipeline {
 
     stage('Deployment') {
       parallel {
-        stage('Deployment') {
+        stage('Deploy backend') {
           steps {
             sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm run start'
           }
         }
 
-        stage('') {
+        stage('Deploy frontend') {
           steps {
             sh 'cd /var/jenkins_home/workspace/Learn4fund_github/frontend && npm run start'
           }
