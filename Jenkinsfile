@@ -9,29 +9,33 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-          sh 'pwd_path=$(pwd)'        
-          sh 'cd $pwd_path'
-          sh 'cd backend && npm i'
-          sh 'cd $pwd_path'
-          sh 'cd frontend && npm i'
+        sh 'pwd_path=$(pwd)'
+        sh 'cd $pwd_path'
+        sh 'cd backend && npm i'
+        sh 'cd $pwd_path'
+        sh 'cd frontend && npm i'
       }
     }
+
     stage('OWASP DependencyCheck') {
-			steps {
-				dependencyCheck additionalArguments: '--format HTML --format XML', odcInstallation: 'Default'
-			}
-		}
+      steps {
+        dependencyCheck(additionalArguments: '--format HTML --format XML', odcInstallation: 'Default')
+      }
+    }
+
     stage('Deployment') {
       parallel {
         stage('Deploy backend') {
           steps {
-            sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm run start'
+            sh 'cd $pwd_path'
+            sh 'cd backend && npm run start'
           }
         }
 
         stage('Deploy frontend') {
           steps {
-            sh 'cd /var/jenkins_home/workspace/Learn4fund_github/frontend && npm run start'
+            sh 'cd $pwd_path'
+            sh 'cd frontend && npm run start'
           }
         }
 
@@ -41,5 +45,11 @@ pipeline {
   }
   environment {
     CI = 'true'
+  }
+  post {
+    success {
+      dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
+    }
+
   }
 }
