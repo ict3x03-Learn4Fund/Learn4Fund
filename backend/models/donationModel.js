@@ -1,19 +1,23 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const donationSchema = mongoose.Schema(
   {
-    showDonation: {
-      type: Boolean,
-      default: false,
+    donationList : {
+      type: Array,
+      default: []
     },
-    totalAmount: {
-      type: mongoose.Schema.Types.Double,
-      default: 0.0,
+    accountId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Account",
+    },
+    transactionId:{
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Transaction",
     },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Donation', donationSchema)
+module.exports = mongoose.model("Donation", donationSchema);

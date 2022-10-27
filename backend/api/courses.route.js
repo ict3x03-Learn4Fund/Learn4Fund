@@ -1,5 +1,4 @@
 const express = require('express')
-const { apiGetCompanies } = require('../controller/companies.controller')
 const {
     apiGetCourses,
     apiCreateCourse,

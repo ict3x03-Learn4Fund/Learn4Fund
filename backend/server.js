@@ -58,6 +58,9 @@ app.use("/v1/api/images", require("./api/images.route"));
 app.use("/v1/api/carts", require("./api/carts.route"));
 app.use("/v1/api/admin", require("./api/admin.route"));       // [Logging & Alert] Admin APIs
 app.use("/v1/api/reviews", require("./api/reviews.route"));
+app.use("/v1/api/payments", require("./api/payments.route"));
+app.use("/v1/api/donations", require("./api/donations.route"));
+
 app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 app.use(errorHandler);
 

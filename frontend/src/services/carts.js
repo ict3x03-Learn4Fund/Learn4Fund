@@ -18,14 +18,20 @@ const deleteCart = async (accountId, courseId) => {
 };
 
 const getTotal = async (accoundId) => {
-  return await http.get(`carts/${accoundId}/totalNo`)
+  return await http.get(`/carts/${accoundId}/totalNo`);
+}
+
+const addDonationToCart = async (accountId, donationAmt, showDonation) => {
+  const cart = {accountId, donationAmt, showDonation};
+  return await http.post("/carts/addDonation", cart);
 }
 
 const cartsService = {
   getCart,
   addCart,
   deleteCart,
-  getTotal
+  getTotal,
+  addDonationToCart
 };
 
 export default cartsService;

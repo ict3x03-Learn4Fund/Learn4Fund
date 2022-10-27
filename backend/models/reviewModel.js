@@ -12,9 +12,11 @@ const reviewSchema = mongoose.Schema(
     },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Account",
     },
     courseId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Course"
     },
   },
   {
