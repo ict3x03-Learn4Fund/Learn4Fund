@@ -11,9 +11,9 @@ pipeline {
       steps {
           sh 'pwd_path=$(pwd)'        
           sh 'cd $pwd_path'
-          SH 'cd /backend && npm i'
+          sh 'cd backend && npm i'
           sh 'cd $pwd_path'
-          sh 'cd /frontend && npm i'
+          sh 'cd frontend && npm i'
       }
     }
 
