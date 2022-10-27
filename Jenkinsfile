@@ -11,7 +11,7 @@ pipeline {
       steps {
         dir(path: '/var/jenkins_home/workspace/Learn4fund_github') {
           git(url: 'https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git', branch: 'test/vm')
-          sh 'docker kill $(docker ps -q)'
+          sh 'echo hi'
           sh 'cd backend && npm i'
           sh 'cd frontend && npm i'
         }
