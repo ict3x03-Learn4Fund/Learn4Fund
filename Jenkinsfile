@@ -25,17 +25,13 @@ pipeline {
       parallel {
         stage('Deploy backend') {
           steps {
-            sh 'pwd_path=$(pwd)'        
-            sh 'cd $pwd_path'
-            sh 'cd backend && npm run start'
+            sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm run start'
           }
         }
 
         stage('Deploy frontend') {
           steps {
-            sh 'pwd_path=$(pwd)'        
-            sh 'cd $pwd_path'
-            sh 'cd frontend && npm run start'
+            sh 'cd /var/jenkins_home/workspace/Learn4fund_github/frontend && npm run start'
           }
         }
 
