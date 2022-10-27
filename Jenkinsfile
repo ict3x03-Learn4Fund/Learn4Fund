@@ -9,6 +9,8 @@ pipeline {
   stages {
     stage('Build') {
       steps {
+        sh 'docker kill lts_container'
+        sh 'docker rmi lts_container'
         git(url: 'https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git', branch: 'test/vm')
         sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm i'
         sh 'cd /var/jenkins_home/workspace/Learn4fund_github/frontend && npm i'
