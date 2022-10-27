@@ -9,9 +9,8 @@ pipeline {
   stages {
     stage('Build') {
       steps {
+        git(url: 'https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git', branch: 'test/vm')
         dir(path: '/var/jenkins_home/workspace/Learn4fund_github') {
-          git(url: 'https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git', branch: 'test/vm')
-          sh 'echo hi'
           sh 'cd backend && npm i'
           sh 'cd frontend && npm i'
         }
@@ -21,7 +20,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        sh 'echo "test4"'
+        sh 'echo "test3"'
       }
     }
 
