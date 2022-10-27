@@ -9,8 +9,8 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-          sh 'pwd'
-        dir(path: '/var/jenkins_home/workspace/Learn4fund_github') {
+          sh 'pwd_path=$(pwd)'
+        dir(path: '$pwd_path') {
           sh 'cd backend && npm i'
           sh 'cd frontend && npm i'
         }
