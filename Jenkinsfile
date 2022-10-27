@@ -8,7 +8,8 @@ pipeline {
   }
   stages {
     stage('Build') {
-      steps {        
+      steps {
+          sh 'sleep 5'
         dir(path: '/var/jenkins_home/workspace/Learn4fund_github') {
           sh 'cd backend && npm i'
           sh 'cd frontend && npm i'
