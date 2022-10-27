@@ -12,7 +12,7 @@ pipeline {
           sh 'pwd_path=$(pwd)'        
           sh 'cd $pwd_path'
           sh 'cd backend && npm i'
-	  sh 'cd $pwd_path'
+          sh 'cd $pwd_path'
           sh 'cd frontend && npm i'
       }
     }
