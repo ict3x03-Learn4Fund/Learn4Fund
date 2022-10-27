@@ -34,7 +34,7 @@ const verify2FALimiter = rateLimit({
 });
 
 // @route   POST api/accounts/register
-router.route("/register").post(
+router.route("/register").post(createAccountLimiter,
   
   [
     check("email")
@@ -120,7 +120,7 @@ router.route("/login").post(
 
 // TODO: Remember to test this route
 // @route   POST api/accounts/verify2FA
-router.route('/verify2FA').post(
+router.route('/verify2FA').post(verify2FALimiter,
     [
         check('token', 'Invalid code')
             .isNumeric()                                               // [Validation] Check if token is a number
