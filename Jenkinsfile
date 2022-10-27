@@ -23,8 +23,8 @@ pipeline {
 
     stage('Deployment') {
       steps {
-        sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && npm run start'
-        sh 'cd /var/jenkins_home/workspace/Learn4fund_github/frontend && npm run start'
+        sh 'cd /var/jenkins_home/workspace/Learn4fund_github/backend && nohup npm run start &'
+        sh 'cd /var/jenkins_home/workspace/Learn4fund_github/frontend && nohup npm run start &'
       }
     }
 
