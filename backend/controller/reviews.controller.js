@@ -34,65 +34,32 @@ const apiGetReviews = asyncHandler(async (req, res) => {
 
 /***
  * @desc Add new review
- * @route POST /v1/api/review/add
+ * @route POST /v1/api/reviews/add
  * @access Private
  */
 const apiCreateReview = asyncHandler(async (req, res) => {
   if (!req.body.accountId){
     return res.status(400).json({message: "account id cannot be null."})
   }
-  const review = await Review.create({
-    rating: req.body.rating,
-    description: req.body.description,
-    title: req.body.title,
-    accountId: req.body.accountId,
-    courseId: req.body.courseId,
-  });
+  let review = await Review.findOne({accountId: req.body.accountId, courseId: req.body.courseId})
+  if (!review){
+    review = await Review.create({
+      rating: req.body.rating,
+      description: req.body.description,
+      accountId: req.body.accountId,
+      courseId: req.body.courseId,
+    });
+  } else {
+    review.rating = req.body.rating,
+    review.description = req.body.description,
+    review.accountId = req.body.accountId,
+    review.courseId = req.body.courseId
+    review.save()
+  }
+
   res.status(200).json(review);
 });
 
-/***
- * @desc Update existing course
- * @route PUT /v1/api/courses/update/:id
- * @access Private
- */
-const apiUpdateCourse = asyncHandler(async (req, res) => {
-  const course = await Course.find(req.params.id);
-  if (!course) {
-    res.status(400);
-    throw new Error("Course not found");
-  }
-  if (!req.body) {
-    res.status(400);
-    throw new Error("Please input your updated values");
-  }
-  const updatedCourse = await Course.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
-  res.status(200).json(updatedCourse);
-});
-
-/***
- * @desc Delete existing course
- * @route PUT course /v1/api/courses/delete/:id
- * @access Private
- */
-const apiDeleteCourse = asyncHandler(async (req, res) => {
-  const course = await Course.find(req.params.id);
-  if (!course) {
-    res.status(400);
-    throw new Error("Course not found");
-  }
-  const deleteIndicator = true;
-  const updatedCourse = await Course.findByIdAndUpdate(
-    req.params.id,
-    deleteIndicator,
-    { new: true }
-  );
-  res.status(200).json(updatedCourse);
-});
 
 module.exports = {
   apiGetReviews,

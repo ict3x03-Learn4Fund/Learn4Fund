@@ -75,6 +75,7 @@ function CourseInfo() {
   useEffect(() => {
     setReviewSubmitted(false)
     retrieveReviews()
+    calculateAverageStars()
   }, [reviewSubmitted]);
 
   // save quantity to cart

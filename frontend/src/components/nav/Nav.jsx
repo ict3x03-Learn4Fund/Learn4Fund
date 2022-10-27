@@ -24,14 +24,15 @@ function Nav() {
   const { userInfo, userId, cartNo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [adminStatus, setAdmin] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  
 
   useEffect(() => {
     if (userInfo) {
-      console.log("testing 123")
       dispatch(getUserDetails());
       dispatch(getCartNumber())
     }
-  }, []);
+  }, userInfo);
 
   useEffect(() => {
     if (userInfo != null && userInfo.role == "admin") {
@@ -83,7 +84,7 @@ function Nav() {
                 navigate("/");
               }}
             >
-              Learn4Fund
+              Learn4Fund {modalOpen}
             </div>
           )}
 

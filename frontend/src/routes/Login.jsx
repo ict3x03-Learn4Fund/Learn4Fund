@@ -6,14 +6,15 @@ import { MdAlternateEmail } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
-import { userLogin } from '../features/user/userActions'
+import { getCartNumber, userLogin } from '../features/user/userActions'
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import {OTPModal} from "../modals/OTPModal"
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { loading, userInfo, error } = useSelector((state) => state.user)
+  const { loading, userInfo, error, success , stateErrorMsg} = useSelector((state) => state.user)
   const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +22,8 @@ function Login() {
   const { state } = useLocation();
   const dispatch = useDispatch()
   const [errorMsg, setErrorMsg] = useState("");
+  const [modalOpen, setModalOpen] = useState(false)
+  const [check, setCheck] = useState(false)
 
   function handleEmailChange(event) {
     setEmail(event.target.value);
@@ -31,14 +34,19 @@ function Login() {
 
   // redirect authenticated user to profile screen
   useEffect(() => {
-    if (userInfo) {
-      navigate('/')
+    console.log(success)
+    if (success){
+      setModalOpen(true)
+    }   
+    if (error) {
+      toast.error(stateErrorMsg)
     }
-  }, [navigate, userInfo])
+  }, [dispatch,success, error])
 
 
   const submitForm = (data) => {
     dispatch(userLogin(data))
+    console.log(success)
   }
 
   return (
@@ -112,6 +120,7 @@ function Login() {
         </div>
       </form>
       </div>
+      { modalOpen ? <OTPModal closeModal={setModalOpen}></OTPModal> : null}
     </main>
   );
 }

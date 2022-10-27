@@ -5,20 +5,24 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../features/user/userActions'
 import {toast} from 'react-hot-toast'
+import {OTPModal} from "../modals/OTPModal"
 
 const Signup = () => {
-  const { loading, userInfo, error, success } = useSelector(
+  const { loading, userInfo, userId, error, success, stateErrorMsg} = useSelector(
     (state) => state.user
   )
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
   useEffect(() => {
-    // redirect user to login page if registration was successful
-    if (userInfo) navigate('/')  // change to /login2fa
-    // redirect authenticated user to profile screen
-    // if (userInfo) navigate('/login2FA')
-  }, [navigate, userInfo, success])
+    console.log(success)
+    if (success){
+      setModalOpen(true)
+    } 
+    if (error) {
+      toast.error(stateErrorMsg)
+    }
+  }, [dispatch,success, error])
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const [errorMsg, setErrorMsg] = useState("") 
@@ -34,6 +38,7 @@ const Signup = () => {
   });
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [fufillPassword, setFufillPassword] = useState([false, false, false, false]);
+  const [modalOpen, setModalOpen] = useState(false)
 
   const {
     email,
@@ -339,8 +344,9 @@ const Signup = () => {
             Back to Login
           </Link>
         </div>
-      </div>
-      {/* {error && toast.error(error)} */}
+      </div>      
+      { modalOpen ? <OTPModal closeModal={setModalOpen}></OTPModal> : null}
+      
     </main>
   );
 }

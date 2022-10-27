@@ -11,6 +11,14 @@ const accountSchema = mongoose.Schema(
       type: String,
       default: ""
     },
+    temp_secret: {
+      type: Object,
+      default: ""
+    },
+    secret: {
+      type: Object,
+      default: ""
+    },
       avatarImg: {
       type: String,
       default: ""

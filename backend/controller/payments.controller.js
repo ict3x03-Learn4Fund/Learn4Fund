@@ -136,11 +136,12 @@ const apiMakePayment = asyncHandler(async (req, res) => {
         quantity < checkedOutCart[purchased].cartItem.quantity;
         quantity++
       ) {
-        let encryptedCode = cipher.update(uuidv4(), "utf-8", "hex");
-        encryptedCode += cipher.final("hex");
+        const code = uuidv4()
+        const salt = await bcrypt.genSalt(10);
+        const hashedCode = await bcrypt.hash(code, salt);
         const voucher = await Voucher.create({
           courseId: checkedOutCart[purchased].cartItem.courseId,
-          voucherCode: encryptedCode,
+          voucherCode: hashedCode,
           accountId: accountId,
           transactionId: transaction._id,
         });

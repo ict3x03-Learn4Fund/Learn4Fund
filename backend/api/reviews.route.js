@@ -5,7 +5,5 @@ const router = express.Router();
 
 router.route("/:id").get(apiGetReviews);
 router.route("/create").post(apiCreateReview)
-// router.route("/update/:id").put(apiUpdateCourse)
-// router.route("/delete/:id").post(apiDeleteCourse)
 
 module.exports = router;
