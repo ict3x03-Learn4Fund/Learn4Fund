@@ -23,15 +23,34 @@ pipeline {
         }
         }            
         steps {
-            // be
+            // Backend
             sh 'pwd_path=$(pwd)'
             sh 'cd $pwd_path'
             sh 'cd backend && npm i && npm run start &'
 
-            // fe
+            // Frontend
             sh 'cd $pwd_path'
             sh 'cd frontend && npm i && npm run start'
 
+        }
+    }
+    stage('Test'){
+        agent any
+        steps {
+            sh 'echo "Testing..."'
+        }
+    }
+
+    stage('OWASP DependencyCheck') {
+        agent any
+        steps {
+            dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+        }
+    }
+
+    post {
+    success {
+      dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
         }
     }
 
