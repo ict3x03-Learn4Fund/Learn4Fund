@@ -38,7 +38,7 @@ pipeline {
     stage('OWASP DependencyCheck') {
         agent any
         steps {
-            dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
+            dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4Fund@2" ', odcInstallation: 'Default'
         }
     }
 
