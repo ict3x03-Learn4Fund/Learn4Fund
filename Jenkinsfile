@@ -22,14 +22,23 @@ pipeline {
        }
       }
       steps {
+        // Install packages
         sh 'pwd_path=$(pwd)'
         sh 'cd $pwd_path'
         sh 'cd backend && npm i'
         sh 'cd $pwd_path'
         sh 'cd frontend && npm i'
+        // Deploy backend
+        sh 'pwd_path=$(pwd)'
+        sh 'cd $pwd_path'
+        sh 'cd backend && npm run start'
+        // Deploy frontend
+        sh 'pwd_path=$(pwd)'
+        sh 'cd $pwd_path'
+        sh 'cd frontend && npm run start'
       }
     }
-    stage('Deployment') {
+    stage('Deployment') {        
       parallel {
         stage('Deploy backend') {
         //   agent {
@@ -40,8 +49,8 @@ pipeline {
         //   }
           steps {
             sh 'pwd_path=$(pwd)'
-            sh 'cd $pwd_path'
-            sh 'cd backend && npm run start'
+            // sh 'cd $pwd_path'
+            // sh 'cd backend && npm run start'
           }
         }
         stage('Deploy frontend') {
@@ -53,8 +62,8 @@ pipeline {
         //   }
           steps {
             sh 'pwd_path=$(pwd)'
-            sh 'cd $pwd_path'
-            sh 'cd frontend && npm run start'
+            // sh 'cd $pwd_path'
+            // sh 'cd frontend && npm run start'
           }
         }
 //         stage('OWASP DependencyCheck') {
