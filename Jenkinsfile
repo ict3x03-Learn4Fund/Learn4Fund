@@ -1,12 +1,6 @@
 pipeline {
   agent none
   stages {
-    stage('OWASP DependencyCheck') {
-      agent any
-      steps {
-        dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
-      }
-    }
     stage('Build') {
       agent {
         docker {
@@ -19,6 +13,12 @@ pipeline {
         sh 'cd backend && npm i'
         sh 'cd $pwd_path'
         sh 'cd frontend && npm i'
+      }
+    }
+    stage('OWASP DependencyCheck') {
+      agent any
+      steps {
+        dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
       }
     }
     stage('Deployment') {
