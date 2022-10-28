@@ -15,13 +15,6 @@ pipeline {
         }
     }
 
-    stage('OWASP DependencyCheck') {
-        agent any
-        steps {
-            dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
-        }
-    }
-
     stage('Build') {
         agent {
         docker {
@@ -53,7 +46,14 @@ pipeline {
     environment {
     CI = 'true'
     }
-
+    
+    stage('OWASP DependencyCheck') {
+        agent any
+        steps {
+            dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
+        }
+    }
+    
     post {
     success {
         dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
