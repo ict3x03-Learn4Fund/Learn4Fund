@@ -23,20 +23,15 @@ pipeline {
         }
         }            
         steps {
-            // Install be packages
+            // be
             sh 'pwd_path=$(pwd)'
             sh 'cd $pwd_path'
-            sh 'cd backend && npm i'
+            sh 'cd backend && npm i && npm run start &'
 
-            // Run backend
-            sh 'npm run start &'
-
-            // Install fe packages
+            // fe
             sh 'cd $pwd_path'
-            sh 'cd frontend && npm i'
+            sh 'cd frontend && npm i && npm run start'
 
-            // Run frontend
-            sh 'npm run start'
         }
     }
 
