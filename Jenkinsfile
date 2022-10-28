@@ -1,6 +1,6 @@
 node {
 checkout scm
-docker.image('node:lts-buster-slim')withRun('-p 5000:5000 -p 3000:3000').inside {
+docker.image('node:lts-buster-slim')withRun('-p 5000:5000 -p 3000:3000') {
     stage('Build') {
         sh 'pwd_path=$(pwd)'
         sh 'cd $pwd_path'
