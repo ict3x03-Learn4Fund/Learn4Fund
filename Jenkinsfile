@@ -41,12 +41,12 @@ pipeline {
             sh 'cd frontend && npm run start'
           }
         }
-        stage('OWASP DependencyCheck') {
-          agent any
-          steps {
-            dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
-          }
-        }
+//         stage('OWASP DependencyCheck') {
+//           agent any
+//           steps {
+//             dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+//           }
+//         }
       }
     }
   }
