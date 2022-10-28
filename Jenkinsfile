@@ -4,8 +4,7 @@ pipeline {
     stage('Deleting') {
         agent any
         steps {
-            // docker stop $(docker ps -q)
-            touch /tmp/worked.txt
+          sh 'docker stop $(docker ps -q)'
         }
     }
     stage('Build') {
