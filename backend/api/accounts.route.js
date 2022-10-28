@@ -14,6 +14,7 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator"); // [Validation, Sanitization]
 const rateLimit = require("express-rate-limit"); // [DoS] Prevent brute force attacks
 const Account = require("../models/accountModel"); // to access the DB
+const Logs = require("../models/logsModel");
 
 const createAccountLimiter = rateLimit({
   // [DoS] Prevent mass account creation
@@ -23,6 +24,16 @@ const createAccountLimiter = rateLimit({
     "Too many accounts created from this IP, please try again after an hour",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (request, response, next, options) => {
+    // Send logs to db
+    Logs.create({
+      email: request.body['email'],
+      type: "auth",
+      reason: "Attempt to register account " + request.body['email'] + " was rate limited.",
+      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+    });
+    response.status(options.statusCode).send(options.message)
+  }
 });
 const verify2FALimiter = rateLimit({
   // [DoS] Prevent brute force attacks on 2FA
@@ -31,6 +42,16 @@ const verify2FALimiter = rateLimit({
   message: "Too much tries, please try again in 15 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (request, response, next, options) => {
+    // Send logs to db
+    Logs.create({
+      email: request.body["userId"],
+      type: "auth",
+      reason: "Attempt to verify 2fa was rate limited.",
+      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+    });
+    response.status(options.statusCode).send(options.message)
+  }
 });
 
 // @route   POST api/accounts/register
