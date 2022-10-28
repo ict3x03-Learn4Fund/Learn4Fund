@@ -1,20 +1,19 @@
 pipeline {
   agent none
-  stage('OWASP DependencyCheck') {
-    ageent any
-    steps {
-      dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
-    }
-  }
-  agent {
-    docker {
-      image 'node:lts-buster-slim'
-      args '-p 3000:3000 -p 5000:5000'
-    }
-
-  }
   stages {
+    stage('OWASP DependencyCheck') {
+      ageent any
+      steps {
+        dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+      }
+    }
     stage('Build') {
+      agent {
+        docker {
+          image 'node:lts-buster-slim'
+          args '-p 3000:3000 -p 5000:5000'
+        }
+      }
       steps {
         sh 'pwd_path=$(pwd)'
         sh 'cd $pwd_path'
@@ -24,6 +23,12 @@ pipeline {
       }
     }
     stage('Deployment') {
+      agent {
+        docker {
+          image 'node:lts-buster-slim'
+          args '-p 3000:3000 -p 5000:5000'
+        }
+      }
       parallel {
         stage('Deploy backend') {
           steps {
