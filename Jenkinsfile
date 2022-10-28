@@ -7,7 +7,7 @@ pipeline {
                 dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
             }
         }
-        stage ('Build, Test, and Deploy'){
+        stage ('Build'){
             agent {
                 docker {
                     image 'node:lts-buster-slim'
@@ -23,18 +23,29 @@ pipeline {
                     sh 'cd frontend && npm i'
                 }
             }
-            stage('Deployment') {
-                parallel {
-                    stage('Deploy backend') {
-                        steps {
-                            sh 'cd $pwd_path'
-                            sh 'cd backend && npm run start'
-                        }
-                    }
-                    stage('Deploy frontend') {
-                        steps {
-                            sh 'cd $pwd_path'
-                            sh 'cd frontend && npm run start'
+        }
+        stage('Parallel Deployment') {
+            agent { 
+                docker {
+                    image 'node:lts-buster-slim'
+                    args '-p 3000:3000 -p 5000:5000'
+                } 
+            }
+            stages {
+                stage('frontend & Backend') {
+                    parallel {
+                        stage('frontend') 
+                        { 
+                            steps {
+                                sh 'cd $pwd_path'
+                                sh 'cd backend && npm run start'
+                            } 
+                        } 
+                        stage('backend') { 
+                            steps {
+                                sh 'cd $pwd_path'
+                                sh 'cd backend && npm run start'
+                            }
                         }
                     }
                 }
