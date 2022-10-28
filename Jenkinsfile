@@ -20,7 +20,6 @@ pipeline {
             agent {
             docker {
                 image 'node:lts-buster-slim'
-                args '-p 3000:3000 -p 5000:5000'
             }
             }            
             steps {
@@ -36,7 +35,7 @@ pipeline {
             agent {
             docker {
                 image 'node:lts-buster-slim'
-                args '-p 3000:3000 -p 5000:5000'
+                args '-p 5000:5000'
             }
             }
             steps{
@@ -49,7 +48,7 @@ pipeline {
             agent {
             docker {
                 image 'node:lts-buster-slim'
-                args '-p 3000:3000 -p 5000:5000'
+                args '-p 3000:3000'
             }
             }
             steps{
