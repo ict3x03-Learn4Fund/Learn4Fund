@@ -19,4 +19,3 @@ docker.image('node:lts-buster-slim').withRun('-p 5000:5000 -p 3000:3000') { c->
     sh 'cd backend && npm run start &'
     // }
 }
-}
