@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // import { useAuth } from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../features/user/userActions'
 import {toast} from 'react-hot-toast'
+import ReCAPTCHA from "react-google-recaptcha"
 
 const Signup = () => {
   const { loading, userInfo, error, success } = useSelector(
@@ -12,6 +13,7 @@ const Signup = () => {
   )
   const dispatch = useDispatch()
   const navigate = useNavigate();
+  const captchaRef = useRef(null)
 
   useEffect(() => {
     // redirect user to login page if registration was successful
@@ -319,7 +321,10 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
-
+            <ReCAPTCHA
+sitekey={"6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"}
+ref={captchaRef}
+/>
             <button
               className="mt-4 p-2 w-full rounded bg-green-400 hover:bg-green-600 text-w1 font-bold"
               type="submit"
