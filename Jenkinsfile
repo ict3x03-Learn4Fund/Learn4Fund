@@ -21,15 +21,17 @@ pipeline {
          args '-p 3000:3000 -p 5000:5000'
        }
       }
-      steps {
-        // Install packages
-        sh 'pwd_path=$(pwd)'
-        sh 'cd $pwd_path'
-        sh 'cd backend && npm i'
-        sh 'cd $pwd_path'
-        sh 'cd frontend && npm i'
-      }
       parallel {
+        stage ('Install packages'){
+            steps {
+                // Install packages
+                sh 'pwd_path=$(pwd)'
+                sh 'cd $pwd_path'
+                sh 'cd backend && npm i'
+                sh 'cd $pwd_path'
+                sh 'cd frontend && npm i'
+            }            
+        }
         stage('Deploy backend') {
             steps{
                 sh 'pwd_path=$(pwd)'
