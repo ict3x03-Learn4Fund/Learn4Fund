@@ -41,17 +41,15 @@ pipeline {
             sh 'echo "Testing..."'
         }
     }
-
-    }
-    environment {
-    CI = 'true'
-    }
-    
     stage('OWASP DependencyCheck') {
         agent any
         steps {
             dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
         }
+    }
+    }
+    environment {
+    CI = 'true'
     }
     
     post {
