@@ -32,13 +32,6 @@ pipeline {
             // Frontend
             sh 'cd $pwd_path'
             sh 'cd frontend && npm i && npm run start'
-
-        }
-    }
-    stage('Test'){
-        agent any
-        steps {
-            sh 'echo "Testing..."'
         }
     }
     stage('OWASP DependencyCheck') {
@@ -47,6 +40,27 @@ pipeline {
             dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
         }
     }
+
+    stage('Deploy'){
+        agent {
+        docker {
+            image 'node:lts-buster-slim'
+            args '-p 3000:3000 -p 5000:5000'
+            reuseNode true
+        }
+        }
+        steps {
+            // Backend
+            sh 'pwd_path=$(pwd)'
+            sh 'cd $pwd_path'
+            sh 'cd backend && npm run start &'
+
+            // Frontend
+            sh 'cd $pwd_path'
+            sh 'cd frontend && npm run start'
+        }
+    }
+
     }
     environment {
     CI = 'true'
