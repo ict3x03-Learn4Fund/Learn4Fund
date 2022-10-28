@@ -1,45 +1,62 @@
 pipeline {
-    agent any
-    tools {nodejs "Default"}
-
+    agent none
     stages {
-        stage("Fetch") {
-            steps {
-                git branch: "dev",
-                    url: "https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
-            }
-        }
-        stage("Install") {
-            parallel {
-                stage("Frontend") {
-                    steps {
-                        dir('frontend') {
-                            sh 'rm package-lock.json'
-                            sh 'rm -rf node_modules'
-                            sh 'npm install'
-                        }
-                    }
-                }
-                stage("Backend") {
-                    steps {
-                        dir('backend') {
-                            sh 'rm package-lock.json'
-                            sh 'rm -rf node_modules'
-                            sh 'npm install'
-                        }
-                    }
+    stage('Deleting') {
+        agent any
+        steps {
+            script{
+                try{
+                    sh 'docker stop $(docker ps -q)'
+                }catch (err){
+                    echo 'No running containers.'
                 }
             }
-        }
-        stage("Dep Check") {
-            steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
-            }
+            
         }
     }
+
+    stage('OWASP DependencyCheck') {
+        agent any
+        steps {
+            dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+        }
+    }
+
+    stage('Build') {
+        agent {
+        docker {
+            image 'node:lts-buster-slim'
+            args '-p 3000:3000 -p 5000:5000'
+            reuseNode true
+        }
+        }            
+        steps {
+            // Backend
+            sh 'pwd_path=$(pwd)'
+            sh 'cd $pwd_path'
+            sh 'cd backend && npm i && npm run start &'
+
+            // Frontend
+            sh 'cd $pwd_path'
+            sh 'cd frontend && npm i && npm run start'
+
+        }
+    }
+    stage('Test'){
+        agent any
+        steps {
+            sh 'echo "Testing..."'
+        }
+    }
+
+    }
+    environment {
+    CI = 'true'
+    }
+
     post {
-        success {
-            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+    success {
+        dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
         }
     }
 }
