@@ -26,6 +26,7 @@ pipeline {
             }
           }
           steps {
+            sh 'pwd_path=$(pwd)'
             sh 'cd $pwd_path'
             sh 'cd backend && npm run start'
           }
@@ -38,6 +39,7 @@ pipeline {
             }
           }
           steps {
+            sh 'pwd_path=$(pwd)'
             sh 'cd $pwd_path'
             sh 'cd frontend && npm run start'
           }
