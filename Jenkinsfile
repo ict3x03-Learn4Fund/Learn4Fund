@@ -36,7 +36,7 @@ pipeline {
             sh 'cd frontend && npm i'
 
             // Run frontend
-            sh 'npm run start &'
+            sh 'npm run start'
         }
     }
 
@@ -44,10 +44,5 @@ pipeline {
   environment {
     CI = 'true'
   }
-  post {
-    success {
-      dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
-    }
 
-  }
 }
