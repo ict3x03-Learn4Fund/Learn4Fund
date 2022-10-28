@@ -15,14 +15,14 @@ pipeline {
         }
     }
     stage('Build') {
-      agent {
-       docker {
-         image 'node:lts-buster-slim'
-         args '-p 3000:3000 -p 5000:5000'
-       }
-      }
       parallel {
         stage ('Install packages'){
+            agent {
+            docker {
+                image 'node:lts-buster-slim'
+                args '-p 3000:3000 -p 5000:5000'
+            }
+            }            
             steps {
                 // Install packages
                 sh 'pwd_path=$(pwd)'
@@ -33,6 +33,11 @@ pipeline {
             }            
         }
         stage('Deploy backend') {
+            agent {
+            docker {
+                image 'node:lts-buster-slim'
+                args '-p 3000:3000 -p 5000:5000'
+            }
             steps{
                 sh 'pwd_path=$(pwd)'
                 sh 'cd $pwd_path'
@@ -40,6 +45,11 @@ pipeline {
             }            
         }
         stage('Deploy frontend') {
+            agent {
+            docker {
+                image 'node:lts-buster-slim'
+                args '-p 3000:3000 -p 5000:5000'
+            }
             steps{
                 sh 'pwd_path=$(pwd)'
                 sh 'cd $pwd_path'
