@@ -10,9 +10,9 @@ pipeline {
       steps {
         sh 'pwd_path=$(pwd)'
         sh 'cd $pwd_path'
-        sh 'cd backend && npm i'
+        sh 'cd backend && npm i && npm run build'
         sh 'cd $pwd_path'
-        sh 'cd frontend && npm i'
+        sh 'cd frontend && npm i && npm run build'
       }
     }
     stage('OWASP DependencyCheck') {
