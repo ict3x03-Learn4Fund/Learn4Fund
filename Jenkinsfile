@@ -4,7 +4,14 @@ pipeline {
     stage('Deleting') {
         agent any
         steps {
-          sh 'docker stop $(docker ps -q)'
+            script{
+                try{
+                    sh 'docker stop $(docker ps -q)'
+                }catch (err){
+                    echo 'No running containers.'
+                }
+            }
+            
         }
     }
     stage('Build') {
