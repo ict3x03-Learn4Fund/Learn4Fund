@@ -18,7 +18,7 @@ pipeline {
     stage('OWASP DependencyCheck') {
         agent any
         steps {
-            dependencyCheck('--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default')
+            dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit', odcInstallation: 'Default'
         }
     }
 
