@@ -31,14 +31,18 @@ pipeline {
       }
       parallel {
         stage('Deploy backend') {
-            sh 'pwd_path=$(pwd)'
-            sh 'cd $pwd_path'
-            sh 'cd backend && npm run start'
+            steps{
+                sh 'pwd_path=$(pwd)'
+                sh 'cd $pwd_path'
+                sh 'cd backend && npm run start'
+            }            
         }
         stage('Deploy frontend') {
-            sh 'pwd_path=$(pwd)'
-            sh 'cd $pwd_path'
-            sh 'cd frontend && npm run start'
+            steps{
+                sh 'pwd_path=$(pwd)'
+                sh 'cd $pwd_path'
+                sh 'cd frontend && npm run start'
+            }
         }
       }
     }
