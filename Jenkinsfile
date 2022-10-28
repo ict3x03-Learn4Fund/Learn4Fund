@@ -38,6 +38,7 @@ pipeline {
                 image 'node:lts-buster-slim'
                 args '-p 3000:3000 -p 5000:5000'
             }
+            }
             steps{
                 sh 'pwd_path=$(pwd)'
                 sh 'cd $pwd_path'
@@ -49,6 +50,7 @@ pipeline {
             docker {
                 image 'node:lts-buster-slim'
                 args '-p 3000:3000 -p 5000:5000'
+            }
             }
             steps{
                 sh 'pwd_path=$(pwd)'
