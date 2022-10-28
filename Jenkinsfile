@@ -1,6 +1,6 @@
 pipeline {
-  agent none
-  stages {
+    agent none
+    stages {
     stage('Deleting') {
         agent any
         steps {
@@ -14,6 +14,14 @@ pipeline {
             
         }
     }
+
+    stage('OWASP DependencyCheck') {
+        agent any
+        steps {
+            dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+        }
+    }
+
     stage('Build') {
         agent {
         docker {
@@ -41,15 +49,8 @@ pipeline {
         }
     }
 
-    stage('OWASP DependencyCheck') {
-        agent any
-        steps {
-            dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
-        }
     }
-
-  }
-  environment {
+    environment {
     CI = 'true'
     }
 
