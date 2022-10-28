@@ -7,11 +7,11 @@ pipeline {
                 dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
             }
         }
-        stage ('Build'){
-            agent {
+        stage('Build') {
+            agent { 
                 docker {
                     image 'node:lts-buster-slim'
-                }
+                } 
             }
             steps {
                 sh 'pwd_path=$(pwd)'
@@ -21,29 +21,30 @@ pipeline {
                 sh 'cd frontend && npm i'
             }
         }
-        stage('Parallel Deployment') {
-            agent { 
-                docker {
-                    image 'node:lts-buster-slim'
-                    args '-p 3000:3000 -p 5000:5000'
-                } 
-            }
-            stages {
-                stage('frontend & Backend') {
-                    parallel {
-                        stage('frontend') 
-                        { 
-                            steps {
-                                sh 'cd $pwd_path'
-                                sh 'cd backend && npm run start'
-                            } 
+        stage('Deployment') {
+            parallel {
+                stage('Deploy backend') {
+                    agent { 
+                        docker {
+                            image 'node:lts-buster-slim'
+                            args '-p 5000:5000'
                         } 
-                        stage('backend') { 
-                            steps {
-                                sh 'cd $pwd_path'
-                                sh 'cd backend && npm run start'
-                            }
-                        }
+                    }
+                    steps {
+                        sh 'cd $pwd_path'
+                        sh 'cd backend && npm run start'
+                    }
+                }
+                stage('Deploy frontend') {
+                    agent { 
+                        docker {
+                            image 'node:lts-buster-slim'
+                            args '-p 3000:3000'
+                        } 
+                    }
+                    steps {
+                        sh 'cd $pwd_path'
+                        sh 'cd frontend && npm run start'
                     }
                 }
             }
@@ -52,7 +53,7 @@ pipeline {
     environment {
         CI = 'true'
     }
-    post {
+  post {
         success {
             dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
         }
