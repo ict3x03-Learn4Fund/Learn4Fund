@@ -27,13 +27,14 @@ pipeline {
             // Backend
             sh 'pwd_path=$(pwd)'
             sh 'cd $pwd_path'
-            sh 'cd backend && npm i && npm run start &'
+            sh 'cd backend && npm i'
 
             // Frontend
             sh 'cd $pwd_path'
-            sh 'cd frontend && npm i && npm run start'
+            sh 'cd frontend && npm i'
         }
     }
+
     stage('OWASP DependencyCheck') {
         agent any
         steps {
