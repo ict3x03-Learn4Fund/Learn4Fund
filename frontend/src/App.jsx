@@ -21,6 +21,7 @@ import Catalog from "./routes/Catalog";
 import CourseInfo from "./components/catalog/CourseInfo";
 import { PromotionModal } from "./modals/PromotionModal";
 import { NewsLetterModal } from "./modals/NewsLetterModal";
+import ReCAPTCHA from "react-google-recaptcha"
 
 import { Toaster } from "react-hot-toast";
 import { OTPModal } from "./modals/OTPModal";
@@ -59,6 +60,7 @@ function App() {
               <Route exact path="donate" element={<Donations />} />
               <Route exact path="tos" element={<Toc />} />
               <Route exact path="privacy" element={<Privacy />} />
+              <Route path="captcha" element={<ReCAPTCHA sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"/>} />
               <Route exact path="cookies" element={<Cookie />} />
               <Route element={<ProtectedRoute />}>
                 <Route exact path="settings" element={<Settings />} />

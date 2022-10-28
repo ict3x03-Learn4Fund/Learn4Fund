@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../features/user/userActions'
 import {toast} from 'react-hot-toast'
+import ReCAPTCHA from "react-google-recaptcha"
 
 const Signup = () => {
   const { loading, userInfo, error, success } = useSelector(
@@ -319,7 +320,7 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
-
+            <ReCAPTCHA sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"/>
             <button
               className="mt-4 p-2 w-full rounded bg-green-400 hover:bg-green-600 text-w1 font-bold"
               type="submit"

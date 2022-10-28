@@ -3,6 +3,7 @@ import {AddCourseModal} from '../../components/admin/AddCourseModal'
 import courseService from '../../services/courses';
 import {ConfirmationModal} from '../../modals/ConfirmationModal'
 import {AiOutlineEdit, AiOutlineDelete} from 'react-icons/ai'
+import coursesService from '../../services/courses';
 
 const CoursesCatalog = () => {
   const [dataCourses, setDataCourses] = useState([]);
@@ -100,7 +101,7 @@ const CoursesCatalog = () => {
                 <img
                     src={`http://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
-                    alt={"exmaple"}
+                    alt={"example"}
                   /></td>
                 <td className='w-1/6'>{course.quantity}</td>
               <td>
