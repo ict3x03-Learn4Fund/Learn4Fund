@@ -1,4 +1,11 @@
 pipeline {
+  agent none
+  stage('OWASP DependencyCheck') {
+    ageent any
+    steps {
+      dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
+    }
+  }
   agent {
     docker {
       image 'node:lts-buster-slim'
@@ -7,11 +14,6 @@ pipeline {
 
   }
   stages {
-    stage('OWASP DependencyCheck') {
-      steps {
-        dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
-      }
-    }
     stage('Build') {
       steps {
         sh 'pwd_path=$(pwd)'
