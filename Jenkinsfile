@@ -48,15 +48,14 @@ pipeline {
         }
     }
 
-    post {
-    success {
-      dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
-        }
-    }
-
   }
   environment {
     CI = 'true'
-  }
+    }
 
+    post {
+    success {
+        dependencyCheckPublisher(pattern: 'dependency-check-report.xml')
+        }
+    }
 }
