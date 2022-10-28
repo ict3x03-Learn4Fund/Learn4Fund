@@ -2,12 +2,12 @@ pipeline {
   agent none
   stages {
     stage('Build') {
-      agent {
-        docker {
-          image 'node:lts-buster-slim'
-          args '-p 3000:3000 -p 5000:5000'
-        }
-      }
+      //agent {
+      //  docker {
+      //    image 'node:lts-buster-slim'
+      //    args '-p 3000:3000 -p 5000:5000'
+      //  }
+      // }
       steps {
         sh 'pwd_path=$(pwd)'
         sh 'cd $pwd_path'
@@ -22,7 +22,7 @@ pipeline {
           agent {
             docker {
               image 'node:lts-buster-slim'
-               //args '-p 3000:3000 -p 5000:5000'
+              args '-p 3000:3000 -p 5000:5000'
             }
           }
           steps {
@@ -35,7 +35,7 @@ pipeline {
           agent {
             docker {
               image 'node:lts-buster-slim'
-               //args '-p 3000:3000 -p 5000:5000'
+              args '-p 3000:3000 -p 5000:5000'
             }
           }
           steps {
