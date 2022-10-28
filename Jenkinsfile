@@ -7,45 +7,35 @@ pipeline {
                 dependencyCheck(odcInstallation: 'Default', additionalArguments: '--format HTML --format XML')
             }
         }
-        stage('Build') {
+        stage ('Build, Test, and Deploy'){
             agent {
                 docker {
                     image 'node:lts-buster-slim'
                     args '-p 3000:3000 -p 5000:5000'
                 }
             }
-            steps {
-                sh 'pwd_path=$(pwd)'
-                sh 'cd $pwd_path'
-                sh 'cd backend && npm i'
-                sh 'cd $pwd_path'
-                sh 'cd frontend && npm i'
-            }
-        }
-        stage('Deployment') {
-            parallel {
-                stage('Deploy backend') {
-                    agent {
-                        docker {
-                            image 'node:lts-buster-slim'
-                            args '-p 3000:3000 -p 5000:5000'
-                        }
-                    }
-                    steps {
-                        sh 'cd $pwd_path'
-                        sh 'cd backend && npm run start'
-                    }
+            stage('Build') {
+                steps {
+                    sh 'pwd_path=$(pwd)'
+                    sh 'cd $pwd_path'
+                    sh 'cd backend && npm i'
+                    sh 'cd $pwd_path'
+                    sh 'cd frontend && npm i'
                 }
-                stage('Deploy frontend') {
-                    agent {
-                        docker {
-                            image 'node:lts-buster-slim'
-                            args '-p 3000:3000 -p 5000:5000'
+            }
+            stage('Deployment') {
+                parallel {
+                    stage('Deploy backend') {
+                        steps {
+                            sh 'cd $pwd_path'
+                            sh 'cd backend && npm run start'
                         }
                     }
-                    steps {
-                        sh 'cd $pwd_path'
-                        sh 'cd frontend && npm run start'
+                    stage('Deploy frontend') {
+                        steps {
+                            sh 'cd $pwd_path'
+                            sh 'cd frontend && npm run start'
+                        }
                     }
                 }
             }
