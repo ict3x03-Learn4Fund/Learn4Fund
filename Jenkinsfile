@@ -86,7 +86,7 @@ pipeline {
 
                 // Deploy Frontend
                 sh 'cd $pwd_path'
-                sh 'cd frontend && npm run start &'
+                sh 'cd frontend && npm run start'
             }
         }
     }
