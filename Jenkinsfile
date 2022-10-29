@@ -5,7 +5,7 @@ pipeline {
             agent any
             steps {
                 git branch: "test/vm", url: "https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
-                // Copy env file to backend
+                // Copy env file to backend.
                 sh 'pwd_path=$(pwd)'
                 sh 'cd $pwd_path'
                 sh 'cd backend && cp /home/.env .'
