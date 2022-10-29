@@ -118,4 +118,16 @@ router.route('/verify2FA').post(verify2FALimiter,
 // @route   GET api/getAccount
 router.route('/getAccount').get(protect, apiGetAccount)
 
+//captcha 
+// router.post('/verifyCaptcha', recaptcha.middleware.verify, function (req, res) {
+//     if (!req.recaptcha.error) {
+//         // success code
+//         res.status(200).json.({
+
+//         })
+//     } else {
+//         // error code
+//     }
+// })
+
 module.exports = router
