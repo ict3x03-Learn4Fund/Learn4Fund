@@ -63,12 +63,12 @@ function Login() {
                 <MdAlternateEmail className="self-center text-w1" />
               </div>
             </span>
-            <input
+            <input required
               className="flex w-3/4 h-[40px] input"
               autoComplete="off"
               type="text"
               maxLength={255}
-              {...register("email", { required: true, pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ })}
+              {...register("email", {pattern: /^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,15}$/ })}
               placeholder="Email ID"
               value={email}
               onChange={handleEmailChange}
@@ -92,7 +92,6 @@ function Login() {
               value={password}
               onChange={handlePasswordChange}
             />
-            {/* <p id="errorMsg" name="errorMsg" value={errorMsg}></p> */}
           </div>
           <div className="flex flex-nowrap w-full justify-center">
             {errors.password && <div><p style={{ color: "red" }}><b>Password is empty!</b></p></div>}
