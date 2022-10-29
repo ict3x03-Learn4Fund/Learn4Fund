@@ -70,20 +70,3 @@ app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
-
-//POST route
-router.post("/post", async (req, res) => {
-  //Destructuring response token from request body
-      const {token} = req.body;
-//sends secret key and response token to google
-      await axios.post(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.REACT_APP_SECRET_KEY}&response=${token}`
-      );
-
-//check response status and send back to the client-side
-  if (res.status(200)) {
-    res.send("Human");
-}else{
-  res.send("Robot");
-}
-});

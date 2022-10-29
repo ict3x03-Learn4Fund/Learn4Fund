@@ -112,18 +112,11 @@ const Signup = () => {
     }));
   }
 
-  const onSubmit = async (data) => {
-    const token = captchaRef.current.getValue();
-    captchaRef.current.reset();
-
-    if(!token){ toast.error('Please verify captcha')}
-
+  const submitData = async (data) => {
+    var token = captchaRef.current.getValue();
     
 
-    if(data.password != data.password2){
-      toast.error("Passwords do not match")
-      return
-    }
+    if(!token){ toast.error('Please verify captcha')}
     await axios.post(process.env.REACT_APP_API_URL, {token})
         .then(res =>  {alert(res)
     dispatch(registerUser(data))
@@ -131,7 +124,21 @@ const Signup = () => {
         .catch((error) => {
         alert(error);
         })
+        captchaRef.current.reset();
+
+  }
+
+  const onSubmit = (data) => {
+    
+
+    if(data.password != data.password2){
+      toast.error("Passwords do not match")
+      return
+    }
+    submitData(data)
   };
+
+  
 
   const setColor = (strength) => {
     if (strength < 50) {
@@ -342,7 +349,7 @@ const Signup = () => {
             <ReCAPTCHA 
               sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De" 
               className="flex justify-center w-full mt-2"
-              // ref={captchaRef}
+              ref={captchaRef}
             />
 
             <button
