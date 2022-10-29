@@ -91,8 +91,8 @@ pipeline {
         }
     }
     post {
-        agent any
         success {
+            agent any
             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
         }
     }
