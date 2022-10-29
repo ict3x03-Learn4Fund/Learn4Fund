@@ -25,7 +25,7 @@ pipeline {
                 try{
                     sh 'docker stop $(docker ps -q)'
                 }catch (err){
-                    echo 'No running containers.'
+                    echo 'No running containers'
                 }
             }
             
