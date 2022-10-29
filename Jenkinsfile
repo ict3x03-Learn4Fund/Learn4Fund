@@ -8,7 +8,7 @@ pipeline {
             }
         }
 
-        stage('Prepping env') {
+        stage('Prep environment') {
             agent any
             steps {
                 script{
