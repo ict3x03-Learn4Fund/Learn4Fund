@@ -18,7 +18,7 @@ const apiGetCourses = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiCreateCourse = asyncHandler(async (req, res) => {
-  const course = await Course.create({
+  const course = await Course.create({                      // Create new course
     courseName: req.body.courseName,
     courseImg: req.body.courseImg,
     courseOriginalPrice: req.body.courseOriginalPrice,
@@ -38,7 +38,7 @@ const apiCreateCourse = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiUpdateCourse = asyncHandler(async (req, res) => {
-  const course = await Course.find(req.params.id);
+  const course = await Course.findById(req.params.id);
   if (!course){
     res.status(400);
     throw new Error('Course not found');
@@ -56,14 +56,14 @@ const apiUpdateCourse = asyncHandler(async (req, res) => {
  * @route PUT course /v1/api/courses/delete/:id
  * @access Private
  */
-const apiDeleteCourse = asyncHandler(async (req, res) => {
-  const course = await Course.find(req.params.id);
+const apiDeleteCourse = asyncHandler(async (req, res) => {   
+  const course = await Course.findById(req.params.id);
   if (!course){
     res.status(400);
     throw new Error('Course not found');
   }
   const deleteIndicator = true;
-  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, deleteIndicator, {new: true,});
+  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, deleteIndicator, {new: true,});  // TODO: Is this suppose to delete course?
   res.status(200).json(updatedCourse);
 });
 
