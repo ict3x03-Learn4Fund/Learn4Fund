@@ -2,12 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // import { useAuth } from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../features/user/userActions';
-import { toast } from 'react-hot-toast';
-
-//for recaptcha
-import ReCAPTCHA from "react-google-recaptcha";
+import { useDispatch, useSelector } from 'react-redux'
+import { registerUser } from '../features/user/userActions'
+import {toast} from 'react-hot-toast'
+import ReCAPTCHA from "react-google-recaptcha"
 
 const Signup = () => {
   const { loading, userInfo, error, success } = useSelector(
@@ -20,7 +18,6 @@ const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     // redirect user to login page if registration was successful
     if (userInfo) navigate('/')  // change to /login2fa
