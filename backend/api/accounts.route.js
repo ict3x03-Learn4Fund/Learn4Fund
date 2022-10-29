@@ -5,6 +5,9 @@ const {
   apiLogin,
   apiGetAccount,
   apiVerify2FA,
+  apiResetPassword,
+  apiChangePassword,
+  apiVerifyReset,
 } = require("../controller/accounts.controller");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -137,8 +140,14 @@ router.route('/verify2FA').post(verify2FALimiter,
         }
 })
 
-
 // @route   GET api/getAccount
 router.route("/getAccount").get(protect, apiGetAccount);
+
+// @route POST api/accounts/resetPassword
+router.route("/reset").post(apiResetPassword);
+
+// @route GET api/accounts/changePassword
+router.route("/reset/:id/:jwt").get(apiVerifyReset);
+router.route("/reset/:id/:jwt").post(apiChangePassword);
 
 module.exports = router;

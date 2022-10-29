@@ -27,10 +27,30 @@ const verify2FA = async (userData) => {
 // Get Account
 const getAccount = async () => {
   // Making calls to server side
-const response = await http.get(`/accounts/getAccount`)
+  const response = await http.get(`/accounts/getAccount`);
 
   return response.data;
 };
+
+// Reset password
+const resetPass = async (request) => {
+  // Making calls to server side
+  const response = await http.post(`/accounts/reset`, request);
+  return response;
+};
+
+// Verify reset
+const verifyReset = async (id, jwt) => {
+  const response = await http.get(`/accounts/reset/${id}/${jwt}`);
+  return response;
+}
+
+// change password after reset
+const changePass = async (id, jwt, password) => {
+  console.log(id, jwt, password)
+  const response = await http.post(`/accounts/reset/${id}/${jwt}`, {password:password});
+  return response;
+}
 
 // Client side functions
 const authService = {
@@ -38,6 +58,9 @@ const authService = {
   login,
   verify2FA,
   getAccount,
+  resetPass,
+  verifyReset,
+  changePass,
 };
 
 export default authService;
