@@ -6,6 +6,8 @@ const {protect} = require("../middleware/authMiddleware")
 
 const router = express.Router()
 
+const axios = require("axios")
+
 
 const { check, validationResult } = require('express-validator')        // [Validation, Sanitization]
 const rateLimit = require('express-rate-limit');                        // [DoS] Prevent brute force attacks
@@ -117,5 +119,23 @@ router.route('/verify2FA').post(verify2FALimiter,
 })
 // @route   GET api/getAccount
 router.route('/getAccount').get(protect, apiGetAccount)
+
+//Check captcha
+router.post("/checkCaptcha", async (req, res) => {
+    //Destructuring response token from request body
+        const {token} = req.body;
+    
+    //sends secret key and response token to google
+        await axios.post(
+          `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+          );
+    
+    //check response status and send back to the client-side
+          if (res.status(200)) {
+            res.send("Human 👨 👩");
+        }else{
+          res.send("Robot 🤖");
+        }
+    });
 
 module.exports = router

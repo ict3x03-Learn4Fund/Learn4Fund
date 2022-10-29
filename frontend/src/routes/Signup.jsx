@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../features/user/userActions'
 import {toast} from 'react-hot-toast'
 import ReCAPTCHA from "react-google-recaptcha"
+import axios from "axios";
 
 const Signup = () => {
   const { loading, userInfo, error, success } = useSelector(
@@ -36,7 +37,7 @@ const Signup = () => {
   });
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [fufillPassword, setFufillPassword] = useState([false, false, false, false]);
-
+  
   const {
     email,
     phone,
@@ -110,12 +111,23 @@ const Signup = () => {
     }));
   }
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    const token = captchaRef.current.getValue();
+    captchaRef.current.reset();
+
+    if(!token){ toast.error('Please verify captcha')}
+
+    await axios.post(process.env.REACT_APP_API_URL, {token})
+        .then(res =>  alert(res))
+        .catch((error) => {
+        alert(error);
+        })
+
     if(data.password != data.password2){
       toast.error("Passwords do not match")
       return
     }
-    dispatch(registerUser(data))
+    // dispatch(registerUser(data))
   };
 
   const setColor = (strength) => {
