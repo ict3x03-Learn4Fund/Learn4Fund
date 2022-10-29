@@ -8,12 +8,29 @@ pipeline {
             }
         }
 
+        stage('Prepping env') {
+            agent any
+            steps {
+                script{
+                    try{
+                        sh 'docker stop $(docker ps -q)'
+                    }catch (err){
+                        echo 'No running containers.'
+                    }
+                }
+                // Copy env file to backend
+                sh 'pwd_path=$(pwd)'
+                sh 'cd $pwd_path'
+                sh 'cd backend && cp /home/.env .'                
+            }
+        }
+
         stage("Build") {
             agent {
                 docker {
                     image 'node:lts-buster-slim'
                     args '-p 3000:3000 -p 5000:5000'
-                    // reuseNode true
+                    reuseNode true
                 }
             }
             steps {
