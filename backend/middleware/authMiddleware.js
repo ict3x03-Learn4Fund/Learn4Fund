@@ -14,7 +14,7 @@ const protect = asyncHandler((req,res,next) =>{
                     // Get token from header
                     token = cookie.split('access_token=')[1]                                //[Authentication] Get token from cookie
                     if (token == null) {
-                        return res.status(401).json({ message: 'No token, authorization denied' })
+                        return res.status(401).json({ message: 'Not logged in' })
                     }
             
                     //verify token
@@ -31,21 +31,17 @@ const protect = asyncHandler((req,res,next) =>{
                         if (req.account.role !== 'admin') {
                             return res.status(403).json({ message: 'Not authorized' });
                         }
-                        // else {
-                        //     next();
-                        // }
                     }
                     
                     next() // Move on from the middleware
                 } catch (error) {
-                    return res.status(403).json({ message: 'Not authorized' })
+                    return res.status(403).json({ message: 'Error' })
                 }
             }
         })
     }
     if (!token) {
-        return res.status(401).json({ message: 'Not authenticated' })
-        // throw new Error('Not authorized, no token')
+        return res.status(401).json({ message: 'Not logged in' })
     }
 })
 

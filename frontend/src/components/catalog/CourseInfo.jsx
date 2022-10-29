@@ -134,8 +134,8 @@ function CourseInfo() {
         toast.success("A review has been added successfully.")
         setReviewSubmitted(true)
       }
-    }).error((error) => {
-      toast.error(error.response)
+    }).catch((error) => {
+      toast.error(error.response.data.message)
     })
   }
 

@@ -6,7 +6,7 @@ const Course = require("../models/courseModel");
 /***
  * @desc Add cart
  * @route POST /v1/api/carts/create
- * @access Private
+ * @access Public
  */
 const apiAddCart = asyncHandler(async (req, res) => {
   try {
