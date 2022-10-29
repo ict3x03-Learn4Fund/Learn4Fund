@@ -456,7 +456,6 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
-
             <button
               className="mt-4 p-2 w-full rounded bg-green-400 hover:bg-green-600 text-w1 font-bold"
               type="submit"
