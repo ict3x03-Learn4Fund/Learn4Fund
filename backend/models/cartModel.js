@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+mongoose.set('sanitizeFilter', true)
 
 
 const cartModel = mongoose.Schema(
