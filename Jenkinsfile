@@ -15,7 +15,7 @@ pipeline {
                     try{
                         sh 'docker stop $(docker ps -q)'
                     }catch (err){
-                        echo 'No running containers.'
+                        echo 'Skipping, no running containers'
                     }
                 }
                 // Copy env file to backend
