@@ -134,8 +134,8 @@ function CourseInfo() {
         toast.success("A review has been added successfully.")
         setReviewSubmitted(true)
       }
-    }).error((error) => {
-      toast.error(error.response)
+    }).catch((error) => {
+      toast.error(error.response.data.message)
     })
   }
 
@@ -233,30 +233,31 @@ function CourseInfo() {
             </div>
             <div className="flex">
               <div
-                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center"
+                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center bg-black"
                 onClick={() =>
-                  quantitySelected > 0
+                  quantitySelected > 0 
                     ? setQuantitySelected(parseInt(quantitySelected) - 1)
                     : null
                 }
               >
-                <BsDash className="text-b3 self-center" />
+                <BsDash className="text-w1 self-center" />
               </div>
               <div className="flex h-full border-[1px] w-[50px] justify-center text-center">
                 <input
-                  className="font-type1 font-normal text-[1.5vw] leading-[20px] w-full text-center self-center"
+                  className="font-type1 font-normal text-sm leading-[20px] w-full text-center self-center"
                   type="number"
                   value={quantitySelected}
                   onChange={handleChange}
                 />
               </div>
               <div
-                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center"
+                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center bg-black"
                 onClick={() =>
-                  setQuantitySelected(parseInt(quantitySelected) + 1)
+                  quantitySelected < courseDetails.quantity ?
+                  setQuantitySelected(parseInt(quantitySelected) + 1): toast.error('Quantity Exceeded')
                 }
               >
-                <BsPlus className="text-b3 self-center" />
+                <BsPlus className="text-w1 self-center" />
               </div>
             </div>
           </div>

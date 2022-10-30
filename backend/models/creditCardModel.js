@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+mongoose.set('sanitizeFilter', true)
 const creditCardSchema = mongoose.Schema(
   {
     accountId: mongoose.SchemaTypes.ObjectId,

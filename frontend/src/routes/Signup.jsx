@@ -150,7 +150,7 @@ const Signup = () => {
                       className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="text"
                       maxLength={20}
-                      {...register("firstName", { required: true, maxLength:20 })}
+                      {...register("firstName", { required: true, maxLength:25 })}
                       placeholder="First Name"
                       id="firstName"
                       name="firstName"
@@ -167,7 +167,7 @@ const Signup = () => {
                     className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                     type="text"
                     maxLength={20}
-                    {...register("lastName", { required: true, maxLength:20 })}
+                    {...register("lastName", { required: true, maxLength:25 })}
                     placeholder="Last Name"
                     id="lastName"
                     name="lastName"

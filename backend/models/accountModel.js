@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+mongoose.set('sanitizeFilter', true)
 
 const accountSchema = mongoose.Schema(
   {
