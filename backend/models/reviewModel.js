@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+mongoose.set('sanitizeFilter', true)
 const reviewSchema = mongoose.Schema(
   {
     rating: {
@@ -12,9 +12,11 @@ const reviewSchema = mongoose.Schema(
     },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Account",
     },
     courseId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Course"
     },
   },
   {

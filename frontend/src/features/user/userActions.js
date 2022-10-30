@@ -10,7 +10,6 @@ export const registerUser = createAsyncThunk(
     async (newUserInfo, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.register(newUserInfo); // change to set local storage at 2fa
-            localStorage.setItem('userId', verifyUser._id)
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -29,8 +28,6 @@ export const userLogin = createAsyncThunk(
     async ({ email, password }, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.login(email, password);
-            // store user's token in local storage
-            localStorage.setItem('userId', verifyUser._id)
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -45,10 +42,13 @@ export const userLogin = createAsyncThunk(
 
 export const getUserDetails = createAsyncThunk(
     'user/getUserDetails',
-    async (arg, {rejectWithValue}) => {
+    async (arg, {getState, rejectWithValue}) => {
         try {
+            let {user} = getState()
+            console.log("user: ",user)
+            const userId = localStorage.getItem("userId")
             // send user's id to retrieve account information
-            const data = await authService.getAccount();
+            const data = await authService.getAccount(user.userId);
             return data
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -62,10 +62,12 @@ export const getUserDetails = createAsyncThunk(
 
 export const user2FA = createAsyncThunk(
     'user/auth2FA',
-    async ({ code }, { getState, rejectWithValue }) => {
+    async (arg, { getState, rejectWithValue }) => {
         try {
             let {user} = getState()
-            const response = await authService.verify2FA(user.userInfo.email, code);
+            console.log("hello ",arg)
+            const response = await authService.verify2FA(arg);
+            localStorage.setItem('userId', response._id)
             return response
         } catch (error) {
             // return custom error message from API if any
@@ -83,9 +85,8 @@ export const getCartNumber = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
-            console.log("user id at sliceee: ", arg)
-            const response = await cartsService.getTotal(arg)
-            return response
+            const userId = localStorage.getItem("userId")
+            return await cartsService.getTotal(userId)
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)

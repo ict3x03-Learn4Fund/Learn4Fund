@@ -1,15 +1,12 @@
-// import {useState} from 'react'
 import BannedUsers from "../components/admin/BannedUsers";
 import CoursesCatalog from "../components/admin/CoursesCatalog";
 import SuspiciousActivities from "../components/admin/SuspiciousActivities";
 import { React, useState, useEffect } from "react";
 import http from "../http-common";
-import { useAuth } from "../hooks/useAuth";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import adminAuthService from "../services/admin";
 import axios from "axios";
 import toast from "react-hot-toast";
-// import { get } from 'mongoose';
 
 function testPostLog() {
   const data = { email: "addme@gmail.com", reason: "Account lockout" };
@@ -22,21 +19,6 @@ const Admin = () => {
   const [logs, setLogs] = useState([]);
   const navigate = useNavigate();
 
-  // // Fetch log data
-  // const fetchLogDataOld = async () => {
-  //   console.log("Fetching logs");
-  //   getAllLogs() // [Logging] Get all logs /hooks/useAuth.jsx
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         setLogs(response.data);
-  //       } else {
-  //         navigate("/");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
 
   const fetchLogData = async () => {
     try {
@@ -61,21 +43,6 @@ const Admin = () => {
     }
   };
 
-  // // Fetch all accounts from /getAllAccounts
-  // const fetchDataOld = async () => {
-  //   console.log("Fetching accounts");
-  //   getAllAccounts() // [Logging] Get all accounts /hooks/useAuth.jsx
-  //     .then((response) => {
-  //       if (response.status === 200) {
-  //         setAccounts(response.data);
-  //       } else {
-  //         navigate("/");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
 
   const fetchData = async () => {
     try {
