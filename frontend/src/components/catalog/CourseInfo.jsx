@@ -191,7 +191,7 @@ function CourseInfo() {
         <div className="flex flex-col w-full h-[244px] my-[16px]">
           <div className="flex w-full h-full justify-center">
             <img
-              src={`http://localhost:5000/v1/api/images/getImg/${courseDetails.courseImg}`}
+              src={`https://learn4fund.tk/v1/api/images/getImg/${courseDetails.courseImg}`}
               alt={""}
             />
           </div>
