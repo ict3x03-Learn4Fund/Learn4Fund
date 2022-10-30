@@ -32,7 +32,7 @@ const app = express();
 // TODO: Uncomment this line in production
 // app.set('trust proxy', 2);                                 // [DoS] trust 2 , cloudflare and nginx
 
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 // parse application/x-www-form-urlencoded, false can only parse incoming Request Object of strings or arrays
 app.use(express.urlencoded({ extended: false }));

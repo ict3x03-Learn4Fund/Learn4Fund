@@ -152,9 +152,9 @@ router.post("/checkCaptcha", async (req, res) => {
     
     //check response status and send back to the client-side
           if (res.status(200)) {
-            res.send("Human 👨 👩");
+            res.status(200).json({message: "Success"});
         }else{
-          res.send("Robot 🤖");
+          res.status(400).json({message: "Failed"});
         }
     });
 
