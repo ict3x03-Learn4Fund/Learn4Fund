@@ -47,9 +47,9 @@ const apiAddDonations = asyncHandler(async (req, res) => {
       path: "accountId",
       select: ["firstName", "lastName"],
     });
-    if (!accountId) {
-      return res.status(400).json({ message: "AccountId cannot be null." });
-    }
+    // if (!accountId) {
+    //   return res.status(400).json({ message: "AccountId cannot be null." });
+    // }
     if (!donator) {
       donator = await Donation.create({
         accountId,

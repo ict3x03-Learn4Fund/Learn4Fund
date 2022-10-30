@@ -11,13 +11,12 @@ const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-const { check, validationResult } = require("express-validator"); // [Validation, Sanitization]
-const rateLimit = require("express-rate-limit"); // [DoS] Prevent brute force attacks
+const { check, validationResult } = require("express-validator");     // [Validation, Sanitization]
+const rateLimit = require("express-rate-limit");                      // [DoS] Prevent brute force attacks
 const Account = require("../models/accountModel"); // to access the DB
 const Logs = require("../models/logsModel");
 
-const createAccountLimiter = rateLimit({
-  // [DoS] Prevent mass account creation
+const createAccountLimiter = rateLimit({                              // [DoS] Prevent mass account creation
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 5, // Limit each IP to 5 create account requests per hour
   message:
@@ -35,8 +34,7 @@ const createAccountLimiter = rateLimit({
     response.status(options.statusCode).send(options.message)
   }
 });
-const verify2FALimiter = rateLimit({
-  // [DoS] Prevent brute force attacks on 2FA
+const verify2FALimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
   windowMs: 15 * 60 * 1000, // 15 mins
   max: 5, // Limit each IP to 5 code verification requests per 15 mins
   message: "Too much tries, please try again in 15 mins",
@@ -60,15 +58,14 @@ router.route("/register").post(createAccountLimiter,
   [
     check("email")
       .notEmpty()
-      .withMessage("Email is required") // [Validation] check if email is empty
+      .withMessage("Email is required").bail()                             // [Validation] check if email is empty
       .isLength({ max: 255 })
-      .withMessage("Email is too long") // [Validation] max length
+      .withMessage("Email is too long").bail()                                // [Validation] max length
       .isEmail()
-      .withMessage("Email is invalid") // [Validation] check if email is valid
-      .normalizeEmail() // [Sanitization] Sanitize email
-      .trim() // [Sanitization] remove whitespace
-      .custom(async (value) => {
-        // [Validation] Check if email already exists
+      .withMessage("Email is invalid")                                // [Validation] check if email is valid
+      .normalizeEmail()                                               // [Sanitization] Sanitize email
+      .trim()                                                         // [Sanitization] remove whitespace
+      .custom(async (value) => {                                      // [Validation] Check if email already exists
         const accountExist = await Account.findOne({ email: value });
         if (accountExist) {
           throw new Error("Account already exists");
@@ -77,32 +74,32 @@ router.route("/register").post(createAccountLimiter,
       }),
     check("password", "Password is too weak")
       .notEmpty()
-      .withMessage("Password is required") // [Validation] check if password is empty
-      .isLength({ min: 12 }), // [Validation] check if password is at least 12 characters
+      .withMessage("Password is required").bail()                            // [Validation] check if password is empty
+      .isLength({ min: 12 }),                                         // [Validation] check if password is at least 12 characters
     check("firstName", "First name is too long")
       .notEmpty()
-      .withMessage("First name is required") // [Validation] check if first name is empty
-      .isLength({ max: 20 }) // [Validation] max length
-      .trim() // [Sanitization] remove whitespace
-      .escape(), // [Sanitization] Escape HTML characters
+      .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
+      .trim()                                                         // [Sanitization] remove whitespace
+      .escape()                                                       // [Sanitization] Escape HTML characters
+      .isLength({ max: 25 }),                                         // [Validation] max length
     check("lastName", "Last name is too long")
       .notEmpty()
-      .withMessage("Last name is required") // [Validation] check if last name is empty
-      .isLength({ max: 20 }) // [Validation] max length
-      .trim() // [Sanitization] Remove whitespace from both sides of a string
-      .escape(), // [Sanitization] Escape HTML characters
+      .withMessage("Last name is required").bail()                           // [Validation] check if last name is empty
+      .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
+      .escape()                                                       // [Sanitization] Escape HTML characters
+      .isLength({ max: 25 }),                                         // [Validation] max length
     check("phone", "Phone number is invalid")
       .notEmpty()
-      .withMessage("Phone number is required") // [Validation] check if phone number is empty
-      .isMobilePhone() // [Validation] check if phone number is valid
-      .isNumeric() // [Validation] check if phone number is number
-      .isLength({ min: 6, max: 12 }) // [Validation] Check if phone number is between 6 and 12 digits
+      .withMessage("Phone number is required").bail()                        // [Validation] check if phone number is empty
+      .isMobilePhone().bail()                                                // [Validation] check if phone number is valid
+      .isNumeric().bail()                                                    // [Validation] check if phone number is number
+      .isLength({ min: 6, max: 12 }).bail()                                  // [Validation] Check if phone number is between 6 and 12 digits
       .trim(), // Remove whitespace from both sides of a string
     check("countryCode", "Country code is invalid")
-      .notEmpty()
-      .withMessage("Country code is required") // [Validation] check if country code is empty
-      .matches(/^(\+\d{2,3})$/) // [Validation] check if country code starts with + and has 2 or 3 digits
-      .trim(), // [Sanitization] Remove whitespace from both sides of a string
+      .notEmpty().bail()
+      .withMessage("Country code is required")                        // [Validation] check if country code is empty
+      .matches(/^(\+\d{2,3})$/)                                       // [Validation] check if country code starts with + and has 2 or 3 digits
+      .trim(),                                                        // [Sanitization] Remove whitespace from both sides of a string
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -122,9 +119,9 @@ router.route("/login").post(
   [
     check("email")
       .notEmpty()
-      .withMessage("Email is required") // [Validation] check if email is empty
-      .normalizeEmail() // [Sanitization] Sanitize email
-      .trim(), // [Sanitization] remove whitespace
+      .withMessage("Email is required")                               // [Validation] check if email is empty
+      .normalizeEmail()                                               // [Sanitization] Sanitize email
+      .trim(),                                                        // [Sanitization] remove whitespace
     check("password").notEmpty().withMessage("Password is required"),
   ],
   (req, res) => {

@@ -6,6 +6,7 @@ const Logs = require("../models/logsModel");
 const protect = asyncHandler((req,res,next) =>{
     let token
     let url = req.baseUrl;                                                                  //[Authorization] Check if the request is for admin or user
+    let path = req.route.path;
     let authCookie = req.headers.cookie;
     if (authCookie) {
         authCookie = authCookie.split('; ');
@@ -14,9 +15,9 @@ const protect = asyncHandler((req,res,next) =>{
                 try {
                     // Get token from header
                     token = cookie.split('access_token=')[1]                                //[Authentication] Get token from cookie
-                    if (token == null) {                        
 
-                        return res.status(401).json({ message: 'No token, authorization denied' })
+                    if (token == null) {
+                        return res.status(401).json({ message: 'Not logged in' })
                     }
             
                     //verify token
@@ -28,8 +29,9 @@ const protect = asyncHandler((req,res,next) =>{
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
 
-                    // Check if user is admin for admin routes
-                    if (url === '/v1/api/admin'){                                           //[Authorization] Check if user is admin
+                    // [Authorization] Check if user is admin
+                    if (url === '/v1/api/admin' ||
+                        (url === '/v1/api/courses' && (path === "/create" || path === "/update/:id" || path === "/delete/:id"))) { 
                         if (req.account.role !== 'admin') {
                             // Send to logs db
                             Logs.create({
@@ -41,14 +43,11 @@ const protect = asyncHandler((req,res,next) =>{
 
                             return res.status(403).json({ message: 'Not authorized' });
                         }
-                        // else {
-                        //     next();
-                        // }
                     }
                     
                     next() // Move on from the middleware
                 } catch (error) {
-                    return res.status(403).json({ message: 'Not authorized' })
+                    return res.status(403).json({ message: 'Error' })
                 }
             }
         })
@@ -61,8 +60,7 @@ const protect = asyncHandler((req,res,next) =>{
             reason: "Attempted to access " + req.url + " without authorization",
             time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
         });
-        return res.status(401).json({ message: 'Not authenticated' })
-        // throw new Error('Not authorized, no token')
+        return res.status(401).json({ message: 'Not logged in' })
     }
 })
 
