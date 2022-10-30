@@ -37,9 +37,9 @@ router.route("/register").post(createAccountLimiter,
   [
     check("email")
       .notEmpty()
-      .withMessage("Email is required")                               // [Validation] check if email is empty
+      .withMessage("Email is required").bail()                             // [Validation] check if email is empty
       .isLength({ max: 255 })
-      .withMessage("Email is too long")                               // [Validation] max length
+      .withMessage("Email is too long").bail()                                // [Validation] max length
       .isEmail()
       .withMessage("Email is invalid")                                // [Validation] check if email is valid
       .normalizeEmail()                                               // [Sanitization] Sanitize email
@@ -53,29 +53,29 @@ router.route("/register").post(createAccountLimiter,
       }),
     check("password", "Password is too weak")
       .notEmpty()
-      .withMessage("Password is required")                            // [Validation] check if password is empty
+      .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .isLength({ min: 12 }),                                         // [Validation] check if password is at least 12 characters
     check("firstName", "First name is too long")
       .notEmpty()
-      .withMessage("First name is required")                          // [Validation] check if first name is empty
+      .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
       .trim()                                                         // [Sanitization] remove whitespace
       .escape()                                                       // [Sanitization] Escape HTML characters
       .isLength({ max: 25 }),                                         // [Validation] max length
     check("lastName", "Last name is too long")
       .notEmpty()
-      .withMessage("Last name is required")                           // [Validation] check if last name is empty
+      .withMessage("Last name is required").bail()                           // [Validation] check if last name is empty
       .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
       .escape()                                                       // [Sanitization] Escape HTML characters
       .isLength({ max: 25 }),                                         // [Validation] max length
     check("phone", "Phone number is invalid")
       .notEmpty()
-      .withMessage("Phone number is required")                        // [Validation] check if phone number is empty
-      .isMobilePhone()                                                // [Validation] check if phone number is valid
-      .isNumeric()                                                    // [Validation] check if phone number is number
-      .isLength({ min: 6, max: 12 })                                  // [Validation] Check if phone number is between 6 and 12 digits
+      .withMessage("Phone number is required").bail()                        // [Validation] check if phone number is empty
+      .isMobilePhone().bail()                                                // [Validation] check if phone number is valid
+      .isNumeric().bail()                                                    // [Validation] check if phone number is number
+      .isLength({ min: 6, max: 12 }).bail()                                  // [Validation] Check if phone number is between 6 and 12 digits
       .trim(), // Remove whitespace from both sides of a string
     check("countryCode", "Country code is invalid")
-      .notEmpty()
+      .notEmpty().bail()
       .withMessage("Country code is required")                        // [Validation] check if country code is empty
       .matches(/^(\+\d{2,3})$/)                                       // [Validation] check if country code starts with + and has 2 or 3 digits
       .trim(),                                                        // [Sanitization] Remove whitespace from both sides of a string
