@@ -17,8 +17,7 @@ const login = async (email, password) => {
 };
 
 // Verify 2FA
-const verify2FA = async (email, token) => {
-  const userData = { email, token };
+const verify2FA = async (userData) => {
   // Making calls to server side
   const response = await http.post("/accounts/verify2FA", userData);
 

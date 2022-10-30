@@ -5,6 +5,7 @@ const asyncHandler = require("express-async-handler");
 const Account = require("../models/accountModel");
 const Logs = require("../models/logsModel");
 const authy = require("authy")(process.env.AUTHY_API_KEY);
+const speakEasy = require("speakeasy");
 
 /***
  * @desc Register
@@ -23,58 +24,71 @@ const apiRegister = asyncHandler(async (req, res) => {
     countryCode,
   } = req.body;
 
-  //hash password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  try {
+    //hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const secret = speakEasy.generateSecret();
 
-  // Creates new user in DB
-  const account = await Account.create({
-    email,
-    firstName,
-    lastName,
-    emailSubscription,
-    password: hashedPassword,
-  });
-  return res.status(200).json({
-    _id: account.id,
-    firstName: account.firstName,
-    lastName: account.lastName,
-    role: account.role,
-  });
-  // ACCOUNT SUSPENDED FOR AUTHY, CANNOT WORK
-  // if (account) {
-  //   authy.register_user(email, phone, countryCode, (err, regRes) => {
-  //     if (err) {
-  //       return res.json({ message: err.message });
-  //     }
-  //     account.authyId = regRes.user.id;
-  //     account.save((err, user) => {
-  //       if (err) {
-  //         return res.json({ message: err.message });
-  //       }
-  //     });
+    // Creates new user in DB
+    const account = await Account.create({
+      email,
+      firstName,
+      lastName,
+      emailSubscription,
+      password: hashedPassword,
+      secret: secret,
+    });
+    return res.status(200).json({
+      _id: account.id,
+      secret: account.secret.otpauth_url,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-  //     authy.request_sms(
-  //       account.authyId,
-  //       { force: true },
-  //       function (err, smsRes) {
-  //         if (err) {
-  //           return res.json({
-  //             message: "An error occurred while sending OTP to user",
-  //           });
-  //         }
-  //       }
-  //     );
-  //     return res
-  //       .status(200)
-  //       .json({ email: account.email, message: "OTP sent to user" });
-
-  //   });
-
-  // } else {
-  //   res.status(400);
-  //   throw new Error("Invalid account data");
-  // }
+/***
+ * @desc Verify 2FA Secret
+ * @route POST /v1/api/accounts/verify2FA
+ */
+const apiVerify2FA = asyncHandler(async (req, res) => {
+  try {
+    const { userId, token } = req.body;
+    const user = await Account.findById(userId);
+    if (!userId) {
+      return res.status(400).json({message: "UserId cannot be null."})
+    }
+    if (!user) {
+      return res.status(400).json({ message: "User not registered yet." });
+    }
+    const { base32: secret } = user.secret;
+    const verified = speakEasy.totp.verify({
+      secret,
+      encoding: "base32",
+      token,
+    });
+    console.log(verified)
+    if (verified) {
+      const access_token = generateToken(userId);
+      res.cookie("access_token", access_token, {
+        httpOnly: true,                               // [Prevent XSS] Cannot be accessed by client side JS
+        // maxAge: 3600 * 1000,
+        secure: true,
+        sameSite: "strict",                           // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
+      });
+      return res.status(200).json({
+        _id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      });
+    } else {
+      return res.status(400).json({ verified: false });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 /***
@@ -89,172 +103,161 @@ const apiLogin = asyncHandler(async (req, res) => {
     // Check if user exists in DB using Account schema (Mongoose -> MongoDB)
     const account = await Account.findOne({ email });
 
-    if (account == null){                                                                 // [Authentication] Check if user exists in DB
+    if (account == null) {                                            // [Authentication] Check if user exists in DB
       throw new Error("Invalid credentials.");
     }
 
-    if (account.lockedOut) {                                                              // [Authentication] Check if user is locked out
-        throw new Error("Your account has been locked.\nPlease contact the administrator.");        
+    if (account.lockedOut) {                                          // [Authentication] Check if user is locked out
+      throw new Error(
+        "Your account has been locked.\nPlease contact the administrator."
+      );
     }
 
-    if (account && (await bcrypt.compare(password, account.password))) {                  // [Authentication] Check if password is correct
-      // uncheck the OTP for now, easier for development
-      // authy.request_sms(
-      //   account.authyId,
-      //   { force: true },
-      //   function (err, smsRes) {
-      //     console.log("123");
-      //     if (err) {
-      //       res.json({
-      //         message: err,
-      //       });
-      //     } else {
-      //       res
-      //       .status(200)
-      //       .json({ email: account.email, message: "OTP sent to user" });
-      //     }
-        // }        
-      // );
-      // res
-      // .status(200)
-      // .json({ email: account.email, message: "OTP sent to user" });
-      
+    if (account && (await bcrypt.compare(password, account.password))) {
       // IF SUCCEED RESET THE lockTimes
-      Account.updateOne({email: email},{ $set: {"loginTimes": 0}},function (err, result) { // [Authentication] Reset the loginTimes
-        if (err){
+      Account.updateOne(
+        { email: email },
+        { $set: { loginTimes: 0 } },
+        function (err, result) {                                      // [Authentication] Reset the loginTimes
+          if (err) {
             console.log("Set loginTimes failed. Error: " + err);
-        }else{
-            console.log("Success! loginTimes reset to 0: " + email)
-            console.log(result)
+          } else {
+            console.log("Success! loginTimes reset to 0: " + email);
+            console.log(result);
+          }
         }
-    });
-
-      // TODO: REMOVE THIS CODE BELOW, BY RIGHT SHOULD ONLY RECEIVE EMAIL 
-      const access_token = generateToken(account._id)
-      res.cookie("access_token", access_token, {
-        httpOnly: true,                                 // [Prevent XSS] Cannot be accessed by client side JS
-        // secure: process.env.JWT_SECRET,
-        maxAge: 3600 * 1000,
-        secure: true,
-        sameSite: 'strict'                              // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites. 
-      });
+      );
       return res.status(200).json({
-        _id: account.id,
-        firstName: account.firstName,
-        lastName: account.lastName,
-        role: account.role,
-        token: access_token,
-        message: "Token is valid",
+        _id: account.id
       });
-
-    } else {            
-      console.log("Failed login")
+    } else {
+      console.log("Failed login");
 
       /* ACCOUNT LOCKING START*/
       // If user attempts to login 5 times and account is not locked, lock the account
-      if (account.loginTimes > 3 && account.lockedOut == false) {                           // [Logging] Check if user has attempted to login 5 times
-          console.log("Locking account: " + email);
-          Account.updateOne({email: email},{ $set: {"lockedOut": true}},function (err, result) {
-            if (err){
-                console.log("Account lock failed. Error: " + err);
-            }else{
-                console.log("Success! Account locked: " + email);
-                //console.log(result)
-                const sgDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
-                
-                // Send to logs db                
-                Logs.create({ email: account.email, type: "auth", reason: "Account Lockout", time: sgDateTime});
+      if (account.loginTimes > 3 && account.lockedOut == false) {   // [Logging] Check if user has attempted to login 5 times     
+        console.log("Locking account: " + email);
+        Account.updateOne(
+          { email: email },
+          { $set: { lockedOut: true } },
+          function (err, result) {
+            if (err) {
+              console.log("Account lock failed. Error: " + err);
+            } else {
+              console.log("Success! Account locked: " + email);
+              //console.log(result)
+              const sgDateTime = new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Singapore",
+              });
 
-                /* SEND EMAIL TO ADMIN START*/
-                console.log("Sending email to admin...");                                   // [Alert] Send email to admin
-                var nodemailer = require('nodemailer');
-                var transporter = nodemailer.createTransport({
-                  service: 'gmail',
-                  auth: {
-                    user: 'learn4fund@gmail.com',
-                    pass: process.env.NODEMAILER_GMAIL_PASS
-                  }
-                });                                
+              // Send to logs db
+              Logs.create({
+                email: account.email,
+                type: "auth",
+                reason: "Account Lockout",
+                time: sgDateTime,
+              });
 
-                var mailOptions = {
-                  from: 'learn4fund@gmail.com',
-                  to: 'learn4fundadm1n@gmail.com',
-                  subject: 'ACCOUNT LOCK ISSUED at ' + sgDateTime,
-                  text: 'The following account was locked at '+ sgDateTime +": " + email
-                };
-                
-                transporter.sendMail(mailOptions, function(error, info){
-                  if (error) {
-                    console.log(error);
-                  } else {
-                    console.log('Email sent: ' + info.response);
-                  }
+              /* SEND EMAIL TO ADMIN START*/
+              console.log("Sending email to admin...");             // [Alert] Send email to admin
+              var nodemailer = require("nodemailer");
+              var transporter = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                  user: "learn4fund@gmail.com",
+                  pass: process.env.NODEMAILER_GMAIL_PASS,
+                },
+              });
+
+              var mailOptions = {
+                from: "learn4fund@gmail.com",
+                to: "learn4fundadm1n@gmail.com",
+                subject: "ACCOUNT LOCK ISSUED at " + sgDateTime,
+                text:
+                  "The following account was locked at " +
+                  sgDateTime +
+                  ": " +
+                  email,
+              };
+
+              transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("Email sent: " + info.response);
+                }
                 /* SEND EMAIL TO ADMIN END*/
-                });
+              });
             }
-        });
-      }
-      else {
-        console.log("Incrementing lockTimes: " + email);                                    // [Logging] Increment loginTimes by 1
-        Account.updateOne({email: email},{ $inc: {"loginTimes": 1}},function (err, result) {
-          if (err){
-              console.log("loginTimes increment failed. Error: " + err);
-          }else{
-              console.log("Success! loginTimes incremented for: " + email)
           }
-      });
-      }      
-      const attemptsLeft = 4-account.loginTimes;                                            // [Logging] Calculate login attempts left out of 5
-      if (attemptsLeft == 1){
-        throw new Error("Invalid credentials.\nThis is your final attempt.");  
+        );
+      } else {
+        console.log("Incrementing lockTimes: " + email);        // [Logging] Increment loginTimes by 1
+        Account.updateOne(
+          { email: email },
+          { $inc: { loginTimes: 1 } },
+          function (err, result) {
+            if (err) {
+              console.log("loginTimes increment failed. Error: " + err);
+            } else {
+              console.log("Success! loginTimes incremented for: " + email);
+            }
+          }
+        );
       }
-      if (attemptsLeft > 0){
+      const attemptsLeft = 4 - account.loginTimes;              // [Logging] Calculate login attempts left out of 5
+      if (attemptsLeft == 1) {
+        throw new Error("Invalid credentials.\nThis is your final attempt.");
+      }
+      if (attemptsLeft > 0) {
         throw new Error("Invalid credentials.\nAttempts left: " + attemptsLeft);
-      }else{        
-        throw new Error("Your account has been locked.\nPlease contact the administrator.")
-      }    
+      } else {
+        throw new Error(
+          "Your account has been locked.\nPlease contact the administrator."
+        );
+      }
     }
     /*ACCOUNT LOCKING END*/
   } catch (err) {
-    res.status(400).json({ message: err.message}) // NOTE: should not throw the specific error in production
+    res.status(400).json({ message: err.message }); // NOTE: should not throw the specific error in production
   }
 });
 
-/***
- * @desc verify2FA
- * @route GET /v1/api/accounts/verify2FA
- * @access Public
- */
-const apiVerify2FA = asyncHandler(async (req, res) => {
-  try {
-    const { email, token } = req.body;
-    const account = await Account.findOne({ email });
-    authy.verify(account.authyId, token, function (err, tokenRes) {
-      if (err) {
-        res.json({ message: "OTP verification failed" });
-      }
-      const access_token = generateToken(account._id)
-      res.cookie("access_token", access_token, {
-        httpOnly: true,                                 // [Prevent XSS] Cannot be accessed by client side JS
-        // secure: process.env.JWT_SECRET,
-        maxAge: 3600 * 1000,
-        secure: true,
-        sameSite: 'strict'                             // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites. 
-      });
-      return res.status(200).json({
-        _id: account.id,
-        firstName: account.firstName,
-        lastName: account.lastName,
-        email: account.email,
-        role: account.role,
-        token: access_token,
-        message: "Token is valid",
-      });
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// /***
+//  * @desc verify2FA
+//  * @route GET /v1/api/accounts/verify2FA
+//  * @access Public
+//  */
+// const apiVerify2FA = asyncHandler(async (req, res) => {
+//   try {
+//     const { email, token } = req.body;
+//     const account = await Account.findOne({ email });
+//     authy.verify(account.authyId, token, function (err, tokenRes) {
+//       if (err) {
+//         res.json({ message: "OTP verification failed" });
+//       }
+//       const access_token = generateToken(account._id)
+//       res.cookie("access_token", access_token, {
+//         httpOnly: true,                                  // [Prevent XSS] Cannot be accessed by client side JS
+//         // secure: process.env.JWT_SECRET,
+//         maxAge: 3600 * 1000,
+//         secure: true,
+//         sameSite: 'strict'                               // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
+//       });
+//       return res.status(200).json({
+//         _id: account.id,
+//         firstName: account.firstName,
+//         lastName: account.lastName,
+//         email: account.email,
+//         role: account.role,
+//         token: access_token,
+//         message: "Token is valid",
+//       });
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 /***
  * @desc Get User
@@ -289,13 +292,11 @@ const apiGetAccount = asyncHandler(async (req, res) => {
 });
 
 //Generate JWT
-const generateToken = (id) => {                         // [Session] Generate JWT
-  return jwt.sign(
-    { id },
-    process.env.JWT_SECRET,
-    { algorithm: "HS512", expiresIn: "1h" }
-  );
-
+const generateToken = (id) => {                       // [Session/Authentication] Generate JWT 
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    algorithm: "HS512",
+    expiresIn: "2h",
+  });
 };
 
 module.exports = {

@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
+mongoose.set('sanitizeFilter', true)
 
-const cartItem = mongoose.Schema({
-  courseId: mongoose.SchemaTypes.ObjectId,
-  quantity: Number,
-});
 
 const cartModel = mongoose.Schema(
   {
@@ -12,6 +9,14 @@ const cartModel = mongoose.Schema(
       type: Array,
       default: [],
     },
+    donationAmt: {
+      type: Number,
+      default: 0,
+    },
+    showDonation: {
+      type: Boolean,
+      default: false, 
+    }
   },
   {
     timestamps: true,

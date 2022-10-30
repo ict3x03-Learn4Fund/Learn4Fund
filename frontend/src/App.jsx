@@ -66,9 +66,9 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route exact path="settings" element={<Settings />} />
                 <Route exact path="login2FA" element={<Login2FA />} />
-                <Route exact path="settings" element={<Settings />} />
                 <Route exact path="admin" element={<Admin />} />
               </Route>
+              <Route exact path="otp" element={<OTPModal />} />
               <Route exact path="cart" element={<Cart />} />
               <Route exact path="login" element={<Login />} />
               <Route exact path="signup" element={<Signup />} />

@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { getUserDetails, getCartNumber } from '../../features/user/userActions'
 
 function CourseInfo() {  
-  const { loading, userInfo, error, success, cartNo } = useSelector(
+  const { loading, userInfo, userId, error, success, cartNo } = useSelector(
     (state) => state.user
   )
   const parse = require("html-react-parser");
@@ -23,8 +23,16 @@ function CourseInfo() {
   const [reviews, setReviews] = useState([]);
   const [stars, setStars] = useState(0);
   const [reviewDescription, setReviewDescription] = useState("");
+  const [averageStars, setAverageStars] = useState(0);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const dispatch = useDispatch()
 
+  // get user info
+  useEffect(()=> {
+    if (userId){
+      dispatch(getUserDetails())
+    }
+  }, [])
 
   // retrieve all reviews
   const retrieveReviews = () => {
@@ -55,6 +63,7 @@ function CourseInfo() {
     window.scrollTo(0, 0);
     retrieveCourses();
     retrieveReviews();
+    calculateAverageStars()
   }, [courseID]);
 
   // Add quantity to const variable
@@ -63,7 +72,11 @@ function CourseInfo() {
   }
 
   // Check if there is any cart items in session storage
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setReviewSubmitted(false)
+    retrieveReviews()
+    calculateAverageStars()
+  }, [reviewSubmitted]);
 
   // save quantity to cart
   function addToCart(e) {
@@ -105,20 +118,24 @@ function CourseInfo() {
     reviews.map((review, index) => {
        sum += review.rating
     },0)
-    return sum
+    sum = sum/ reviews.length
+    setAverageStars(sum);
   }
 
   const handleNewReview = () => {
     const newReview = {
       rating: stars,
       description: reviewDescription,
-      accountId: userInfo._id,
+      accountId: userId,
       courseId: courseID,
     }
     reviewsService.getCreateReview(newReview).then((response) => {
-      toast.success("A review has been added successfully.")
-    }).error((error) => {
-      toast.error(error.response)
+      if (response.status == 200){
+        toast.success("A review has been added successfully.")
+        setReviewSubmitted(true)
+      }
+    }).catch((error) => {
+      toast.error(error.response.data.message)
     })
   }
 
@@ -174,7 +191,7 @@ function CourseInfo() {
         <div className="flex flex-col w-full h-[244px] my-[16px]">
           <div className="flex w-full h-full justify-center">
             <img
-              src={`http://localhost:5000/v1/api/images/getImg/${courseDetails.courseImg}`}
+              src={`https://learn4fund.tk/v1/api/images/getImg/${courseDetails.courseImg}`}
               alt={""}
             />
           </div>
@@ -216,30 +233,31 @@ function CourseInfo() {
             </div>
             <div className="flex">
               <div
-                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center"
+                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center bg-black"
                 onClick={() =>
-                  quantitySelected > 0
+                  quantitySelected > 0 
                     ? setQuantitySelected(parseInt(quantitySelected) - 1)
                     : null
                 }
               >
-                <BsDash className="text-b3 self-center" />
+                <BsDash className="text-w1 self-center" />
               </div>
               <div className="flex h-full border-[1px] w-[50px] justify-center text-center">
                 <input
-                  className="font-type1 font-normal text-[1.5vw] leading-[20px] w-full text-center self-center"
+                  className="font-type1 font-normal text-sm leading-[20px] w-full text-center self-center"
                   type="number"
                   value={quantitySelected}
                   onChange={handleChange}
                 />
               </div>
               <div
-                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center"
+                className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center bg-black"
                 onClick={() =>
-                  setQuantitySelected(parseInt(quantitySelected) + 1)
+                  quantitySelected < courseDetails.quantity ?
+                  setQuantitySelected(parseInt(quantitySelected) + 1): toast.error('Quantity Exceeded')
                 }
               >
-                <BsPlus className="text-b3 self-center" />
+                <BsPlus className="text-w1 self-center" />
               </div>
             </div>
           </div>
@@ -266,12 +284,12 @@ function CourseInfo() {
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
             <span className="font-type1 text-[1.4vw] text-b3 font-bold">
-              Customer Reviews - {calculateAverageStars? calculateAverageStars: "-"}/5{" "}
+              Customer Reviews - {averageStars ? averageStars: 0}/5
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />
           </div>
 
-          <div className="flex flex-wrap h-[300px] overflow-y-scroll">
+          <div className={reviews.length >= 3 ? "flex flex-wrap h-[300px] overflow-y-scroll": "flex flex-wrap h-[300px] "}>
             {reviews.map((review, index) => {
               return (
                 <div className="flex-row flex-wrap w-full my-2 text-[1vw]">

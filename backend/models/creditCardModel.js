@@ -1,15 +1,24 @@
 const mongoose = require('mongoose')
-
+mongoose.set('sanitizeFilter', true)
 const creditCardSchema = mongoose.Schema(
   {
-    showDonation: {
-      type: Boolean,
-      default: false,
+    accountId: mongoose.SchemaTypes.ObjectId,
+    name: {
+      type: String,
+      default: "",
     },
-    totalAmount: {
-      type: mongoose.Schema.Types.Double,
-      default: 0.0,
+    cardNo: {
+      type: String,
     },
+    last4No: {
+      type: String,
+    },
+    cardType: {
+      type: String,
+    },
+    expiryDate: {
+      type: String,
+    }
   },
   {
     timestamps: true

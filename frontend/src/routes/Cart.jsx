@@ -3,24 +3,30 @@ import cartsService from "../services/carts";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../features/user/userActions";
-import { CreditCardModal } from '../modals/CreditCardModal'
+import { CreditCardModal } from "../modals/CreditCardModal";
 
 const Cart = () => {
-  
   const [cartList, setCartList] = useState([]);
   const [checkout, setCheckout] = useState([]);
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [donation, setDonation] = useState(0);
+  const [showDonation, setShowDonation] = useState(false);
+  const [totalAmount, setTotalAmount] = useState();
   const { userInfo, userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [checkedState, setCheckedState] = useState();
   useEffect(() => {
-    if(userInfo) dispatch(getUserDetails());
     window.scrollTo(0, 0);
-    
-    if(userInfo) {getCart()} else {toast.error('Please login to view cart')};
 
-  }, [userInfo]);
+    if (userId) {
+      console.log(userId);
+      getUserDetails();
+      getCart();
+    } else {
+      toast.error("Please login to view cart");
+    }
+  }, []);
 
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));
@@ -31,9 +37,10 @@ const Cart = () => {
     cartsService
       .getCart(userId)
       .then((response) => {
-        console.log(userId);
         console.log(response.data);
         setCartList(response.data.coursesAdded);
+        setDonation(response.data.donationAmt);
+        setShowDonation(response.data.showDonation);
       })
       .catch((e) => {
         console.log(e);
@@ -59,15 +66,23 @@ const Cart = () => {
 
     // setTotal(totalPrice);
   };
-  
-  function checkOutItems(){
-    console.log("call stripe api")
-    if (checkout.length > 0){
-    setShowModal(true)
-    }else{
-      toast.error('Select items to checkout');
-    }
 
+  function checkOutItems() {
+    if (checkout.length > 0 || donation > 0) {
+      // save card and return id
+      // save address and return address
+      // create transaction
+      setTotalAmount((
+        checkout.reduce(
+          (partialSum, a) => partialSum + parseFloat(a.currentPriceTotal),
+          0.0
+        ) + parseFloat(donation)
+      ).toFixed(2));
+      console.log(totalAmount, "\n", donation, "\n", checkout)
+      setShowModal(true);
+    } else {
+      toast.error("Select items to checkout");
+    }
   }
 
   // retrieve cart
@@ -75,7 +90,6 @@ const Cart = () => {
     cartsService
       .deleteCart(userId, courseId)
       .then((response) => {
-        console.log(response.data);
         setCartList(response.data.coursesAdded);
         toast.success("Items successfully deleted from cart.");
       })
@@ -112,6 +126,7 @@ const Cart = () => {
     } else {
       setCheckout([...checkout, item]);
     }
+    console.log("checkout: ", checkout);
   }
 
   return (
@@ -202,7 +217,8 @@ const Cart = () => {
                 $
                 {checkout
                   .reduce(
-                    (partialSum, a) => partialSum + parseFloat(a.usualPrice),
+                    (partialSum, a) =>
+                      partialSum + parseFloat(a.usualPriceTotal),
                     0.0
                   )
                   .toFixed(2)}
@@ -217,7 +233,8 @@ const Cart = () => {
                 {checkout
                   .reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.usualPrice - a.discountedPrice),
+                      partialSum +
+                      parseFloat(a.usualPriceTotal - a.currentPriceTotal),
                     0.0
                   )
                   .toFixed(2)}
@@ -225,17 +242,25 @@ const Cart = () => {
             </div>
             <div className="flex flex-row justify-between w-full h-fit">
               <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
-                GrandTotal
+                Total After Discount
               </span>
               <span className="font-type1 text-[1vw] text-b1 font-bold">
                 $
                 {checkout
                   .reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.discountedPrice),
+                      partialSum + parseFloat(a.currentPriceTotal),
                     0.0
                   )
                   .toFixed(2)}
+              </span>
+            </div>
+            <div className="flex flex-row justify-between w-full h-fit">
+              <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
+                Donations made
+              </span>
+              <span className="font-type1 text-[1vw] text-b1 font-bold">
+                ${donation}.00
               </span>
             </div>
             <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2" />
@@ -248,10 +273,10 @@ const Cart = () => {
                 {(
                   checkout.reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.discountedPrice),
+                      partialSum + parseFloat(a.currentPriceTotal),
                     0.0
-                  ) / 10
-                ).toFixed(0)}
+                  ) + donation
+                ).toFixed(2)}
               </span>
             </div>
           </div>
@@ -266,7 +291,7 @@ const Cart = () => {
           </button>
         </div>
       </div>
-      {showModal && <CreditCardModal closeModal={setShowModal}/>}
+      {showModal && <CreditCardModal closeModal={setShowModal} totalAmount={totalAmount} donation={donation} showDonation={showDonation} checkout={checkout} />}
     </main>
   );
 };
