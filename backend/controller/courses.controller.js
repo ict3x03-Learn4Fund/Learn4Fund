@@ -62,8 +62,8 @@ const apiDeleteCourse = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Course not found');
   }
-  const deleteIndicator = true;
-  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, deleteIndicator, {new: true,});  // TODO: Is this suppose to delete course?
+  // TODO: delete indicator set but still displayed on frontend
+  const updatedCourse = await Course.findByIdAndUpdate({_id : req.params.id}, {deleteIndicator: true});  
   res.status(200).json(updatedCourse);
 });
 
