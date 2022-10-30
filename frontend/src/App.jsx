@@ -62,6 +62,7 @@ function App() {
               <Route exact path="privacy" element={<Privacy />} />
               <Route path="captcha" element={<ReCAPTCHA sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"/>} />
               <Route exact path="cookies" element={<Cookie />} />
+              <Route path="captcha" element={<ReCAPTCHA sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"/>} />
               <Route element={<ProtectedRoute />}>
                 <Route exact path="settings" element={<Settings />} />
                 <Route exact path="login2FA" element={<Login2FA />} />
