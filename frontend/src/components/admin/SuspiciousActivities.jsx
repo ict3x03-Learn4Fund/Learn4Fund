@@ -20,12 +20,12 @@ const SuspiciousActivities = ({logs, fetchLogData}) => {
       <span className="h-[2px] bg-[black] w-full my-2" />
 
       
-      <div className="w-full table-responsive">
-        <table className="table w-full table-striped table-bordered table-hover">
+      <div className="w-full table-responsive" style={{height: 700}}>
+        <table className="table w-full table-striped table-bordered table-hover overflow-y:auto">
           <thead>
             <tr>
               <th className='border'>Time</th>          
-              <th className='border'>Email</th>    
+              <th className='border'>Identifier</th>    
               <th className='border'>Reason</th>      
             </tr>
           </thead>
