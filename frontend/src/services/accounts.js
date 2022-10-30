@@ -32,12 +32,18 @@ const response = await http.get(`/accounts/getAccount`)
   return response.data;
 };
 
+
+// const getCaptcha = async () => {
+//   const response = await http.post('/accounts/verifyCaptcha')
+// }
+
 // Client side functions
 const authService = {
   register,
   login,
   verify2FA,
   getAccount,
+  // getCaptcha,
 };
 
 export default authService;

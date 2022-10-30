@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { useAuth } from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux'
 import { registerUser } from '../features/user/userActions'
 import {toast} from 'react-hot-toast'
+import ReCAPTCHA from "react-google-recaptcha"
+import axios from "axios";
 import {OTPModal} from "../modals/OTPModal"
 
 const Signup = () => {
+  const sitekey = process.env.REACT_APP_RECAPTCHA_SITE_KEY
   const { loading, userInfo, userId, error, success, stateErrorMsg} = useSelector(
     (state) => state.user
   )
   const dispatch = useDispatch()
   const navigate = useNavigate();
+  //for captcha
+  const captchaRef = useRef(null);
 
   useEffect(() => {
     console.log(success)
@@ -113,12 +117,31 @@ const Signup = () => {
     }));
   }
 
+  const submitData = async (data) => {
+    var token = captchaRef.current.getValue();
+    
+
+    if(!token){ toast.error('Please verify captcha')}
+    await axios.post(process.env.REACT_APP_API_URL, {token})
+        .then(res =>  {
+          console.log(res)
+    dispatch(registerUser(data))
+        })
+        .catch((error) => {
+        alert(error);
+        })
+        captchaRef.current.reset();
+
+  }
+
   const onSubmit = (data) => {
+    
+
     if(data.password != data.password2){
       toast.error("Passwords do not match")
       return
     }
-    dispatch(registerUser(data))
+    submitData(data)
   };
 
   const setColor = (strength) => {
@@ -324,6 +347,12 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
+
+            <ReCAPTCHA 
+              sitekey={sitekey} 
+              className="flex justify-center w-full mt-2"
+              ref={captchaRef}
+            />
 
             <button
               className="mt-4 p-2 w-full rounded bg-green-400 hover:bg-green-600 text-w1 font-bold"
