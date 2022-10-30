@@ -21,7 +21,7 @@ const verify2FA = async (userData) => {
   // Making calls to server side
   const response = await http.post("/accounts/verify2FA", userData);
 
-  return response.data;
+  return response;
 };
 
 // Get Account
@@ -52,6 +52,18 @@ const changePass = async (id, jwt, password) => {
   return response;
 }
 
+// normal password change
+const normalChangePass = async (userId, password) => {
+  const request = {userId, password}
+  return await http.post(`/accounts/changePass`, request)
+}
+
+// upload new avatar img
+const uploadAvatar = async (userId, imgId) => {
+  const request = {userId, imgId}
+  return await http.post(`/accounts/uploadAvatar`, request);
+}
+
 // Client side functions
 const authService = {
   register,
@@ -61,6 +73,8 @@ const authService = {
   resetPass,
   verifyReset,
   changePass,
+  uploadAvatar,
+  normalChangePass
 };
 
 export default authService;

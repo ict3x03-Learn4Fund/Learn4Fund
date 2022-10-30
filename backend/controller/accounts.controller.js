@@ -380,6 +380,51 @@ const apiChangePassword = asyncHandler(async (req,res) => {
   }
 })
 
+const apiNormalChangePass = asyncHandler(async (req,res) => {
+  try {
+    const {userId, password} = req.body;
+    const user = await Account.findById(userId)
+    if (!user){
+      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+    } else {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      await Account.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          $set: {
+            password: hashedPassword,
+          }
+        }
+      )
+      return res.status(200).json({message: "Password changed successfully."})
+    }
+
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+// upload avatar
+const apiUploadAvatar = asyncHandler(async (req,res) => {
+  try {
+    const {userId, imgId} = req.body
+    const user = await Account.findById(userId)
+    if (!user) {
+      return res.status(400).json({message: "User not found."})
+    }
+    if (!imgId) {
+      return res.status(400).json({message: "Image not found."})
+    }
+    const updatedUser = await Account.findByIdAndUpdate({_id: userId}, {avatarImg: imgId})
+    return res.status(200).json(updatedUser)
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
 
 //Generate JWT
 const generateToken = (id) => {
@@ -398,4 +443,6 @@ module.exports = {
   apiResetPassword,
   apiChangePassword,
   apiVerifyReset,
+  apiUploadAvatar,
+  apiNormalChangePass
 };

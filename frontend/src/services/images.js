@@ -5,8 +5,13 @@ const getImg = async (id) =>{
     return response;
 }
 
+const uploadImage = async (formData) => {
+    return await http.post(`/images/upload`, formData)
+}
+
 const imagesService = {
     getImg,
+    uploadImage
 };
 
 export default imagesService;

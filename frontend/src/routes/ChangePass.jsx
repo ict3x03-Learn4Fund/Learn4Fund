@@ -9,7 +9,7 @@ import { user2FA } from "../features/user/userActions";
 import toast from "react-hot-toast";
 import authService from "../services/accounts";
 
-function ChangePassword() {
+function ChangePass() {
   const { setTab } = useNav();
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
@@ -274,4 +274,4 @@ function ChangePassword() {
   );
 }
 
-export default ChangePassword;
+export default ChangePass;

@@ -8,6 +8,8 @@ const {
   apiResetPassword,
   apiChangePassword,
   apiVerifyReset,
+  apiUploadAvatar,
+  apiNormalChangePass,
 } = require("../controller/accounts.controller");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -123,7 +125,7 @@ router.route("/login").post(
 
 // TODO: Remember to test this route
 // @route   POST api/accounts/verify2FA
-router.route('/verify2FA').post(verify2FALimiter,
+router.route('/verify2FA').post(
     [
         check('token', 'Invalid code')
             .isNumeric()                                               // [Validation] Check if token is a number
@@ -149,5 +151,11 @@ router.route("/reset").post(apiResetPassword);
 // @route GET api/accounts/changePassword
 router.route("/reset/:id/:jwt").get(apiVerifyReset);
 router.route("/reset/:id/:jwt").post(apiChangePassword);
+
+// @route POST normal change password
+router.route("/changePass").post(apiNormalChangePass);
+
+// @route POST api/accounts/uploadImg
+router.route("/uploadAvatar").post(apiUploadAvatar)
 
 module.exports = router;

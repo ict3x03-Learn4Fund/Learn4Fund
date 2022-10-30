@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import { getCartNumber, user2FA, getUserDetails } from "../features/user/userActions";
 import QRCode from "react-qr-code";
 import toast from "react-hot-toast";
+import authService from "../services/accounts";
+import Cookies from 'js-cookie';
 
-export const OTPModal = ({ closeModal }) => {
-  const { loading, userInfo, userId, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
+export const OTPModal2 = ({ closeModal, password }) => {
+  const { loading, userInfo, userId, otpError, qrUrl, stateErrorMsg } = useSelector(
     (state) => state.user
   );
 
@@ -24,6 +26,7 @@ export const OTPModal = ({ closeModal }) => {
   const { state } = useLocation();
   const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
+  const [success, setSuccess] = useState(false);
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -33,19 +36,27 @@ export const OTPModal = ({ closeModal }) => {
     const payload = {userId: userId, token: otp}
     console.log(payload)
     dispatch(user2FA(payload));
+    authService.verify2FA(payload).then((res) => {
+      if (res.status == 200){
+      } else {
+        toast.error(res.data.message)
+      }
+    })
   };
 
   useEffect(() => {
-    if (otpSuccess){
-      console.log("Authenticated!")
-      navigate("/")
-      dispatch(getUserDetails())
-      toast.success("Login Successful!")
+    if (success){
+      const jwt = Cookies.get("access_token")
+      console.log(jwt, userId, password)
+      // authService.changePass(userId, jwt, password).then((response) => {
+      //   if (response.status == 200){
+      //     toast.success(response.data.message)
+      //   } else {
+      //     toast.error(response.data.message)
+      //   }
+      // })
     }
-    if (otpError){
-      toast.error(stateErrorMsg)
-    }
-  },[dispatch, otpError, otpSuccess, stateErrorMsg])
+  },[success, setSuccess])
 
   return (
     <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300">
@@ -68,20 +79,6 @@ export const OTPModal = ({ closeModal }) => {
             className="mx-5, my-5 flex justify-center"
           >
             <div className="flex flex-col items-center  rounded-lg">
-              {qrUrl ? (
-                <Fragment className="flex items-center">
-                  <QRCode
-                    className=""
-                    value={qrUrl}
-                    size={256}
-                  ></QRCode>
-                  <h2>
-                    Scan this QR code on your preferred authentication
-                    application.
-                  </h2>
-                </Fragment>
-              ) : null}
-
               <div className="flex flex-nowrap w-full justify-center mt-4">
                 <span className="self-center w-1/4 h-[40px] bg-b1 rounded-l">
                   <div className="flex w-full h-full content-center justify-center">
