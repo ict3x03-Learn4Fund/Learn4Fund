@@ -15,7 +15,7 @@ function Cookie() {
           <div className="flex flex-col flex-wrap w-full text-[14px]">
             This Cookie Policy explains how Titans ("Company", "we", "us", and
             "our") uses cookies and similar technologies to recognize you when
-            you visit our websites at https://learn4fund.com ("Websites"). It
+            you visit our websites at https://learn4fund.tk ("Websites"). It
             explains what these technologies are and why we use them, as well as
             your rights to control our use of them. In some cases we may use
             cookies to collect personal information, or that becomes personal

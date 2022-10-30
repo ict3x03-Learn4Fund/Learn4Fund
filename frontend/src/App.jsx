@@ -4,7 +4,7 @@ import Homepage from "./routes/Homepage";
 import Nav from "./components/nav/Nav";
 import Footer from "./components/footer/Footer";
 import Login from "./routes/Login";
-import Login2FA from "./routes/Login2FA";
+import ResetPassword from "./routes/ResetPassword";
 import Signup from "./routes/Signup";
 import Toc from "./policies/Toc";
 import Privacy from "./policies/Privacy";
@@ -21,10 +21,13 @@ import Catalog from "./routes/Catalog";
 import CourseInfo from "./components/catalog/CourseInfo";
 import { PromotionModal } from "./modals/PromotionModal";
 import { NewsLetterModal } from "./modals/NewsLetterModal";
+import ReCAPTCHA from "react-google-recaptcha";
+
 
 import { Toaster } from "react-hot-toast";
 import { OTPModal } from "./modals/OTPModal";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import ChangePass from "./routes/ChangePass";
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
@@ -62,11 +65,13 @@ function App() {
               <Route exact path="cookies" element={<Cookie />} />
               <Route element={<ProtectedRoute />}>
                 <Route exact path="settings" element={<Settings />} />
-                <Route exact path="login2FA" element={<Login2FA />} />
                 <Route exact path="admin" element={<Admin />} />
+                <Route exact path="cart" element={<Cart />} />
+
               </Route>
+              <Route exact path="reset" element={<ResetPassword />} />
+              <Route exact path="reset/:userId/:jwt" element={<ChangePass />} />
               <Route exact path="otp" element={<OTPModal />} />
-              <Route exact path="cart" element={<Cart />} />
               <Route exact path="login" element={<Login />} />
               <Route exact path="signup" element={<Signup />} />
               <Route exact path="courses" element={<Catalog />} />

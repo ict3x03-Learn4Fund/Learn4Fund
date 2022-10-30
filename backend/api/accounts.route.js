@@ -5,15 +5,26 @@ const {
   apiLogin,
   apiGetAccount,
   apiVerify2FA,
+  apiResetPassword,
+  apiChangePassword,
+  apiVerifyReset,
+  apiUploadAvatar,
+  apiNormalChangePass,
+  apiUpdateDetails,
+  apiDelete,
+  apiUpdateSubscription,
 } = require("../controller/accounts.controller");
 
 const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+const axios = require("axios")
+
 const { check, validationResult } = require("express-validator");     // [Validation, Sanitization]
 const rateLimit = require("express-rate-limit");                      // [DoS] Prevent brute force attacks
 const Account = require("../models/accountModel"); // to access the DB
+const Logs = require("../models/logsModel");
 
 const createAccountLimiter = rateLimit({                              // [DoS] Prevent mass account creation
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -22,13 +33,33 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
     "Too many accounts created from this IP, please try again after an hour",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (request, response, next, options) => {
+    // Send logs to db
+    Logs.create({
+      email: request.body['email'],
+      type: "auth",
+      reason: "Attempt to register account " + request.body['email'] + " was rate limited.",
+      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+    });
+    response.status(options.statusCode).send(options.message)
+  }
 });
 const verify2FALimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
   windowMs: 15 * 60 * 1000, // 15 mins
-  max: 3, // Limit each IP to 3 code verification requests per 15 mins
+  max: 5, // Limit each IP to 5 code verification requests per 15 mins
   message: "Too much tries, please try again in 15 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (request, response, next, options) => {
+    // Send logs to db
+    Logs.create({
+      email: request.body["userId"],
+      type: "auth",
+      reason: "Attempt to verify 2fa was rate limited.",
+      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+    });
+    response.status(options.statusCode).send(options.message)
+  }
 });
 
 // @route   POST api/accounts/register
@@ -134,8 +165,49 @@ router.route('/verify2FA').post(verify2FALimiter,
         }
 })
 
-
 // @route   GET api/getAccount
 router.route("/getAccount").get(protect, apiGetAccount);
 
+// @route POST api/accounts/resetPassword
+router.route("/reset").post(apiResetPassword);
+
+// @route GET api/accounts/changePassword
+router.route("/reset/:id/:jwt").get(apiVerifyReset);
+router.route("/reset/:id/:jwt").post(apiChangePassword);
+
+// @route POST normal change password
+router.route("/changePass").post(apiNormalChangePass);
+
+// @route POST api/accounts/uploadImg
+router.route("/uploadAvatar").post(apiUploadAvatar)
+
+// @route POST api/accounts/update
+router.route("/update").post(apiUpdateDetails)
+
+// @route POST api/accounts/update
+router.route("/updateSubscription").post(apiUpdateSubscription)
+
+// @route POST api/accounts/delete
+router.route("/delete/:id").post(apiDelete)
+
+
 module.exports = router;
+//Check captcha
+router.post("/checkCaptcha", async (req, res) => {
+    //Destructuring response token from request body
+        const {token} = req.body;
+    
+    //sends secret key and response token to google
+        await axios.post(
+          `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+          );
+    
+    //check response status and send back to the client-side
+          if (res.status(200)) {
+            res.status(200).json({message: "Success"});
+        }else{
+          res.status(400).json({message: "Failed"});
+        }
+    });
+
+module.exports = router
