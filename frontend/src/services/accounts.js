@@ -64,6 +64,25 @@ const uploadAvatar = async (userId, imgId) => {
   return await http.post(`/accounts/uploadAvatar`, request);
 }
 
+// update new details
+const updateDetails = async (userId, firstName, lastName, email) => {
+  const request = {userId, firstName, lastName, email}
+  return await http.post(`/accounts/update`, request);
+}
+
+// update email Subscription
+const updateSubscription = async (userId, emailSubscription) => {
+  const request = {userId, emailSubscription}
+  return await http.post(`/accounts/updateSubscription`, request);
+}
+
+// delete account
+const deleteAcc = async (userId) => {
+  return await http.post(`/accounts/delete/${userId}`)
+}
+
+
+
 // Client side functions
 const authService = {
   register,
@@ -74,7 +93,10 @@ const authService = {
   verifyReset,
   changePass,
   uploadAvatar,
-  normalChangePass
+  normalChangePass,
+  updateDetails,
+  deleteAcc,
+  updateSubscription
 };
 
 export default authService;

@@ -74,7 +74,7 @@ function Nav() {
           {userInfo ? (
             <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
               <img
-                src={ avatar ? `http://localhost:5000/v1/api/images/getImg/${avatar}` : picture}
+                src={ avatar ? `http://localhost:5000/v1/api/images/getImg/${userInfo?.avatarImg}` : picture}
                 alt={"user profile"}
                 className="w-[32px] h-[32px] mr-[8px] bg-w1 self-center"
                 style={{ borderRadius: "100%" }}

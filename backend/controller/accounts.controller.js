@@ -410,19 +410,75 @@ const apiNormalChangePass = asyncHandler(async (req,res) => {
 // upload avatar
 const apiUploadAvatar = asyncHandler(async (req,res) => {
   try {
-    const {userId, imgId} = req.body
-    const user = await Account.findById(userId)
+    const {userId, imgId} = req.body;
+    const user = await Account.findById(userId);
     if (!user) {
-      return res.status(400).json({message: "User not found."})
+      return res.status(400).json({message: "User not found."});
     }
     if (!imgId) {
-      return res.status(400).json({message: "Image not found."})
+      return res.status(400).json({message: "Image not found."});
     }
-    const updatedUser = await Account.findByIdAndUpdate({_id: userId}, {avatarImg: imgId})
-    return res.status(200).json(updatedUser)
+    const updatedUser = await Account.findByIdAndUpdate({_id: userId}, {avatarImg: imgId});
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res.status(400).json({message: error.message});
+  }
+})
+
+const apiUpdateDetails = asyncHandler(async (req,res) => {
+  try {
+    const {userId, firstName, lastName, email} = req.body;
+    const user = await Account.findById(userId);
+    if (!firstName || !lastName || !email){
+      return res.status(400).json({message: "details cannot be empty."})
+    }
+    if (!user){
+      return res.status(400).json({message: "User is not found."})
+    }
+    if (user.firstName != firstName){
+      user.firstName = firstName;
+    }
+    if (user.lastName != lastName){
+      user.lastName = lastName;
+    }
+    if (user.email != email){
+      user.email = email;
+    }
+    user.save()
+    return res.status(200).json(user)
+
   } catch (error) {
     return res.status(400).json({message: error.message})
   }
+})
+
+const apiUpdateSubscription = asyncHandler(async (req,res) => {
+  try {
+    const {userId, emailSubscription} = req.body;
+    const user = await Account.findById(userId);
+    if (!user){
+      return res.status(400).json({message: "User is not found."})
+    }
+    user.emailSubscription = emailSubscription
+    user.save()
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+const apiDelete = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await Account.findById(userId);
+    if (!user){
+      return res.status(400).json({message: "User is not found."})
+    }
+    const userDeleted = await Account.findByIdAndDelete(userId);
+    return res.status(200).json(userDeleted)
+  } catch (error) {
+    return res.status(400).json(error.message)
+  } 
 })
 
 
@@ -444,5 +500,8 @@ module.exports = {
   apiChangePassword,
   apiVerifyReset,
   apiUploadAvatar,
-  apiNormalChangePass
+  apiNormalChangePass,
+  apiUpdateDetails,
+  apiDelete,
+  apiUpdateSubscription 
 };

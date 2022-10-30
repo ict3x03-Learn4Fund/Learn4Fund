@@ -10,6 +10,9 @@ const {
   apiVerifyReset,
   apiUploadAvatar,
   apiNormalChangePass,
+  apiUpdateDetails,
+  apiDelete,
+  apiUpdateSubscription,
 } = require("../controller/accounts.controller");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -157,5 +160,15 @@ router.route("/changePass").post(apiNormalChangePass);
 
 // @route POST api/accounts/uploadImg
 router.route("/uploadAvatar").post(apiUploadAvatar)
+
+// @route POST api/accounts/update
+router.route("/update").post(apiUpdateDetails)
+
+// @route POST api/accounts/update
+router.route("/updateSubscription").post(apiUpdateSubscription)
+
+// @route POST api/accounts/delete
+router.route("/delete/:id").post(apiDelete)
+
 
 module.exports = router;
