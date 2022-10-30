@@ -73,11 +73,10 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
     if (verified) {
       const access_token = generateToken(userId);
       res.cookie("access_token", access_token, {
-        httpOnly: true, // [Prevent XSS] Cannot be accessed by client side JS
-        // secure: process.env.JWT_SECRET,
-        maxAge: 3600 * 1000,
+        httpOnly: true,                               // [Prevent XSS] Cannot be accessed by client side JS
+        // maxAge: 3600 * 1000,
         secure: true,
-        sameSite: "strict", // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
+        sameSite: "strict",                           // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
       });
       return res.status(200).json({
         _id: user.id,
@@ -105,13 +104,11 @@ const apiLogin = asyncHandler(async (req, res) => {
     // Check if user exists in DB using Account schema (Mongoose -> MongoDB)
     const account = await Account.findOne({ email });
 
-    if (account == null) {
-      // [Authentication] Check if user exists in DB
+    if (account == null) {                                            // [Authentication] Check if user exists in DB
       throw new Error("Invalid credentials.");
     }
 
-    if (account.lockedOut) {
-      // [Authentication] Check if user is locked out
+    if (account.lockedOut) {                                          // [Authentication] Check if user is locked out
       throw new Error(
         "Your account has been locked.\nPlease contact the administrator."
       );
@@ -122,8 +119,7 @@ const apiLogin = asyncHandler(async (req, res) => {
       Account.updateOne(
         { email: email },
         { $set: { loginTimes: 0 } },
-        function (err, result) {
-          // [Authentication] Reset the loginTimes
+        function (err, result) {                                      // [Authentication] Reset the loginTimes
           if (err) {
             console.log("Set loginTimes failed. Error: " + err);
           } else {
@@ -140,8 +136,7 @@ const apiLogin = asyncHandler(async (req, res) => {
 
       /* ACCOUNT LOCKING START*/
       // If user attempts to login 5 times and account is not locked, lock the account
-      if (account.loginTimes > 3 && account.lockedOut == false) {
-        // [Logging] Check if user has attempted to login 5 times
+      if (account.loginTimes > 3 && account.lockedOut == false) {   // [Logging] Check if user has attempted to login 5 times     
         console.log("Locking account: " + email);
         Account.updateOne(
           { email: email },
@@ -165,7 +160,7 @@ const apiLogin = asyncHandler(async (req, res) => {
               });
 
               /* SEND EMAIL TO ADMIN START*/
-              console.log("Sending email to admin..."); // [Alert] Send email to admin
+              console.log("Sending email to admin...");             // [Alert] Send email to admin
               var nodemailer = require("nodemailer");
               var transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -198,7 +193,7 @@ const apiLogin = asyncHandler(async (req, res) => {
           }
         );
       } else {
-        console.log("Incrementing lockTimes: " + email); // [Logging] Increment loginTimes by 1
+        console.log("Incrementing lockTimes: " + email);        // [Logging] Increment loginTimes by 1
         Account.updateOne(
           { email: email },
           { $inc: { loginTimes: 1 } },
@@ -211,7 +206,7 @@ const apiLogin = asyncHandler(async (req, res) => {
           }
         );
       }
-      const attemptsLeft = 4 - account.loginTimes; // [Logging] Calculate login attempts left out of 5
+      const attemptsLeft = 4 - account.loginTimes;              // [Logging] Calculate login attempts left out of 5
       if (attemptsLeft == 1) {
         throw new Error("Invalid credentials.\nThis is your final attempt.");
       }
@@ -244,11 +239,11 @@ const apiLogin = asyncHandler(async (req, res) => {
 //       }
 //       const access_token = generateToken(account._id)
 //       res.cookie("access_token", access_token, {
-//         httpOnly: true,                                 // [Prevent XSS] Cannot be accessed by client side JS
+//         httpOnly: true,                                  // [Prevent XSS] Cannot be accessed by client side JS
 //         // secure: process.env.JWT_SECRET,
 //         maxAge: 3600 * 1000,
 //         secure: true,
-//         sameSite: 'strict'                             // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
+//         sameSite: 'strict'                               // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
 //       });
 //       return res.status(200).json({
 //         _id: account.id,
@@ -483,11 +478,10 @@ const apiDelete = asyncHandler(async (req, res) => {
 
 
 //Generate JWT
-const generateToken = (id) => {
-  // [Session] Generate JWT
+const generateToken = (id) => {                       // [Session/Authentication] Generate JWT 
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     algorithm: "HS512",
-    expiresIn: "1h",
+    expiresIn: "2h",
   });
 };
 

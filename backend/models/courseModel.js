@@ -1,6 +1,6 @@
 var mongoose = require("mongoose")
 require('mongoose-double')(mongoose);
-
+mongoose.set('sanitizeFilter', true)
 var SchemaTypes = mongoose.Schema.Types;
 const courseSchema = mongoose.Schema(
   {

@@ -21,6 +21,8 @@ import Catalog from "./routes/Catalog";
 import CourseInfo from "./components/catalog/CourseInfo";
 import { PromotionModal } from "./modals/PromotionModal";
 import { NewsLetterModal } from "./modals/NewsLetterModal";
+import ReCAPTCHA from "react-google-recaptcha";
+
 
 import { Toaster } from "react-hot-toast";
 import { OTPModal } from "./modals/OTPModal";

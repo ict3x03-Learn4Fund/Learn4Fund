@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+mongoose.set('sanitizeFilter', true)
 const voucherSchema = mongoose.Schema(
   {
     voucherCode: {

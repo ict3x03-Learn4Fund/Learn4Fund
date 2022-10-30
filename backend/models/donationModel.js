@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+mongoose.set('sanitizeFilter', true)
 const donationSchema = mongoose.Schema(
   {
     donationList : {

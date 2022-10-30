@@ -83,6 +83,10 @@ const deleteAcc = async (userId) => {
 
 
 
+// const getCaptcha = async () => {
+//   const response = await http.post('/accounts/verifyCaptcha')
+// }
+
 // Client side functions
 const authService = {
   register,
@@ -96,7 +100,8 @@ const authService = {
   normalChangePass,
   updateDetails,
   deleteAcc,
-  updateSubscription
+  updateSubscription,
+  // getCaptcha,
 };
 
 export default authService;

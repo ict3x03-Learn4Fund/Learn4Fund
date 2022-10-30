@@ -2,15 +2,16 @@
 version: '3.8'
 
 # all of your services list will define here
-services: 
-    backend:   
+services:
+    backend:
+#        mem_limit: "1300M"   
         build: # build image
             context: ./backend #directory location
             dockerfile: Dockerfile.dev # dockerfile name
-        volumes: 
+        volumes:
             - /app/node_modules
-            - ./backend:/app    
-        environment: 
+            - ./backend:/app
+        environment:
              # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
              # container service name and port on which it is running
             - CHOKIDAR_USEPOLLING=true #for hot reloading
@@ -19,41 +20,22 @@ services:
         ports:
             - 5000:5000
 
-    frontend:   
+    frontend:
+        mem_limit: "1300M"
         stdin_open: true
-        build: 
+        build:
             context: ./frontend
             dockerfile: Dockerfile.dev
-        volumes: 
+        volumes:
             - /app/node_modules # we reference the node_modules which is present in app directory inside the docker, to our current node modules which is present in front directory
             - ./frontend:/app  # frontend directory is used as a volume(bind mount)  
-             
-        environment: 
+        restart: always
+        environment:
             #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
-        
-    
-    nginx:
-        depends_on:
-            - backend
-            - frontend
-        build:
-            context: ./nginx
-            dockerfile: Dockerfile.dev
-        ports: 
-            - 80:80 #modified (was 3000:80)
-            - 443:443 #added for ssl
-        restart: unless-stopped
-        volumes:
-            - ./nginx/ssl.conf:/config/nginx/ssl.conf
-        environment: 
-            - PUID=1000
-            - PGID=1000
-            - TZ=Singapore
-            - URL=learn4fund.tk
-            - VALIDATION=http 
-            - EMAIL=2002692@sit.singaporetech.edu.sg
-        # volumes are defined here
-volumes: 
-    db-volume:        
+        ports:
+            - 3000:3000
+# volumes are defined here
+volumes:
+    db-volume:
