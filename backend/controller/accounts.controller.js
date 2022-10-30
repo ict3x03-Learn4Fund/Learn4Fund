@@ -6,6 +6,7 @@ const Account = require("../models/accountModel");
 const Logs = require("../models/logsModel");
 const authy = require("authy")(process.env.AUTHY_API_KEY);
 const speakEasy = require("speakeasy");
+const {sendEmail} = require("../middleware/mailer.js")
 
 /***
  * @desc Register
@@ -57,7 +58,7 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
     const { userId, token } = req.body;
     const user = await Account.findById(userId);
     if (!userId) {
-      return res.status(400).json({message: "UserId cannot be null."})
+      return res.status(400).json({ message: "UserId cannot be null." });
     }
     if (!user) {
       return res.status(400).json({ message: "User not registered yet." });
@@ -68,7 +69,7 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       encoding: "base32",
       token,
     });
-    console.log(verified)
+    console.log(verified);
     if (verified) {
       const access_token = generateToken(userId);
       res.cookie("access_token", access_token, {
@@ -128,7 +129,7 @@ const apiLogin = asyncHandler(async (req, res) => {
         }
       );
       return res.status(200).json({
-        _id: account.id
+        _id: account.id,
       });
     } else {
       console.log("Failed login");
@@ -291,6 +292,191 @@ const apiGetAccount = asyncHandler(async (req, res) => {
   });
 });
 
+const apiResetPassword = asyncHandler(async (req, res) => {
+  try {
+    const { email, token } = req.body;
+    const user = await Account.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exists." });
+    }
+    const { base32: secret } = user.secret;
+    const verified = speakEasy.totp.verify({
+      secret,
+      encoding: "base32",
+      token,
+    });
+    if (verified) {
+      const jwt = generateToken(user._id);
+      const link = `http://localhost:3000/reset/${user._id}/${jwt}`;
+      const message = `Click on this link to reset your password: ${link}`
+      const emailSuccess = await sendEmail(email, "Learn4Fund password reset", message);
+      if (emailSuccess){
+        return res.status(200).json({message: "An email has been sent to you to reset your password."});
+      } else {
+        return res.status(400).json({message: "Failed to sent email."});
+      }
+    } else {
+      return res.status(400).json({message: "token not valid."});
+    }
+  } catch (error) {
+    return res.status(400).json({message: error.message});
+  }
+});
+
+const apiVerifyReset = asyncHandler(async (req,res) => {
+  try {
+    const userId = req.params.id;
+    const jwtToken = req.params.jwt;
+    if (!jwtToken) {
+      return res.status(400).json({message: "No token, authorization denied"});
+    } 
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, {algorithm:"HS512"});
+    const user = await Account.findById(decoded.id)
+    if (!user){
+      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+    } else {
+      return res.status(200).json({message: "Authentication Successful"})
+    }
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+const apiChangePassword = asyncHandler(async (req,res) => {
+  try {
+    const userId = req.params.id;
+    const jwtToken = req.params.jwt;
+    const {password} = req.body;
+    if (!jwtToken) {
+      return res.status(400).json({message: "No token, authorization denied"});
+    } 
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, {algorithm:"HS512"});
+    const user = await Account.findById(decoded.id)
+    if (!user){
+      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+    } else {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      await Account.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          $set: {
+            password: hashedPassword,
+          }
+        }
+      )
+      return res.status(200).json({message: "Password changed successfully."})
+    }
+
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+const apiNormalChangePass = asyncHandler(async (req,res) => {
+  try {
+    const {userId, password} = req.body;
+    const user = await Account.findById(userId)
+    if (!user){
+      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+    } else {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      await Account.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          $set: {
+            password: hashedPassword,
+          }
+        }
+      )
+      return res.status(200).json({message: "Password changed successfully."})
+    }
+
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+// upload avatar
+const apiUploadAvatar = asyncHandler(async (req,res) => {
+  try {
+    const {userId, imgId} = req.body;
+    const user = await Account.findById(userId);
+    if (!user) {
+      return res.status(400).json({message: "User not found."});
+    }
+    if (!imgId) {
+      return res.status(400).json({message: "Image not found."});
+    }
+    const updatedUser = await Account.findByIdAndUpdate({_id: userId}, {avatarImg: imgId});
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res.status(400).json({message: error.message});
+  }
+})
+
+const apiUpdateDetails = asyncHandler(async (req,res) => {
+  try {
+    const {userId, firstName, lastName, email} = req.body;
+    const user = await Account.findById(userId);
+    if (!firstName || !lastName || !email){
+      return res.status(400).json({message: "details cannot be empty."})
+    }
+    if (!user){
+      return res.status(400).json({message: "User is not found."})
+    }
+    if (user.firstName != firstName){
+      user.firstName = firstName;
+    }
+    if (user.lastName != lastName){
+      user.lastName = lastName;
+    }
+    if (user.email != email){
+      user.email = email;
+    }
+    user.save()
+    return res.status(200).json(user)
+
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+const apiUpdateSubscription = asyncHandler(async (req,res) => {
+  try {
+    const {userId, emailSubscription} = req.body;
+    const user = await Account.findById(userId);
+    if (!user){
+      return res.status(400).json({message: "User is not found."})
+    }
+    user.emailSubscription = emailSubscription
+    user.save()
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(400).json({message: error.message})
+  }
+})
+
+const apiDelete = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await Account.findById(userId);
+    if (!user){
+      return res.status(400).json({message: "User is not found."})
+    }
+    const userDeleted = await Account.findByIdAndDelete(userId);
+    return res.status(200).json(userDeleted)
+  } catch (error) {
+    return res.status(400).json(error.message)
+  } 
+})
+
+
 //Generate JWT
 const generateToken = (id) => {                       // [Session/Authentication] Generate JWT 
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -304,4 +490,12 @@ module.exports = {
   apiLogin,
   apiGetAccount,
   apiVerify2FA,
+  apiResetPassword,
+  apiChangePassword,
+  apiVerifyReset,
+  apiUploadAvatar,
+  apiNormalChangePass,
+  apiUpdateDetails,
+  apiDelete,
+  apiUpdateSubscription 
 };
