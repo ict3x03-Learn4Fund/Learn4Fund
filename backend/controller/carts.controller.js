@@ -99,8 +99,8 @@ const apiGetCart = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiGetNo = asyncHandler(async (req, res) => {
-  const accountId = mongoose.Types.ObjectId(req.params.id);
   try {
+    const accountId = req.params.id
     let cart = await Cart.findOne({ accountId: accountId });
 
     if (!cart) cart = await Cart.create({ accountId: accountId });

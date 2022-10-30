@@ -5,6 +5,14 @@ const {
   apiLogin,
   apiGetAccount,
   apiVerify2FA,
+  apiResetPassword,
+  apiChangePassword,
+  apiVerifyReset,
+  apiUploadAvatar,
+  apiNormalChangePass,
+  apiUpdateDetails,
+  apiDelete,
+  apiUpdateSubscription,
 } = require("../controller/accounts.controller");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -157,10 +165,33 @@ router.route('/verify2FA').post(verify2FALimiter,
         }
 })
 
-
 // @route   GET api/getAccount
 router.route("/getAccount").get(protect, apiGetAccount);
 
+// @route POST api/accounts/resetPassword
+router.route("/reset").post(apiResetPassword);
+
+// @route GET api/accounts/changePassword
+router.route("/reset/:id/:jwt").get(apiVerifyReset);
+router.route("/reset/:id/:jwt").post(apiChangePassword);
+
+// @route POST normal change password
+router.route("/changePass").post(apiNormalChangePass);
+
+// @route POST api/accounts/uploadImg
+router.route("/uploadAvatar").post(apiUploadAvatar)
+
+// @route POST api/accounts/update
+router.route("/update").post(apiUpdateDetails)
+
+// @route POST api/accounts/update
+router.route("/updateSubscription").post(apiUpdateSubscription)
+
+// @route POST api/accounts/delete
+router.route("/delete/:id").post(apiDelete)
+
+
+module.exports = router;
 //Check captcha
 router.post("/checkCaptcha", async (req, res) => {
     //Destructuring response token from request body
