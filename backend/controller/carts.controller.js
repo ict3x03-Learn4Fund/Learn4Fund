@@ -1,31 +1,51 @@
 const asyncHandler = require("express-async-handler");
+const { default: mongoose } = require("mongoose");
 const Cart = require("../models/cartModel");
 const Course = require("../models/courseModel");
-
 
 /***
  * @desc Add cart
  * @route POST /v1/api/carts/create
- * @access Private
+ * @access Public
  */
 const apiAddCart = asyncHandler(async (req, res) => {
-    const {
-      cartItem,
-      accountId
-    } = req.body;
-  
-    let cart = await Cart.findOne({accountId: accountId})
+  try {
+    const { cartItem, accountId } = req.body;
 
-    if (!cart)
-      cart = await Cart.create({accountId: accountId})
+    if (!accountId) {
+      return res.status(400).json({ message: "Account Id is null." });
+    }
 
-    cart.coursesAdded.push({cartItem})
-    console.log(cart.coursesAdded)
-    cart.save()
-    console.log(cart)
-    
-    return res.status(200).json({message: `added ${cartItem}`})
-  
+    let cart = await Cart.findOne({ accountId: accountId });
+    console.log("cart: ", cart);
+    if (!cart) cart = await Cart.create({ accountId: accountId });
+
+    console.log("account id: ", accountId);
+
+    let counterFlag = 0;
+    cart.coursesAdded.some((existingCart) => {
+      console.log("existing cart:", existingCart);
+      if (existingCart.cartItem.courseId === cartItem.courseId) {
+        existingCart.cartItem.quantity += cartItem.quantity;
+        console.log(
+          `${existingCart.cartItem.courseId} now has ${existingCart.cartItem.quantity}.`
+        );
+      } else {
+        counterFlag++;
+      }
+    });
+    console.log(
+      `counter flag: ${counterFlag} length: ${cart.coursesAdded.length}`
+    );
+    if (counterFlag === cart.coursesAdded.length)
+      cart.coursesAdded.push({ cartItem });
+    cart.markModified("coursesAdded");
+    cart.save();
+
+    return res.status(200).json(cart);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
 });
 
 /***
@@ -34,93 +54,142 @@ const apiAddCart = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiGetCart = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const accountId = mongoose.Types.ObjectId(req.params.id);
+  try {
+    let cart = await Cart.findOne({ accountId: accountId });
 
-  const account = await Account.findOne({ email });
+    if (!cart) cart = await Cart.create({ accountId: accountId });
 
-  if (account && (await bcrypt.compare(password, account.password))) {
-    authy.request_sms(account.authyId, { force: true }, function (err, smsRes) {
-      if (err) {
-        return res.json({
-          message: "An error occurred while sending OTP to user",
-        });
-      }
-    });
+    let cartArray = [];
+    for (const existingCart in cart.coursesAdded) {
+      const courseId = cart.coursesAdded[existingCart].cartItem.courseId;
+      const quantity = cart.coursesAdded[existingCart].cartItem.quantity;
+      courseDetails = await Course.findById(courseId);
+      let cartItem = {
+        courseId: courseId,
+        quantity: quantity,
+        courseName: courseDetails.courseName,
+        usualPriceTotal: (quantity * courseDetails.courseOriginalPrice).toFixed(
+          2
+        ),
+        currentPriceTotal: (
+          quantity * courseDetails.courseDiscountedPrice
+        ).toFixed(2),
+      };
+      cartArray.push(cartItem);
+      console.log(cartItem);
+    }
+
     return res
       .status(200)
-      .json({ email: account.email, message: "OTP sent to user" });
-  } else {
-    res.status(400);
-    throw new Error("Invalid credentials");
-  }
-});
-
-/***
- * @desc verify2FA
- * @route GET /v1/api/accounts/verify2FA
- * @access Public
- */
-const apiVerify2FA = asyncHandler(async (req, res) => {
-  try {
-    const { email, token } = req.body;
-    const account = await Account.findOne({ email });
-    authy.verify(account.authyId, token, function (err, tokenRes) {
-      if (err) {
-        res.json({ message: "OTP verification failed" });
-      }
-      res.status(200).json({
-        _id: account.id,
-        firstName: account.firstName,
-        lastName: account.lastName,
-        email: account.email,
-        role: account.role,
-        token: generateToken(account._id),
-        message: "Token is valid",
+      .json({
+        accountId: accountId,
+        coursesAdded: cartArray,
+        donationAmt: cart.donationAmt,
+        showDonation: cart.showDonation,
       });
-    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(400).json(error.message);
   }
 });
 
 /***
- * @desc Get User
- * @route GET /v1/api/accounts/getUser
+ * @desc Get Cart Total number
+ * @route Get /v1/api/carts/:id/totalNo
  * @access Private
  */
-const apiGetAccount = asyncHandler(async (req, res) => {
-  const {
-    _id,
-    firstName,
-    lastName,
-    email,
-    avatarImg,
-    donation,
-    emailSubscription,
-    lockedOut,
-    loginTimes,
-    role,
-  } = await Account.findById(req.account.id);
-  res.status(200).json({
-    id: _id,
-    firstName,
-    lastName,
-    email,
-    role,
-    avatarImg,
-    donation,
-    emailSubscription,
-    lockedOut,
-    loginTimes,
-  });
+const apiGetNo = asyncHandler(async (req, res) => {
+  const accountId = mongoose.Types.ObjectId(req.params.id);
+  try {
+    let cart = await Cart.findOne({ accountId: accountId });
+
+    if (!cart) cart = await Cart.create({ accountId: accountId });
+
+    const total = cart.coursesAdded.length;
+
+    return res.status(200).json({ accountId: accountId, totalNo: total });
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
 });
 
-//Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-};
+/***
+ * @desc Delete Cart items
+ * @route Post /v1/api/carts/delete
+ * @access Private
+ */
+const apiDeleteCart = asyncHandler(async (req, res) => {
+  const { accountId, courseId } = req.body;
+  const accId = mongoose.Types.ObjectId(accountId);
+  try {
+    let cart = await Cart.findOne({ accountId: accId });
+    if (!cart) {
+      return res.status(400).json({ message: "No items found" });
+    }
+    for (const existingCart in cart.coursesAdded) {
+      if (cart.coursesAdded[existingCart].cartItem.courseId == courseId) {
+        cart.coursesAdded.splice(existingCart, 1);
+      }
+    }
+    cart.markModified("coursesAdded");
+    cart.save();
+
+    let cartArray = [];
+    for (const existingCart in cart.coursesAdded) {
+      const courseId = cart.coursesAdded[existingCart].cartItem.courseId;
+      const quantity = cart.coursesAdded[existingCart].cartItem.quantity;
+      courseDetails = await Course.findById(courseId);
+      let cartItem = {
+        courseId: courseId,
+        quantity: quantity,
+        courseName: courseDetails.courseName,
+        usualPriceTotal: (quantity * courseDetails.courseOriginalPrice).toFixed(
+          2
+        ),
+        currentPriceTotal: (
+          quantity * courseDetails.courseDiscountedPrice
+        ).toFixed(2),
+      };
+      cartArray.push(cartItem);
+      console.log(cartItem);
+    }
+
+    return res
+      .status(200)
+      .json({ accountId: accountId, coursesAdded: cartArray });
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+});
+
+/***
+ * @desc Add Donations to cart
+ * @route Post /v1/api/carts/donate
+ * @access Private
+ */
+const apiAddDonationToCart = asyncHandler(async (req, res) => {
+  try {
+    const { accountId, donationAmt, showDonation} = req.body;
+    if (!accountId) {
+      return res.status(400).json({message: "Account Id cannot be null."})
+    }
+    let cart = await Cart.findOne({accountId: accountId})
+    if (!cart){
+      cart = await Cart.create({accountId: accountId})
+    }
+    cart.showDonation = showDonation;
+    cart.donationAmt = parseFloat(cart.donationAmt) +  parseFloat(donationAmt);
+    cart.save()
+    return res.status(200).json(cart)
+  } catch (e) {
+    return res.status(400).json({message: e.message })
+  }
+});
 
 module.exports = {
   apiAddCart,
-  apiGetCart
+  apiGetCart,
+  apiDeleteCart,
+  apiGetNo,
+  apiAddDonationToCart,
 };

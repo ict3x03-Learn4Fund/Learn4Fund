@@ -1,24 +1,26 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
+mongoose.set('sanitizeFilter', true)
 
-const cartItem = mongoose.Schema({
-  courseId: mongoose.SchemaTypes.ObjectId,
-  quantity: Number,
-})
 
 const cartModel = mongoose.Schema(
   {
+    accountId: mongoose.SchemaTypes.ObjectId,
     coursesAdded: {
       type: Array,
       default: [],
     },
-    paymentCompleted: {
-      type: Boolean,
-      default: false,
+    donationAmt: {
+      type: Number,
+      default: 0,
     },
+    showDonation: {
+      type: Boolean,
+      default: false, 
+    }
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-module.exports = mongoose.model('Cart', cartModel)
+module.exports = mongoose.model("Cart", cartModel);

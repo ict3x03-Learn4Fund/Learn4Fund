@@ -5,8 +5,14 @@ const getAll = async () =>{
     return response;
 }
 
+const deleteCourse = async (id) =>{
+    const response = await http.delete(`/courses/${id}`)
+    return response;
+}
+
 const coursesService = {
     getAll,
+    deleteCourse
 };
 
 export default coursesService;

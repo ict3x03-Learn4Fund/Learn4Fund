@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "react-hot-toast": "^2.4.0"
+    "draft-js": "^0.11.7"
   }
 }

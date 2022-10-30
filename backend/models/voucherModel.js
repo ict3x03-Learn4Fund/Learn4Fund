@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+mongoose.set('sanitizeFilter', true)
 const voucherSchema = mongoose.Schema(
   {
     voucherCode: {
@@ -8,12 +8,15 @@ const voucherSchema = mongoose.Schema(
     },
     expiryDate: {
       type: Date,
-      default: setExpiryDate(),
+      default: () => new Date(+ new Date() + 365*24*60*60*1000)
     },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
     },
     courseId: {
+        type: mongoose.SchemaTypes.ObjectId,
+    },
+    transactionId: {
         type: mongoose.SchemaTypes.ObjectId,
     },
   },
@@ -22,10 +25,5 @@ const voucherSchema = mongoose.Schema(
   }
 );
 
-const setExpiryDate = () => {
-  const date = Date.now()
-  const newDate = date.setFullYear(date.getFullYear() + 1)
-  return newDate
-}
 
 module.exports = mongoose.model('Voucher', voucherSchema)

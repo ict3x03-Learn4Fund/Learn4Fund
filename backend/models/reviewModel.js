@@ -1,24 +1,22 @@
 const mongoose = require('mongoose')
-
+mongoose.set('sanitizeFilter', true)
 const reviewSchema = mongoose.Schema(
   {
     rating: {
-      type: mongoose.Schema.Types.Double,
+      type: Number,
       default: 4.0,
     },
     description: {
       type: String,
       default: "",
     },
-    title: {
-      type: String,
-      default: "",
-    },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Account",
     },
     courseId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Course"
     },
   },
   {

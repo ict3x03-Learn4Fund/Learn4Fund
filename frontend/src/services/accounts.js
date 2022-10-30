@@ -17,18 +17,27 @@ const login = async (email, password) => {
 };
 
 // Verify 2FA
-const verify2FA = async (email, token) => {
-  const userData = { email, token };
+const verify2FA = async (userData) => {
   // Making calls to server side
   const response = await http.post("/accounts/verify2FA", userData);
 
   return response.data;
 };
+
+// Get Account
+const getAccount = async () => {
+  // Making calls to server side
+const response = await http.get(`/accounts/getAccount`)
+
+  return response.data;
+};
+
 // Client side functions
 const authService = {
   register,
   login,
   verify2FA,
+  getAccount,
 };
 
 export default authService;
