@@ -128,7 +128,7 @@ router.route("/login").post(
 
 // TODO: Remember to test this route
 // @route   POST api/accounts/verify2FA
-router.route('/verify2FA').post(
+router.route('/verify2FA').post(verify2FALimiter,
     [
         check('token', 'Invalid code')
             .isNumeric()                                               // [Validation] Check if token is a number
