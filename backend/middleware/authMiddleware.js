@@ -5,6 +5,7 @@ const Account = require('../models/accountModel')
 const protect = asyncHandler((req,res,next) =>{
     let token
     let url = req.baseUrl;                                                                  //[Authorization] Check if the request is for admin or user
+    let path = req.route.path;
     let authCookie = req.headers.cookie;
     if (authCookie) {
         authCookie = authCookie.split('; ');
@@ -26,8 +27,9 @@ const protect = asyncHandler((req,res,next) =>{
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
 
-                    // Check if user is admin for admin routes
-                    if (url === '/v1/api/admin'){                                           //[Authorization] Check if user is admin
+                    // [Authorization] Check if user is admin
+                    if (url === '/v1/api/admin' ||
+                        (url === '/v1/api/courses' && (path === "/create" || path === "/update/:id" || path === "/delete/:id"))) { 
                         if (req.account.role !== 'admin') {
                             return res.status(403).json({ message: 'Not authorized' });
                         }
