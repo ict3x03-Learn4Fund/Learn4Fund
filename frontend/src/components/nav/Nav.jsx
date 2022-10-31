@@ -27,7 +27,6 @@ function Nav() {
   useEffect(()=> {
     if (localStorage.getItem("userId")){
       dispatch(getUserDetails())
-      
     }
   }, [])
 
@@ -35,6 +34,10 @@ function Nav() {
     if (userInfo) {
       dispatch(getCartNumber(userInfo.id));
       setAvatar(userInfo.avatarImg)
+      console.log(new Date(userInfo.loggedTimestamp).getTime())
+      if(new Date().getTime() > new Date(userInfo.loggedTimestamp).getTime()+1000*60*30){
+        dispatch(logout())
+      }
     }
   }, [userInfo]);
 

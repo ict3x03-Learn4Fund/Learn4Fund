@@ -277,6 +277,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
+    loggedTimestamp,
     role,
   } = await Account.findById(req.account.id);
   res.status(200).json({
@@ -290,6 +291,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
+    loggedTimestamp
   });
 });
 
