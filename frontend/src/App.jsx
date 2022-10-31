@@ -22,8 +22,8 @@ import CourseInfo from "./components/catalog/CourseInfo";
 import { PromotionModal } from "./modals/PromotionModal";
 import { NewsLetterModal } from "./modals/NewsLetterModal";
 import ReCAPTCHA from "react-google-recaptcha"
-
-import { Toaster } from "react-hot-toast";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { OTPModal } from "./modals/OTPModal";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ChangePass from "./routes/ChangePass";
@@ -67,7 +67,6 @@ function App() {
                 <Route exact path="settings" element={<Settings />} />
                 <Route exact path="admin" element={<Admin />} />
                 <Route exact path="cart" element={<Cart />} />
-
               </Route>
               <Route exact path="reset" element={<ResetPassword />} />
               <Route exact path="reset/:userId/:jwt" element={<ChangePass />} />
@@ -76,7 +75,7 @@ function App() {
               <Route exact path="signup" element={<Signup />} />
               <Route exact path="courses" element={<Catalog />} />
               <Route exact path="courses/:courseID" element={<CourseInfo />} />
-              <Route exact path="promo" element={<Homepage />} />
+              {/* <Route exact path="promo" element={<Promopage />} /> */}
 
               <Route
                 path="*"
@@ -117,15 +116,18 @@ function App() {
             )}
             {toggleModal && <PromotionModal closeModal={setToggleModal} />}
             {newsModal && <NewsLetterModal closeModal={setNewsModal} />}
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                style: {
-                  background: "#363636",
-                  color: "#fff",
-                },
-              }}
-            />
+            <ToastContainer
+position="bottom-right"
+autoClose={3000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+/>
             <Footer />
           </>
         

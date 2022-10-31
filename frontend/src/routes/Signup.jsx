@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userActions";
-import { toast } from "react-hot-toast";
+import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 
 const Signup = () => {
-  const sitekey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+  const [reCaptchaKey, setRecaptchaKey] = useState(process.env.REACT_APP_RECAPTCHA_SITE_KEY);
   const { loading, userInfo, userId, error, success, stateErrorMsg } =
     useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -478,9 +478,8 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
-
             <ReCAPTCHA
-              sitekey={sitekey}
+              sitekey={reCaptchaKey}
               className="flex justify-center w-full mt-2"
               ref={captchaRef}
             />
