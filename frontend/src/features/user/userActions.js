@@ -92,7 +92,7 @@ export const getCartNumber = createAsyncThunk(
             console.log("user.Id: ",user._id)
             const response = await cartsService.getTotal(userId)
             if (response.status == 200){
-                return response
+                return response.data.totalNo
             } else {
                 return rejectWithValue(response.message)
             }

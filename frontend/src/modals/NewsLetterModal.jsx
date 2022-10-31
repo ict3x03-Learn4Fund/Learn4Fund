@@ -1,8 +1,16 @@
 import { AiOutlineCloseSquare } from "react-icons/ai"
-import toast from 'react-hot-toast';
+import {toast} from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from "react";
 
 export const NewsLetterModal = ({closeModal}) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+        // Anything in here is fired on component unmount.
+        document.body.style.overflow = 'unset';
+    }
+}, [])
   const { loading, userInfo, error, success } = useSelector(
     (state) => state.user
   )

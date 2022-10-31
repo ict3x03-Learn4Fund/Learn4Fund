@@ -15,7 +15,7 @@ import { getUserDetails, getCartNumber } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useNav } from "../../hooks/useNav";
 import cartsService from "../../services/carts";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 function Nav() {
   const { tab, setTab } = useNav();

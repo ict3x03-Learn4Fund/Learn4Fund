@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import paymentsService from "../../services/payment";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../../features/user/userActions";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 function TransactionHistory() {
   const [transactions, setTransaction] = useState([]);
