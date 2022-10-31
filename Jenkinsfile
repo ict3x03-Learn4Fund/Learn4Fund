@@ -19,7 +19,7 @@ pipeline {
                 }
                 sh 'cp /home/.env backend'
                 sh 'docker compose down --rmi all'
-                sh 'docker compose build --no-cache'
+                sh 'docker compose -f docker-compose.dev.yml build --no-cache'
             }
         }
 
