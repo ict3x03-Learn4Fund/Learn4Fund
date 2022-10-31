@@ -1,6 +1,6 @@
 import React from "react";
 import http from "../../http-common";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import adminAuthService from "../../services/admin";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -105,12 +105,14 @@ export default function UserManagementActivity({ account, fetchData }) {
       <td>{account.firstName}</td>
       <td>{account.lockedOut + ""}</td>
       <td>
+        <tr>
         <td>
-          <button onClick={HandleLockUnlockClick}> {value} </button>
+          <button className="btn btn-primary" onClick={HandleLockUnlockClick}> {value} </button>
         </td>
         <td>
-          <button onClick={HandleRemoveClick}> REMOVE </button>
+          <button className="btn btn-primary" onClick={HandleRemoveClick}> REMOVE </button>
         </td>
+        </tr>
       </td>
     </tr>
   );

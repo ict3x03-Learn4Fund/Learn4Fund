@@ -5,11 +5,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { getCartNumber, user2FA } from "../features/user/userActions";
+import { getCartNumber, user2FA, getUserDetails } from "../features/user/userActions";
 import QRCode from "react-qr-code";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 export const OTPModal = ({ closeModal }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+        // Anything in here is fired on component unmount.
+        document.body.style.overflow = 'unset';
+    }
+}, [])
   const { loading, userInfo, userId, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
     (state) => state.user
   );
@@ -30,7 +37,7 @@ export const OTPModal = ({ closeModal }) => {
   }
 
   const submitForm = (data) => {
-    const payload = {userId: userId, token: Number(otp)}
+    const payload = {userId: userId, token: otp}
     console.log(payload)
     dispatch(user2FA(payload));
   };
@@ -39,7 +46,7 @@ export const OTPModal = ({ closeModal }) => {
     if (otpSuccess){
       console.log("Authenticated!")
       navigate("/")
-      dispatch(getCartNumber())
+      dispatch(getUserDetails())
       toast.success("Login Successful!")
     }
     if (otpError){

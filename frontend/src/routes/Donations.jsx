@@ -1,22 +1,59 @@
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { BsAward } from "react-icons/bs";
 import Banner from "../assets/images/donation banner.png";
 import cartsService from "../services/carts";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import donationsService from "../services/donations";
 
 function Donations() {
   const { userInfo, userId } = useSelector((state) => state.user);
   const [showDonation, setShowDonation] = useState("on");
+  const [top5List, setTop5List] = useState([]);
+  const [top10List, setTop10List] = useState([]);
+  const [total, setTotal] = useState(0);
   const offerAmtRef = useRef(0.0);
   const dispatch = useDispatch();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (userId) {
-      dispatch(getUserDetails());
+      getTop5();
+      getTop10();
+      getTotal();
+  },[]);
+
+  useEffect(() => {
+    if (userId){
+      dispatch(getUserDetails())
     }
-  }, []);
+  }, [userId])
+
+
+  const getTop5 = () => {
+    donationsService.getTop5().then((response) => {
+      if (response.status == 200) {
+        setTop5List(response.data);
+      }
+    });
+  };
+
+  const getTop10 = () => {
+    donationsService.getTop10().then((response) => {
+      if (response.status == 200) {
+        setTop10List(response.data);
+      }
+    });
+  };
+
+  const getTotal = () => {
+    donationsService.getTotal().then((response) => {
+      if (response.status == 200){
+        setTotal(response.data.total)
+      }
+    })
+  }
+
   function handleDonationChange(e) {
     if (e.key !== "Backspace") {
       if (offerAmtRef.current.value.includes(".")) {
@@ -31,42 +68,41 @@ function Donations() {
   }
 
   const handleAnnonymous = (e) => {
-    if (e.target.value === "on"){
-      e.target.value = "off"
+    if (e.target.value === "on") {
+      e.target.value = "off";
     } else {
-      e.target.value = "on"
+      e.target.value = "on";
     }
-    setShowDonation(e.target.value)
-    
-  }
+    setShowDonation(e.target.value);
+  };
 
   function addToCart() {
     if (userInfo) {
-      addDonation()
+      addDonation();
     } else {
       toast.error("Please login to continue");
     }
   }
 
   const addDonation = () => {
-    let showName = false
+    let showName = false;
     if (showDonation == "on") {
-      showName = true
+      showName = false;
     } else {
-      showName = false
+      showName = true;
     }
     cartsService
       .addDonationToCart(userId, offerAmtRef.current.value, showName)
       .then((response) => {
-        if (response.status == 200){
-          console.log(response.data)
-          toast.success("Donations added into cart.")
+        if (response.status == 200) {
+          console.log(response.data);
+          toast.success("Donations added into cart.");
         } else {
-          toast.error(response.data)
+          toast.error(response.data);
         }
       })
       .catch((e) => {
-        toast.error(e.message)
+        toast.error(e.message);
       });
   };
 
@@ -83,7 +119,7 @@ function Donations() {
                 Funds Raised: &nbsp;
               </span>
               <span className="font-type1 font-bold text-[1.5vw] lg:text-[1rem] leading-[20px]">
-                ${"1000000"}
+                ${total}
               </span>
             </div>
 
@@ -175,30 +211,47 @@ function Donations() {
               <div className="flex w-full justify-between">
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-yellow-500" />
-                  Jisoo - $5
+                  {top5List.length >= 1
+                    ? `${top5List[0].name} - $${top5List[0].amount}`
+                    : null}
                 </div>
-                <div>14/9</div>
+                <div>{top5List.length >= 1 ? `${top5List[0].date}` : null}</div>
               </div>
               <div className="flex w-full justify-between">
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-gray-500" />
-                  Jennie - $5
+                  {top5List.length >= 2
+                    ? `${top5List[1].name} - $${top5List[1].amount}`
+                    : null}
                 </div>
-                <div>14/9</div>
+                <div>{top5List.length >= 2 ? `${top5List[1].date}` : null}</div>
               </div>
               <div className="flex w-full justify-between">
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-brown-500" />
-                  Lisa - $10
+                  {top5List.length >= 3
+                    ? `${top5List[2].name} - $${top5List[2].amount}`
+                    : null}
                 </div>
-                <div>14/9</div>
+                <div>{top5List.length >= 3 ? `${top5List[2].date}` : null}</div>
               </div>
               <div className="flex w-full justify-between">
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-brown-500" />
-                  Rose - $10
+                  {top5List.length >= 4
+                    ? `${top5List[3].name} - $${top5List[3].amount}`
+                    : null}
                 </div>
-                <div>14/9</div>
+                <div>{top5List.length >= 4 ? `${top5List[3].date}` : null}</div>
+              </div>
+              <div className="flex w-full justify-between">
+                <div className="flex flex-nowrap font-type1 font-bold">
+                  <BsAward className="self-center text-brown-500" />
+                  {top5List.length >= 5
+                    ? `${top5List[4].name} - $${top5List[4].amount}`
+                    : null}
+                </div>
+                <div>{top5List.length >= 5 ? `${top5List[4].date}` : null}</div>
               </div>
             </div>
           </div>
@@ -209,76 +262,16 @@ function Donations() {
             </span>
           </div>
 
-          <div className="flex flex-wrap w-full h-[184px] overflow-y-scroll py-2 content-start">
+          <div className="flex flex-wrap w-full h-[184px] overflow-auto-scroll py-2 content-start">
             <div className="flex-row flex-wrap w-full h-fit text-[1vw]">
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Sana - $5
+              {top10List.map((value) => (
+                <div className="flex w-full justify-between">
+                  <div className="flex flex-nowrap font-type1 font-bold">
+                    {value.name} - ${value.amount}
+                  </div>
+                  <div>{value.date}</div>
                 </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Momo - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  ****** - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Jeongyeon - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Dahyun - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  ****** - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Jihyo - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Nayeon - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  Mina - $5
-                </div>
-                <div>14/9</div>
-              </div>
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  John - $5
-                </div>
-                <div>14/9</div>
-              </div>
-            </div>
-            <div className="flex-row flex-wrap w-full h-fit text-[1vw]">
-              <div className="flex w-full justify-between">
-                <div className="flex flex-nowrap font-type1 font-bold">
-                  ******** - $10
-                </div>
-                <div>14/9</div>
-              </div>
+              ))}
             </div>
           </div>
         </div>

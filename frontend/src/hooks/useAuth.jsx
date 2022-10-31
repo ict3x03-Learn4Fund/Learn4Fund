@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
 import adminAuthService from "../services/admin";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import axios from "axios";                // [Error] To intercept error codes from Response
 
 const AuthContext = createContext(null);

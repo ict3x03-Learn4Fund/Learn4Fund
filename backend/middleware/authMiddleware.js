@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const asyncHandler  = require('express-async-handler')
 const Account = require('../models/accountModel')
+const Logs = require("../models/logsModel");
 
 const protect = asyncHandler((req,res,next) =>{
     let token
@@ -14,6 +15,7 @@ const protect = asyncHandler((req,res,next) =>{
                 try {
                     // Get token from header
                     token = cookie.split('access_token=')[1]                                //[Authentication] Get token from cookie
+
                     if (token == null) {
                         return res.status(401).json({ message: 'Missing token' })
                     }
@@ -31,18 +33,34 @@ const protect = asyncHandler((req,res,next) =>{
                     if (url === '/v1/api/admin' ||
                         (url === '/v1/api/courses' && (path === "/create" || path === "/update/:id" || path === "/delete/:id"))) { 
                         if (req.account.role !== 'admin') {
+                            // Send to logs db
+                            Logs.create({
+                            email: req.account.email,
+                            type: "auth",
+                            reason: "Attempted to access " + req.url + " without authorization",
+                            time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+                            });
+
                             return res.status(403).json({ message: 'Not authorized' });
                         }
                     }
                     
                     next() // Move on from the middleware
                 } catch (error) {
+                    console.log(error)
                     return res.status(403).json({ message: 'Error' })
                 }
             }
         })
     }
     if (!token) {
+        // Send to logs db
+        Logs.create({
+            email: req.ip,
+            type: "auth",
+            reason: "Attempted to access " + req.url + " without authorization",
+            time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+        });
         return res.status(401).json({ message: 'Not logged in' })
     }
 })

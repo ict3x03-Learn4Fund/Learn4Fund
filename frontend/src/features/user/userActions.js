@@ -67,13 +67,19 @@ export const user2FA = createAsyncThunk(
             let {user} = getState()
             console.log("hello ",arg)
             const response = await authService.verify2FA(arg);
-            localStorage.setItem('userId', response._id)
-            return response
+            if (response.status == 200){
+                localStorage.setItem('userId', response.data._id)
+            }
+            return response.data
         } catch (error) {
+            console.log(error)
             // return custom error message from API if any
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
-            } else {
+            } else if (error.response.data){
+                return rejectWithValue(error.response.data)
+            } 
+            else {
                 return rejectWithValue(error.message)
             }
         }
@@ -85,8 +91,13 @@ export const getCartNumber = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
-            const userId = localStorage.getItem("userId")
-            return await cartsService.getTotal(userId)
+            const response = await cartsService.getTotal(user.userId)
+            if (response.status == 200){
+                return response
+            } else {
+                return rejectWithValue(response.message)
+            }
+            return
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
