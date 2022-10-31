@@ -86,7 +86,7 @@ function CourseInfo() {
     }
     // sessionStorage.setItem("cartItems", quantitySelected);
     addCartItem();
-    dispatch(getCartNumber(courseID))
+    dispatch(getCartNumber())
   }
 
   // add cart item

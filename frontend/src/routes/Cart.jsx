@@ -30,9 +30,6 @@ const Cart = () => {
     }
   }, []);
 
-  useEffect(() => {
-    getCart()
-  }, setShowModal)
 
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));

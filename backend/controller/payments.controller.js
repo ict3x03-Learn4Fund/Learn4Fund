@@ -9,8 +9,8 @@ const Donation = require("../models/donationModel");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
-const {sendEmail} = require("../middleware/mailer.js")
-const Account = require("../models/accountModel")
+const { sendEmail } = require("../middleware/mailer.js");
+const Account = require("../models/accountModel");
 
 //// encryption code
 // let decryptedData = decipher.update(encryptedCode, "hex", "utf-8")
@@ -66,8 +66,8 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "AccountId cannot be null." });
     }
     const user = await Account.findById(accountId);
-    if (!user){
-      return res.status(400).json({message: "User not found."})
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
     }
 
     // reduce quantity from courses from checkedout cart
@@ -106,7 +106,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     existingCart.donationAmt = 0;
     existingCart.coursesAdded = newCartList;
     existingCart.markModified("coursesAdded");
-    existingCart.markModified("donationAmount")
+    existingCart.markModified("donationAmount");
     existingCart.save();
 
     // create transaction document
@@ -122,28 +122,36 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     });
 
     // create donation document
-    let donor = await Donation.findOne({accountId: accountId});
+    let donor = await Donation.findOne({ accountId: accountId });
     if (!donor) {
-      donor = await Donation.create({accountId: accountId});
+      donor = await Donation.create({ accountId: accountId });
     }
-    const newDonation = {amount: donationAmount, showDonation: showDonation};
-    donor.donationList.push(newDonation);
-    donor.save();
-
+    if (donationAmount != 0) {
+      const newDonation = {
+        amount: donationAmount,
+        showDonation: showDonation,
+        date: new Date()
+      };
+      donor.donationList.push(newDonation);
+      donor.markModified("donationList")
+      donor.save();
+    }
 
     // create vouchers using uuid
     // encrypt vouchers and save to voucher document
     const emailList = [];
     const voucherList = [];
-    const expiryDate = new Date(+ new Date() + 365*24*60*60*1000);
+    const expiryDate = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000);
     for (const purchased in checkedOutCart) {
-      const courseInfo = await Course.findById(checkedOutCart[purchased].cartItem.courseId)
+      const courseInfo = await Course.findById(
+        checkedOutCart[purchased].cartItem.courseId
+      );
       for (
         let quantity = 0;
         quantity < checkedOutCart[purchased].cartItem.quantity;
         quantity++
       ) {
-        const code = uuidv4()        
+        const code = uuidv4();
         const emailVoucher = {
           courseName: courseInfo.courseName,
           voucherCode: code,
@@ -161,25 +169,27 @@ const apiMakePayment = asyncHandler(async (req, res) => {
         voucherList.push(voucher);
       }
     }
-    console.log(emailList)
+    console.log(emailList);
 
-    let message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`
-    let list = ""
+    let message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`;
+    let list = "";
     emailList.map((value) => {
-        list = `${value.courseName}:  ${value.voucherCode} \n`
-        message += list
-    })
-    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`
-
+      list = `${value.courseName}:  ${value.voucherCode} \n`;
+      message += list;
+    });
+    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`;
 
     // send vouchers to user's email
-    const success = await sendEmail(user.email, "New Transaction Made", message)
+    const success = await sendEmail(
+      user.email,
+      "New Transaction Made",
+      message
+    );
     if (success) {
       return res.status(200).json({ transaction, voucherList });
     } else {
-      return res.status(400).json({message: "failed to send email"})
+      return res.status(400).json({ message: "failed to send email" });
     }
-
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -192,7 +202,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
  */
 const apiAddCard = asyncHandler(async (req, res) => {
   try {
-    const { accountId, creditCard} = req.body;
+    const { accountId, creditCard } = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "Account Id not found" });
     }
@@ -223,12 +233,11 @@ const apiAddCard = asyncHandler(async (req, res) => {
         cardType: creditCard.cardType,
         expiryDate: creditCard.expiryDate,
       });
-      return res.status(200).json({id: newCreditCard._id});
+      return res.status(200).json({ id: newCreditCard._id });
     }
-    return res.status(400).json({message: "Card already exists."})
-
+    return res.status(400).json({ message: "Card already exists." });
   } catch (e) {
-    res.status(500).json({message: e.message});
+    res.status(500).json({ message: e.message });
   }
 });
 
@@ -237,7 +246,7 @@ const apiAddCard = asyncHandler(async (req, res) => {
  * @route POST /v1/api/payments/addAddr
  * @access Private
  */
- const apiAddAddr = asyncHandler(async (req, res) => {
+const apiAddAddr = asyncHandler(async (req, res) => {
   try {
     const { accountId, billAddress } = req.body;
     if (!accountId) {
@@ -264,12 +273,11 @@ const apiAddCard = asyncHandler(async (req, res) => {
         city: billAddress.city,
         postalCode: billAddress.postalCode,
       });
-      return res.status(200).json({id: newAddr._id});
-    } 
-    return res.status(400).json({message: "Address already exists."})
-
+      return res.status(200).json({ id: newAddr._id });
+    }
+    return res.status(400).json({ message: "Address already exists." });
   } catch (e) {
-    res.status(500).json({message: e.message});
+    res.status(500).json({ message: e.message });
   }
 });
 
@@ -323,7 +331,7 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
     })
       .populate("billAddressId")
       .populate({ path: "cardId", select: ["cardType", "last4No"] });
-    
+
     const filteredTrans = transactions;
     console.log(transactions[0].checkedOutCart[0]);
     for (const transaction in transactions) {
@@ -335,12 +343,15 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
         const newCartItem = {
           courseId: courseId,
           courseName: course.courseName,
-          quantity: transactions[transaction].checkedOutCart[cart].cartItem.quantity,
-          totalPrice: (course.courseDiscountedPrice * transactions[transaction].checkedOutCart[cart].cartItem.quantity).toFixed(2)
-        }
-        transactions[transaction].checkedOutCart[cart].cartItem = newCartItem
+          quantity:
+            transactions[transaction].checkedOutCart[cart].cartItem.quantity,
+          totalPrice: (
+            course.courseDiscountedPrice *
+            transactions[transaction].checkedOutCart[cart].cartItem.quantity
+          ).toFixed(2),
+        };
+        transactions[transaction].checkedOutCart[cart].cartItem = newCartItem;
         // transactions[transaction].checkedOutCart[cart].cartItem.courseName = course.CourseName;
-        
       }
     }
 

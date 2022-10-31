@@ -41,6 +41,7 @@ export const CreditCardModal = ({
   const [existLast4No, setExistLast4No] = useState();
   const [existCardType, setExistCardType] = useState();
   const [cvv, setCvv] = useState("");
+  const [loading, setLoading] = useState(false);
   let cardType = "";
 
   const getMethods = () => {
@@ -65,7 +66,7 @@ export const CreditCardModal = ({
     return newCart;
   };
 
-  const makePayment = () => {
+  const makePayment = async () => {
     const filteredCart = prepareCheckoutCart();
     if (checkedState[0] == true) {
       cardType = "VisaCard";
@@ -99,10 +100,13 @@ export const CreditCardModal = ({
     console.log(payload);
     paymentsService
       .makePayment(payload)
-      .then((response) => {
+      .then(async (response) => {
         if (response.status == 200) {
           toast.success("Payment has been made successfully!");
+          await timeout(10)
           closeModal(false);
+          setLoading(false);
+          window.location.reload(false)
         } else {
           toast.error(response.data.message);
         }
@@ -140,15 +144,15 @@ export const CreditCardModal = ({
       toast.error("Please select a billing address to proceed with payment");
       return;
     }
-    if (payMethod == "new" && erroredInputs) {
-      toast.error("Error filling up card details.")
+    if (payMethod == "new" && (typeof erroredInputs.cardNumber !== "undefined") && (typeof erroredInputs.cvc !== "undefined") && (typeof erroredInputs.expiryDate !== "undefined")) {
+      toast.error("Error filling up card details.");
       return;
     }
-    if (payMethod == "previous" && cvv.length !=3){
-      toast.error("Please enter the 3 digit cvv.")
+    if (payMethod == "previous" && cvv.length != 3) {
+      toast.error("Please enter the 3 digit cvv.");
       return;
     }
-    console.log("hello")
+    console.log("hello");
     setModalOpen(true);
   }
 
@@ -161,6 +165,7 @@ export const CreditCardModal = ({
       .then((response) => {
         console.log("status", response.status);
         if (response.status == 200) {
+          setLoading(true)
           makePayment();
           modalOpen(false);
         } else {
@@ -281,6 +286,10 @@ export const CreditCardModal = ({
       // cardType = "Master Card"
     }
   }
+
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+}
 
   /////////// Input Validations
   const {
@@ -502,7 +511,9 @@ export const CreditCardModal = ({
                         placeholder="•••"
                         required
                         value={cvv}
-                        onChange={(e)=>{setCvv(e.target.value)}}
+                        onChange={(e) => {
+                          setCvv(e.target.value);
+                        }}
                       />
                     </div>
                   </Fragment>
@@ -573,7 +584,7 @@ export const CreditCardModal = ({
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
                             {...getCardNumberProps()}
-                          />  
+                          />
                           <span className="text-red-500 self-center">
                             {erroredInputs.cardNumber &&
                               erroredInputs.cardNumber}
@@ -701,6 +712,12 @@ export const CreditCardModal = ({
                       </div>
                     )}
                   </div>
+                  { loading ? (<div
+                    class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-blue-600"
+                    role="status"
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>) : null}
                   <div className="flex flex-col w-full space-y-2 mt-6">
                     <button
                       className="p-2 w-full rounded bg-success text-w1 font-bold"

@@ -26,10 +26,14 @@ const apiGetDonations = asyncHandler(async (req, res) => {
 const apiGetTotal = asyncHandler(async (req, res) => {
   try {
     const donationList = await Donation.find();
-    const total = donationList.reduce((total, a) => total + a.totalAmount, 0);
-    total = total.toFixed(0);
+    let total = 0;
+    donationList.map((donor) => {
+      donor.donationList.map((object) => {
+        total += parseInt(object.amount);
+      })
+    })
     // console.log(courses)
-    res.status(200).json(total);
+    res.status(200).json({total: total});
   } catch (error) {
     res.status(400).json(`message: ${error.message}`);
   }
@@ -55,18 +59,73 @@ const apiAddDonations = asyncHandler(async (req, res) => {
         accountId,
       });
     }
-    const donation = {amount, showDonation};
+    const donation = { amount, showDonation, date: new Date() };
     donator.donationList.push(donation);
+    donator.markModified("donationList")
     donator.save();
-    
+
     return res.status(200).json(donator);
   } catch (e) {
     return res.status(400).json({ message: e.message });
   }
 });
 
+// get top 5 donators based on donation amount in descending order
+const apiGetTop5Donors = asyncHandler(async (req, res) => {
+  try {
+    const donors = await Donation.find().populate("accountId");
+    let sortedList = [];
+    donors.map((user) => {
+      let totalAmt = 0
+      user.donationList.map((donation) => {
+        totalAmt += parseInt(donation.amount);
+      });
+      const date = new Date(user.updatedAt)
+      const niceD = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+      const donor = { name: user.accountId.firstName, amount: totalAmt, date: niceD}
+      sortedList.push(donor)
+    });    
+    sortedList.sort((a,b) => {
+      return b.amount - a.amount;
+    })
+    const top5donors = sortedList.slice(0,5);
+    return res.status(200).json(top5donors)
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+// get top 5 donators based on donation amount in descending order
+const apiTopRecent = asyncHandler(async (req, res) => {
+  try {
+    const donors = await Donation.find().populate("accountId");
+    let donorLists = [];
+    donors.map((donor) => {
+      donor.donationList.map((object) => {
+        if (object.showDonation){
+          const d = object.date
+          const date = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
+          const newObject = {name: donor.accountId.firstName, amount: object.amount, date: date }
+          donorLists.push(newObject);
+        }
+      })
+    })
+    donorLists = donorLists.sort((a,b) => {
+      return b.date - a.date
+    })
+    donorLists = donorLists.slice(0,10)
+    return res.status(200).json(donorLists)
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+// get recent donors 
+
 module.exports = {
   apiAddDonations,
   apiGetTotal,
   apiGetDonations,
+  apiGetTop5Donors,
+  apiTopRecent
 };
