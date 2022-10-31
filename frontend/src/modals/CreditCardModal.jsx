@@ -1,9 +1,8 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { AiOutlineQuestionCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import validator from "validator";
 import { BiErrorCircle } from "react-icons/bi";
-import { toast } from "react-hot-toast";
-import { useEffect } from "react";
+import {toast} from "react-toastify";
 import paymentsService from "../services/payment";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../features/user/userActions";
@@ -15,6 +14,13 @@ export const CreditCardModal = ({
   showDonation,
   checkout,
 }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+        // Anything in here is fired on component unmount.
+        document.body.style.overflow = 'unset';
+    }
+}, [])
   const [checkedState, setCheckedState] = useState([true, false]);
   const { userInfo, userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();

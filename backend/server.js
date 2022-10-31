@@ -4,6 +4,7 @@ const mongoSanitize = require('express-mongo-sanitize');    // [Sanitization] Pr
 const cors = require("cors");
 const { errorHandler } = require("./middleware/errorMiddleware");
 const {connectDB} = require("./config/db");
+// const {recaptcha} =require("./config/recaptchsa");
 const dotenv = require("dotenv").config();
 const colors = require("colors");
 const port = process.env.port || 5000;
@@ -15,6 +16,7 @@ const multer = require('multer')
 const bodyParser = require('body-parser');
 
 connectDB();
+// recaptcha();
 
 // const apiLimiter = rateLimit({                              // [DoS] Prevent brute force attacks on APIs
 // 	windowMs: 15 * 60 * 1000, // 15 minutes
@@ -30,7 +32,7 @@ const app = express();
 // TODO: Uncomment this line in production
 // app.set('trust proxy', 2);                                 // [DoS] trust 2 , cloudflare and nginx
 
-app.use(cors({ origin: '*', credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 // parse application/x-www-form-urlencoded, false can only parse incoming Request Object of strings or arrays
 app.use(express.urlencoded({ extended: false }));
@@ -39,6 +41,9 @@ app.use(methodOverride("_method"));
 
 
 app.use(bodyParser.json());
+//for recaptcha
+// app.use(bodyParser.urlencoded({ extended: true }));
+
 
 // For object type only - By default, $ and . characters are removed completely from user-supplied input in the following places:
 // - req.body
@@ -65,3 +70,4 @@ app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
+

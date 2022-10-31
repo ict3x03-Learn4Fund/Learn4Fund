@@ -5,11 +5,21 @@ const {
   apiLogin,
   apiGetAccount,
   apiVerify2FA,
+  apiResetPassword,
+  apiChangePassword,
+  apiVerifyReset,
+  apiUploadAvatar,
+  apiNormalChangePass,
+  apiUpdateDetails,
+  apiDelete,
+  apiUpdateSubscription,
 } = require("../controller/accounts.controller");
 
 const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+const axios = require("axios")
 
 const { check, validationResult } = require("express-validator");     // [Validation, Sanitization]
 const rateLimit = require("express-rate-limit");                      // [DoS] Prevent brute force attacks
@@ -155,8 +165,49 @@ router.route('/verify2FA').post(verify2FALimiter,
         }
 })
 
-
 // @route   GET api/getAccount
 router.route("/getAccount").get(protect, apiGetAccount);
 
+// @route POST api/accounts/resetPassword
+router.route("/reset").post(apiResetPassword);
+
+// @route GET api/accounts/changePassword
+router.route("/reset/:id/:jwt").get(apiVerifyReset);
+router.route("/reset/:id/:jwt").post(apiChangePassword);
+
+// @route POST normal change password
+router.route("/changePass").post(apiNormalChangePass);
+
+// @route POST api/accounts/uploadImg
+router.route("/uploadAvatar").post(apiUploadAvatar)
+
+// @route POST api/accounts/update
+router.route("/update").post(apiUpdateDetails)
+
+// @route POST api/accounts/update
+router.route("/updateSubscription").post(apiUpdateSubscription)
+
+// @route POST api/accounts/delete
+router.route("/delete/:id").post(apiDelete)
+
+
 module.exports = router;
+//Check captcha
+router.post("/checkCaptcha", async (req, res) => {
+    //Destructuring response token from request body
+        const {token} = req.body;
+    
+    //sends secret key and response token to google
+        await axios.post(
+          `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+          );
+    
+    //check response status and send back to the client-side
+          if (res.status(200)) {
+            res.status(200).json({message: "Success"});
+        }else{
+          res.status(400).json({message: "Failed"});
+        }
+    });
+
+module.exports = router

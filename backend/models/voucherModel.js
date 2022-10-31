@@ -4,7 +4,6 @@ const voucherSchema = mongoose.Schema(
   {
     voucherCode: {
       type: String,
-      default: false,
     },
     expiryDate: {
       type: Date,
@@ -12,12 +11,15 @@ const voucherSchema = mongoose.Schema(
     },
     accountId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Account"
     },
     courseId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Course"
     },
     transactionId: {
         type: mongoose.SchemaTypes.ObjectId,
+        ref: "Transaction"
     },
   },
   {

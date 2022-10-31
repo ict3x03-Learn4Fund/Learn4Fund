@@ -1,6 +1,6 @@
 import React from "react";
 import http from "../../http-common";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import adminAuthService from "../../services/admin";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

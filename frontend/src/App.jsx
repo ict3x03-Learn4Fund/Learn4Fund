@@ -4,7 +4,7 @@ import Homepage from "./routes/Homepage";
 import Nav from "./components/nav/Nav";
 import Footer from "./components/footer/Footer";
 import Login from "./routes/Login";
-import Login2FA from "./routes/Login2FA";
+import ResetPassword from "./routes/ResetPassword";
 import Signup from "./routes/Signup";
 import Toc from "./policies/Toc";
 import Privacy from "./policies/Privacy";
@@ -21,10 +21,12 @@ import Catalog from "./routes/Catalog";
 import CourseInfo from "./components/catalog/CourseInfo";
 import { PromotionModal } from "./modals/PromotionModal";
 import { NewsLetterModal } from "./modals/NewsLetterModal";
-
-import { Toaster } from "react-hot-toast";
+import ReCAPTCHA from "react-google-recaptcha"
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { OTPModal } from "./modals/OTPModal";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import ChangePass from "./routes/ChangePass";
 
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
@@ -59,19 +61,21 @@ function App() {
               <Route exact path="donate" element={<Donations />} />
               <Route exact path="tos" element={<Toc />} />
               <Route exact path="privacy" element={<Privacy />} />
+              <Route path="captcha" element={<ReCAPTCHA sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"/>} />
               <Route exact path="cookies" element={<Cookie />} />
               <Route element={<ProtectedRoute />}>
                 <Route exact path="settings" element={<Settings />} />
-                <Route exact path="login2FA" element={<Login2FA />} />
                 <Route exact path="admin" element={<Admin />} />
+                <Route exact path="cart" element={<Cart />} />
               </Route>
+              <Route exact path="reset" element={<ResetPassword />} />
+              <Route exact path="reset/:userId/:jwt" element={<ChangePass />} />
               <Route exact path="otp" element={<OTPModal />} />
-              <Route exact path="cart" element={<Cart />} />
               <Route exact path="login" element={<Login />} />
               <Route exact path="signup" element={<Signup />} />
               <Route exact path="courses" element={<Catalog />} />
               <Route exact path="courses/:courseID" element={<CourseInfo />} />
-              <Route exact path="promo" element={<Homepage />} />
+              {/* <Route exact path="promo" element={<Promopage />} /> */}
 
               <Route
                 path="*"
@@ -112,15 +116,18 @@ function App() {
             )}
             {toggleModal && <PromotionModal closeModal={setToggleModal} />}
             {newsModal && <NewsLetterModal closeModal={setNewsModal} />}
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                style: {
-                  background: "#363636",
-                  color: "#fff",
-                },
-              }}
-            />
+            <ToastContainer
+position="bottom-right"
+autoClose={3000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+/>
             <Footer />
           </>
         
