@@ -4,6 +4,7 @@ const payMethodSchema = mongoose.Schema(
   {
     accountId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
         required: [true, "AccountId cannot be empty"],
       },
     methods: {
