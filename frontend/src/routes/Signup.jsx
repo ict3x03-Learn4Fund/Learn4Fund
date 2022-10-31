@@ -111,7 +111,31 @@ const Signup = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-  }
+  };
+
+  const submitData = async (data) => {
+    var token = captchaRef.current.getValue();    
+    if (process.env.REACT_APP_ENV === 'testing'){ // [UI Testing] Skip captcha verification for UI testing phase
+      toast.error("SKIPPING CAPTCHA");
+      dispatch(registerUser(data));
+    }else{
+      if (!token) {
+        toast.error("Please verify captcha");
+      }else{
+        await axios
+        .post(process.env.REACT_APP_API_URL, { token })
+        .then((res) => {
+          console.log(res);
+          dispatch(registerUser(data));
+        })
+        .catch((error) => {
+          alert(error);
+        });
+      captchaRef.current.reset();
+      }
+    }
+
+  };
 
   const onSubmit = (data) => {
     if(data.password != data.password2){
