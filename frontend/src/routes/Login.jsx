@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { userLogin } from "../features/user/userActions";
+import { Link, useNavigate } from "react-router-dom";
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
-import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 
 function Login() {
@@ -16,17 +13,13 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { loading, userInfo, error, success, stateErrorMsg } = useSelector(
-    (state) => state.user
-  );
+
   const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [errorMsg, setErrorMsg] = useState("");
+  const [userCredentials, setUserCredentials] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [check, setCheck] = useState(false);
 
   function handleEmailChange(event) {
     setEmail(event.target.value);
@@ -40,20 +33,9 @@ function Login() {
     window.scrollTo(0, 0);
 },[])
 
-  // redirect authenticated user to profile screen
-  useEffect(() => {
-    console.log(success);
-    if (success) {
-      setModalOpen(true);
-    }
-    if (error) {
-      toast.error(stateErrorMsg);
-    }
-  }, [dispatch, success, error]);
-
   const submitForm = (data) => {
-    dispatch(userLogin(data));
-    console.log(success);
+    setUserCredentials(data);
+    setModalOpen(true);
   };
 
   return (
@@ -125,19 +107,18 @@ function Login() {
               <button
                 className="p-2 w-full rounded bg-b1 border-2 hover:bg-b2 text-w1 font-bold"
                 type="submit"
-                disabled={loading}
               >
                 Login with Email
               </button>
             </div>
-            <a
-              className="underline text-sm hover:text-blue-400 text-blue-900"
+            <button
+              className="p-2 w-full rounded bg-g2 border-2 hover:bg-b2 text-w1 font-bold"
               onClick={() => {
                 navigate("/reset");
               }}
             >
               forget password?
-            </a>
+            </button>
             <div className="flex flex-row flex-nowrap w-full my-1">
               <hr className="flex flex-wrap w-full border-1 border-[black] self-center mr-4" />
               <p className="font-type2">OR</p>
@@ -152,7 +133,7 @@ function Login() {
           </div>
         </form>
       </div>
-      {modalOpen ? <OTPModal closeModal={setModalOpen}></OTPModal> : null}
+      {modalOpen ? <OTPModal closeModal={setModalOpen} formData={userCredentials}></OTPModal> : null}
     </main>
   );
 }

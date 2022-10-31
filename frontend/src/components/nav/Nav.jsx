@@ -33,7 +33,7 @@ function Nav() {
 
   useEffect(() => {
     if (userInfo) {
-      dispatch(getCartNumber(localStorage.getItem("userId")));
+      dispatch(getCartNumber(userInfo.id));
       setAvatar(userInfo.avatarImg)
     }
   }, [userInfo]);

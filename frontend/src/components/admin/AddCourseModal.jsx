@@ -8,6 +8,7 @@ import imagesService from "../../services/images";
 
 export const AddCourseModal = ({closeModal, courseInfo}) => {
   const [file, setFile] = useState(null);
+  const [checkBox, setCheckBox] = useState(false);
   const formData = new FormData();
     const { loading, userInfo, error, success } = useSelector(state => state.user)
     const [updatedList,setUpdatedList] = React.useState({
@@ -33,6 +34,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
     useEffect(() => {
       if (courseInfo._id){
+        setCheckBox(courseInfo.canBeDiscounted);
         setUpdatedList(courseInfo)
       }
     }, [courseInfo, setUpdatedList])
@@ -43,6 +45,10 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
           [e.target.name]: e.target.value,
         }));
       };
+
+      useEffect(() => {
+        console.log('changed!')
+      },[updatedList])
 
       const uploadImage = (e) => {
         e.preventDefault();
@@ -69,9 +75,9 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       };
 
     const swapSelection = () =>{
-        updatedList.canBeDiscounted = !updatedList.canBeDiscounted
-        setUpdatedList(updatedList);
-         console.log(updatedList)
+        setCheckBox(!checkBox)
+        updatedList.canBeDiscounted = checkBox;
+        setUpdatedList(updatedList)
     }
 
     const addOrUpdateCourse = () => {
@@ -82,6 +88,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
         // insert course
           createCourses(updatedList)
         }
+        closeModal(false);
     }
 
   // create courses
@@ -174,7 +181,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Discounted Price</label> <input type="text" name="courseDiscountedPrice" className='border-2 border-b1 w-1/2 text-center' onChange={editInput} value={updatedList.courseDiscountedPrice}/>
-                <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={updatedList.canBeDiscounted} onChange={()=>swapSelection()}/>
+                <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={checkBox} onChange={()=>swapSelection()}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Quantity</label> <input name="quantity" type="number" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.quantity}/>

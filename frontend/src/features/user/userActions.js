@@ -26,10 +26,13 @@ export const registerUser = createAsyncThunk(
 
 export const userLogin = createAsyncThunk(
     'user/login',
-    async ({ email, password }, { rejectWithValue }) => {
+    async ({ email, password, token }, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.login(email, password);
-            localStorage.setItem('userId', verifyUser._id);
+            if(verifyUser.status===200){
+            await authService.verify2FA({ token: token, userId: verifyUser._id });
+            
+            localStorage.setItem('userId', verifyUser._id);}
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -62,10 +65,8 @@ export const getUserDetails = createAsyncThunk(
 
 export const user2FA = createAsyncThunk(
     'user/auth2FA',
-    async (arg, { getState, rejectWithValue }) => {
+    async (arg, { rejectWithValue }) => {
         try {
-            let {user} = getState()
-            console.log("hello ",arg)
             const response = await authService.verify2FA(arg);
             return response.data
         } catch (error) {

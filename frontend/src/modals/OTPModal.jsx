@@ -5,21 +5,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { user2FA, getUserDetails } from "../features/user/userActions";
+import {
+  userLogin,
+  getUserDetails,
+  getCartNumber,
+} from "../features/user/userActions";
+import { logout } from "../features/user/userSlice";
 import QRCode from "react-qr-code";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
-export const OTPModal = ({ closeModal }) => {
+export const OTPModal = ({ closeModal, formData }) => {
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
-        // Anything in here is fired on component unmount.
-        document.body.style.overflow = 'unset';
-    }
-}, [])
-  const { loading, userInfo, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
-    (state) => state.user
-  );
+      // Anything in here is fired on component unmount.
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+  const {
+    loading,
+    success,
+    error,
+    userInfo,
+    otpError,
+    otpSuccess,
+    qrUrl,
+    stateErrorMsg,
+  } = useSelector((state) => state.user);
 
   const {
     register,
@@ -36,23 +48,28 @@ export const OTPModal = ({ closeModal }) => {
     setOtp(event.target.value);
   }
 
-  const submitForm = (data) => {
-    const payload = {userId: localStorage.getItem('userId'), token: otp}
-    console.log(payload)
-    dispatch(user2FA(payload));
+  const submitForm = () => {
+    formData.token = otp;
+    dispatch(userLogin(formData));
+    
+      
   };
 
   useEffect(() => {
-    if (otpSuccess){
-      console.log("Authenticated!")
-      navigate("/")
-      dispatch(getUserDetails())
-      toast.success("Login Successful!")
+    if (success) {
+      navigate("/");
+      toast.success("Login Successful!");
+      dispatch(getUserDetails());
+      dispatch(getCartNumber(localStorage.getItem("userId")));
     }
-    if (otpError){
-      toast.error(stateErrorMsg)
+    if(error){
+      dispatch(logout());
+      toast.error(stateErrorMsg);
+      closeModal(false);
     }
-  },[dispatch, otpError, otpSuccess, stateErrorMsg])
+    
+  },[dispatch, success, error, stateErrorMsg]);
+
 
   return (
     <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300">
@@ -77,11 +94,7 @@ export const OTPModal = ({ closeModal }) => {
             <div className="flex flex-col items-center  rounded-lg">
               {qrUrl ? (
                 <Fragment className="flex items-center">
-                  <QRCode
-                    className=""
-                    value={qrUrl}
-                    size={256}
-                  ></QRCode>
+                  <QRCode className="" value={qrUrl} size={256}></QRCode>
                   <h2>
                     Scan this QR code on your preferred authentication
                     application.
