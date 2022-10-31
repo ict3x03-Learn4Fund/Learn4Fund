@@ -101,9 +101,10 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     let newCartList = existingCart.coursesAdded.filter(
       (cart) => !idArray.includes(cart.cartItem.courseId)
     );
-    existingCart.donationAmount = 0;
+    existingCart.donationAmt = 0;
     existingCart.coursesAdded = newCartList;
     existingCart.markModified("coursesAdded");
+    existingCart.markModified("donationAmount")
     existingCart.save();
 
     // create transaction document
@@ -170,9 +171,9 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     // send vouchers to user's email
     const success = await sendEmail(user.email, "New Transaction Made", message)
     if (success) {
-      return res.json({ transaction, voucherList });
+      return res.status(200).json({ transaction, voucherList });
     } else {
-      return res.json({message: "failed to send email"})
+      return res.status(400).json({message: "failed to send email"})
     }
 
   } catch (error) {
@@ -218,11 +219,12 @@ const apiAddCard = asyncHandler(async (req, res) => {
         cardType: creditCard.cardType,
         expiryDate: creditCard.expiryDate,
       });
+      return res.status(200).json({id: newCreditCard._id});
     }
+    return res.status(400).json({message: "Card already exists."})
 
-    res.status(200).json(newCreditCard);
   } catch (e) {
-    res.status(500).json(e.message);
+    res.status(500).json({message: e.message});
   }
 });
 
@@ -258,11 +260,12 @@ const apiAddCard = asyncHandler(async (req, res) => {
         city: billAddress.city,
         postalCode: billAddress.postalCode,
       });
+      return res.status(200).json({id: newAddr._id});
     } 
+    return res.status(400).json({message: "Address already exists."})
 
-    res.status(200).json(newAddr);
   } catch (e) {
-    res.status(500).json(e.message);
+    res.status(500).json({message: e.message});
   }
 });
 

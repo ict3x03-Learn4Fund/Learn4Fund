@@ -51,9 +51,9 @@ function Donations() {
   const addDonation = () => {
     let showName = false
     if (showDonation == "on") {
-      showName = true
-    } else {
       showName = false
+    } else {
+      showName = true
     }
     cartsService
       .addDonationToCart(userId, offerAmtRef.current.value, showName)

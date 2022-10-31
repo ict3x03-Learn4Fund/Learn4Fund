@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../features/user/userActions";
 import { CreditCardModal } from "../modals/CreditCardModal";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -30,12 +31,14 @@ const Cart = () => {
   }, []);
 
   useEffect(() => {
+    getCart()
+  }, setShowModal)
+
+  useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));
   }, cartList);
 
-  useEffect(()=> {
-
-  }, [cartList])
+  useEffect(() => {}, [cartList]);
 
   // retrieve cart
   const getCart = () => {
@@ -137,15 +140,18 @@ const Cart = () => {
   }
 
   const removeDonations = () => {
-    cartsService.clearDonationsInCart(userId).then((res) => {
-      if (res.status == 200){
-        toast.success("Donations cleared");
-        getCart();
-      }
-    }).catch((err) => {
-      toast.error(err.response.data.message)
-    })
-  }
+    cartsService
+      .clearDonationsInCart(userId)
+      .then((res) => {
+        if (res.status == 200) {
+          toast.success("Donations cleared");
+          getCart();
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
+  };
 
   return (
     <main className="flex w-full h-full min-h-[600px] px-[40px] lg:px-[120px] pb-[24px] bg-b1 ">
@@ -278,11 +284,14 @@ const Cart = () => {
                 Donations made
               </span>
               <div>
-                <RemoveCircleOutlinedIcon
-                  fontSize="small"
-                  className="hover:text-red-500 justify-center"
-                  onClick={() => removeDonations()}
-                ></RemoveCircleOutlinedIcon>
+                {donation != 0 ? (
+                  <RemoveCircleOutlinedIcon
+                    fontSize="small"
+                    className="hover:text-red-500 justify-center"
+                    onClick={() => removeDonations()}
+                  ></RemoveCircleOutlinedIcon>
+                ) : null}
+
                 <span className="font-type1 text-[1vw] text-b1 font-bold">
                   ${donation}.00
                 </span>
