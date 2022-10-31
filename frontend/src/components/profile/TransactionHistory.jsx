@@ -65,8 +65,8 @@ function TransactionHistory() {
                       </td>
                       <td>${transaction.totalAmount}</td>
                       <td>
-                        {transaction.cardId.cardType} ****{" "}
-                        {transaction.cardId.last4No}
+                        {transaction.cardType} ****{" "}
+                        {transaction.last4No}
                       </td>
                     </tr>
                     {transaction.checkedOutCart.map((cart, index) => {

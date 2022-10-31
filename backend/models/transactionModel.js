@@ -11,6 +11,14 @@ const transactionSchema = mongoose.Schema(
       type: mongoose.Schema.Types.Double,
       required: [true, "Total amount cannot be null."],
     },
+    last4No: {
+      type: String,
+      default: ""
+    },
+    cardType: {
+      type: String,
+      default: ""
+    },
     checkedOutCart: Array,
     accountId: {
       type: mongoose.SchemaTypes.ObjectId,

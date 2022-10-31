@@ -12,8 +12,7 @@ import { useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BsShieldLockFill } from "react-icons/bs";
-
-
+import { useCreditCardValidator } from "react-creditcard-validator";
 
 export const CreditCardModal = ({
   closeModal,
@@ -31,16 +30,18 @@ export const CreditCardModal = ({
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
-  const [cvv, setCvv] = useState("");
   const [payMethod, selectPayMethod] = useState("previous");
   const [billMethod, selectBillMethod] = useState("previous");
   const [cardList, setCardList] = useState([]);
   const [addressList, setAddressList] = useState([]);
   const [cardId, setCardId] = useState();
   const [addrId, setAddrId] = useState();
+  const [existLast4No, setExistLast4No] = useState();
+  const [existCardType, setExistCardType] = useState();
+  const [cvv, setCvv] = useState("");
+  let cardType = "";
 
   const getMethods = () => {
     paymentsService
@@ -66,6 +67,24 @@ export const CreditCardModal = ({
 
   const makePayment = () => {
     const filteredCart = prepareCheckoutCart();
+    if (checkedState[0] == true) {
+      cardType = "VisaCard";
+    } else {
+      cardType = "MasterCard";
+    }
+    let reqLast4No = "";
+    let reqCardType = "";
+    if (existCardType) {
+      reqCardType = existCardType;
+    } else {
+      reqCardType = cardType;
+    }
+    if (existLast4No) {
+      reqLast4No = existLast4No;
+    } else {
+      reqLast4No = cardNo.slice(-4);
+    }
+
     const payload = {
       accountId: userId,
       donationAmount: donation,
@@ -74,6 +93,8 @@ export const CreditCardModal = ({
       cardId: cardId,
       billAddressId: addrId,
       checkedOutCart: filteredCart,
+      last4No: reqLast4No,
+      cardType: reqCardType,
     };
     console.log(payload);
     paymentsService
@@ -81,7 +102,7 @@ export const CreditCardModal = ({
       .then((response) => {
         if (response.status == 200) {
           toast.success("Payment has been made successfully!");
-          closeModal(false)
+          closeModal(false);
         } else {
           toast.error(response.data.message);
         }
@@ -119,27 +140,38 @@ export const CreditCardModal = ({
       toast.error("Please select a billing address to proceed with payment");
       return;
     }
+    if (payMethod == "new" && erroredInputs) {
+      toast.error("Error filling up card details.")
+      return;
+    }
+    if (payMethod == "previous" && cvv.length !=3){
+      toast.error("Please enter the 3 digit cvv.")
+      return;
+    }
+    console.log("hello")
     setModalOpen(true);
   }
 
   // for otp submit
   const submitOtpForm = () => {
-    const payload = {userId: userId, token: otp}
-    console.log(payload)
-    authService.verify2FA(payload).then((response) => {
-      console.log("status", response.status)
-      if (response.status == 200){
-        makePayment()
-        modalOpen(false)
-      } else {
-        console.log("Error")
-        toast.error(response.data.message)
-      }
-    }).catch((err) => {
-      toast.error(err.response.data.message)
-    })
+    const payload = { userId: userId, token: otp };
+    console.log(payload);
+    authService
+      .verify2FA(payload)
+      .then((response) => {
+        console.log("status", response.status);
+        if (response.status == 200) {
+          makePayment();
+          modalOpen(false);
+        } else {
+          console.log("Error");
+          toast.error(response.data.message);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
   };
-
 
   const {
     register,
@@ -208,11 +240,6 @@ export const CreditCardModal = ({
   };
 
   const onCardSubmit = (data) => {
-    if (!validator.isCreditCard(cardNo)) {
-      toast.error("Enter valid CreditCard Number!");
-      return;
-    }
-    let cardType = "";
     if (checkedState[0] == true) {
       cardType = "VisaCard";
     } else {
@@ -239,8 +266,10 @@ export const CreditCardModal = ({
     setAddrId(addrId);
   };
 
-  const selectCard = (cardId) => {
-    setCardId(cardId);
+  const selectCard = (card) => {
+    setCardId(card._id);
+    setExistCardType(card.cardType);
+    setExistLast4No(card.last4No);
   };
 
   function selectCardType(type) {
@@ -252,6 +281,15 @@ export const CreditCardModal = ({
       // cardType = "Master Card"
     }
   }
+
+  /////////// Input Validations
+  const {
+    getCardNumberProps,
+    getExpiryDateProps,
+    getCVCProps,
+    getCardImageProps,
+    meta: { erroredInputs },
+  } = useCreditCardValidator();
 
   return (
     <div
@@ -440,7 +478,7 @@ export const CreditCardModal = ({
                         <input
                           type="radio"
                           checked={cardId === value._id}
-                          onClick={() => selectCard(value._id)}
+                          onClick={() => selectCard(value)}
                           className="mr-2"
                         />
                         <div className="grid grid-rows-2">
@@ -459,9 +497,12 @@ export const CreditCardModal = ({
                       <input
                         type="password"
                         id="confirm_password"
+                        max="3"
                         class=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="•••"
                         required
+                        value={cvv}
+                        onChange={(e)=>{setCvv(e.target.value)}}
                       />
                     </div>
                   </Fragment>
@@ -531,7 +572,12 @@ export const CreditCardModal = ({
                             onChange={onChangeCard}
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
-                          />
+                            {...getCardNumberProps()}
+                          />  
+                          <span className="text-red-500 self-center">
+                            {erroredInputs.cardNumber &&
+                              erroredInputs.cardNumber}
+                          </span>
                         </div>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">
@@ -545,18 +591,28 @@ export const CreditCardModal = ({
                             placeholder="mm/yyyy"
                             onChange={onChangeCard}
                             className="p-2 border-2 border-black w-40"
+                            {...getExpiryDateProps()}
                           />
+                          <span className="text-red-500 self-center">
+                            {erroredInputs.expiryDate &&
+                              erroredInputs.expiryDate}
+                          </span>
                         </div>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">CVV</div>
                           <input
-                            type="number"
+                            type="password"
                             name="holder name"
                             required
                             maxLength={3}
                             placeholder="***"
                             className="p-2 border-2 border-black w-14"
+                            {...getCVCProps()}
                           />
+
+                          <span className="text-red-500 self-center">
+                            {erroredInputs.cvc && erroredInputs.cvc}
+                          </span>
                         </div>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold">
                           <input

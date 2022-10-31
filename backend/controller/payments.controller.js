@@ -59,6 +59,8 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       checkedOutCart,
       billAddressId,
       cardId,
+      cardType,
+      last4No,
     } = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "AccountId cannot be null." });
@@ -115,6 +117,8 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       accountId: accountId,
       billAddressId: billAddressId,
       cardId: cardId,
+      last4No: last4No,
+      cardType: cardType,
     });
 
     // create donation document
