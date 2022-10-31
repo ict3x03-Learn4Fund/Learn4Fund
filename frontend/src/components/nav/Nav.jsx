@@ -14,50 +14,35 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useNav } from "../../hooks/useNav";
-import cartsService from "../../services/carts";
-import {toast} from "react-toastify";
 
 function Nav() {
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState(0);
-  const { userInfo, userId, cartNo, otpSuccess } = useSelector((state) => state.user);
+  const { userInfo, cartNo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [adminStatus, setAdmin] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [avatar, setAvatar] = useState();
 
-  useEffect(() => {
-    if (otpSuccess) {
+  // get user info
+  useEffect(()=> {
+    if (localStorage.getItem("userId")){
       dispatch(getUserDetails())
-      dispatch(getCartNumber());
+      
     }
-  }, [otpSuccess, dispatch])
+  }, [])
 
   useEffect(() => {
     if (userInfo) {
+      dispatch(getCartNumber(localStorage.getItem("userId")));
       setAvatar(userInfo.avatarImg)
     }
   }, [userInfo]);
-
-  useEffect(() => {
-    if (userInfo != null && userInfo.role == "admin") {
-      setAdmin(true);
-    } else {
-      setAdmin(false);
-    }
-  }, userInfo);
 
   const handleLogout = () => {
     // logout();
     dispatch(logout());
     setTab("");
     navigate("/");
-  };
-
-  const selectedTab = (tab) => {
-    setTab(tab);
-    navigate("/" + tab);
   };
 
   useEffect(() => {
@@ -95,10 +80,10 @@ function Nav() {
           )}
 
           <div className="flex w-full lg:w-1/2 justify-center lg:justify-end self-center">
-            {adminStatus && (
+            {userInfo && userInfo.role == "admin" && (
               <div
                 onClick={() => {
-                  selectedTab("admin");
+                  navigate("/admin");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -113,7 +98,7 @@ function Nav() {
             )}
             <div
               onClick={() => {
-                selectedTab("");
+                navigate("/");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -127,7 +112,7 @@ function Nav() {
             </div>
             <div
               onClick={() => {
-                selectedTab("donate");
+                navigate("/donate");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -142,7 +127,7 @@ function Nav() {
             {userInfo && (
               <div
                 onClick={() => {
-                  selectedTab("settings");
+                  navigate("/settings");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -157,7 +142,7 @@ function Nav() {
             )}
             <div
               onClick={() => {
-                selectedTab("cart");
+                navigate("/cart");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -186,7 +171,7 @@ function Nav() {
             ) : (
               <div
                 onClick={() => {
-                  selectedTab("login");
+                  navigate("/login");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +

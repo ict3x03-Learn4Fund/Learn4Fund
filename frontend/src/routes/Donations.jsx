@@ -3,19 +3,18 @@ import {toast} from "react-toastify";
 import { BsAward } from "react-icons/bs";
 import Banner from "../assets/images/donation banner.png";
 import cartsService from "../services/carts";
-import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import { useSelector } from "react-redux";
+import { getCartNumber } from "../features/user/userActions";
+import { useNav } from "../hooks/useNav";
 
 function Donations() {
-  const { userInfo, userId } = useSelector((state) => state.user);
+  const { userInfo } = useSelector((state) => state.user);
   const [showDonation, setShowDonation] = useState("on");
   const offerAmtRef = useRef(0.0);
-  const dispatch = useDispatch();
+  const { setTab } = useNav();
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (userId) {
-      dispatch(getUserDetails());
-    }
+    setTab("donate");
   }, []);
   function handleDonationChange(e) {
     if (e.key !== "Backspace") {
@@ -56,7 +55,7 @@ function Donations() {
       showName = false
     }
     cartsService
-      .addDonationToCart(userId, offerAmtRef.current.value, showName)
+      .addDonationToCart(userInfo.id, offerAmtRef.current.value, showName)
       .then((response) => {
         if (response.status == 200){
           console.log(response.data)

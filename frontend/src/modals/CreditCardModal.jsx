@@ -5,7 +5,7 @@ import { BiErrorCircle } from "react-icons/bi";
 import {toast} from "react-toastify";
 import paymentsService from "../services/payment";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import { getUserDetails } from "../features/user/userActions";
 
 export const CreditCardModal = ({
   closeModal,
@@ -22,7 +22,7 @@ export const CreditCardModal = ({
     }
 }, [])
   const [checkedState, setCheckedState] = useState([true, false]);
-  const { userInfo, userId } = useSelector((state) => state.user);
+  const { userInfo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const [cardNumber, setCardNumber] = useState("");
@@ -40,7 +40,7 @@ export const CreditCardModal = ({
 
   const getMethods = () => {
     paymentsService
-      .getMethods(userId)
+      .getMethods(userInfo.id)
       .then((response) => {
         if (response.status == 200) {
           setAddressList(response.data.billAddrs);
@@ -63,7 +63,7 @@ export const CreditCardModal = ({
   const makePayment = () => {
     const filteredCart = prepareCheckoutCart();
     const payload = {
-      accountId: userId,
+      accountId: userInfo.id,
       donationAmount: donation,
       showDonation: showDonation,
       totalAmount: totalAmount,
@@ -84,11 +84,8 @@ export const CreditCardModal = ({
   };
 
   useEffect(() => {
-    if (userId) {
-      dispatch(getUserDetails());
-      console.log(totalAmount, donation, checkout);
+    if (userInfo) {
       getMethods();
-      console.log(addressList);
     }
   }, []);
 

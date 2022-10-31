@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { AiOutlineGoogle } from "react-icons/ai";
-import { FaFacebookF } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getCartNumber, userLogin } from "../features/user/userActions";
+import { userLogin } from "../features/user/userActions";
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
 import {toast} from "react-toastify";
@@ -25,7 +23,6 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { state } = useLocation();
   const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -37,6 +34,11 @@ function Login() {
   function handlePasswordChange(event) {
     setPassword(event.target.value);
   }
+
+  useEffect(() => {
+    setTab("login");
+    window.scrollTo(0, 0);
+},[])
 
   // redirect authenticated user to profile screen
   useEffect(() => {

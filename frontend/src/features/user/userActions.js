@@ -10,6 +10,7 @@ export const registerUser = createAsyncThunk(
     async (newUserInfo, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.register(newUserInfo); // change to set local storage at 2fa
+            localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -28,6 +29,7 @@ export const userLogin = createAsyncThunk(
     async ({ email, password }, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.login(email, password);
+            localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -45,10 +47,8 @@ export const getUserDetails = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
-            console.log("user: ",user)
-            const userId = localStorage.getItem("userId")
             // send user's id to retrieve account information
-            const data = await authService.getAccount(user.userId);
+            const data = await authService.getAccount(localStorage.getItem('userId'));
             return data
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -67,9 +67,6 @@ export const user2FA = createAsyncThunk(
             let {user} = getState()
             console.log("hello ",arg)
             const response = await authService.verify2FA(arg);
-            if (response.status == 200){
-                localStorage.setItem('userId', response.data._id)
-            }
             return response.data
         } catch (error) {
             // return custom error message from API if any
@@ -87,10 +84,7 @@ export const getCartNumber = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
-            const userId = localStorage.getItem("userId")
-            console.log("userId: ",userId)
-            console.log("user.Id: ",user._id)
-            const response = await cartsService.getTotal(userId)
+            const response = await cartsService.getTotal(user.userInfo.id)
             if (response.status == 200){
                 return response.data.totalNo
             } else {

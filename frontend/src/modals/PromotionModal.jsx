@@ -1,11 +1,20 @@
 import { AiOutlineCloseSquare } from "react-icons/ai"
 import { useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from 'react-redux'
+import {useEffect} from 'react';
 
 export const PromotionModal = ({closeModal}) => {
   const { loading, userInfo, error, success } = useSelector(
     (state) => state.user
   )
+
+  useEffect(()=>{
+    document.body.style.overflow = 'hidden';
+    return () => {
+        // Anything in here is fired on component unmount.
+        document.body.style.overflow = 'unset';
+    }
+  },[])
   const navigate = useNavigate();
   function goToSignup(){
     navigate('/signup');

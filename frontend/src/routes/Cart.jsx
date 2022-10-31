@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
 import {toast} from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import { useSelector } from "react-redux";
 import { CreditCardModal } from "../modals/CreditCardModal";
+import { useNav } from "../hooks/useNav";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -12,16 +12,13 @@ const Cart = () => {
   const [donation, setDonation] = useState(0);
   const [showDonation, setShowDonation] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
-  const { userInfo, userId } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-
+  const { userInfo } = useSelector((state) => state.user);
+  const {setTab} = useNav();
   const [checkedState, setCheckedState] = useState();
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    if (userId) {
-      console.log(userId);
-      getUserDetails();
+    setTab("cart")
+    if (userInfo) {
       getCart();
     } else {
       toast.error("Please login to view cart");
@@ -35,7 +32,7 @@ const Cart = () => {
   // retrieve cart
   const getCart = () => {
     cartsService
-      .getCart(userId)
+      .getCart(userInfo.id)
       .then((response) => {
         console.log(response.data);
         setCartList(response.data.coursesAdded);
@@ -88,7 +85,7 @@ const Cart = () => {
   // retrieve cart
   const deleteCart = (courseId) => {
     cartsService
-      .deleteCart(userId, courseId)
+      .deleteCart(userInfo.id, courseId)
       .then((response) => {
         setCartList(response.data.coursesAdded);
         toast.success("Items successfully deleted from cart.");
@@ -101,7 +98,6 @@ const Cart = () => {
 
   function removeItem(item, position) {
     deleteCart(item.courseId);
-    dispatch(getCartNumber(userId));
     const updatedCheckedState = checkedState.map((item, index) =>
       index === position ? !item : item
     );

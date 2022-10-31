@@ -10,7 +10,7 @@ import {toast} from "react-toastify";
 import { getUserDetails, getCartNumber } from '../../features/user/userActions'
 
 function CourseInfo() {  
-  const { loading, userInfo, userId, error, success, cartNo } = useSelector(
+  const { loading, userInfo, error, success, cartNo } = useSelector(
     (state) => state.user
   )
   const parse = require("html-react-parser");
@@ -26,13 +26,6 @@ function CourseInfo() {
   const [averageStars, setAverageStars] = useState(0);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
   const dispatch = useDispatch()
-
-  // get user info
-  useEffect(()=> {
-    if (userId){
-      dispatch(getUserDetails())
-    }
-  }, [])
 
   // retrieve all reviews
   const retrieveReviews = () => {
@@ -126,7 +119,7 @@ function CourseInfo() {
     const newReview = {
       rating: stars,
       description: reviewDescription,
-      accountId: userId,
+      accountId: userInfo.id,
       courseId: courseID,
     }
     reviewsService.getCreateReview(newReview).then((response) => {

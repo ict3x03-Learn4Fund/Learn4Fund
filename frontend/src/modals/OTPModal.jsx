@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { getCartNumber, user2FA, getUserDetails } from "../features/user/userActions";
+import { user2FA, getUserDetails } from "../features/user/userActions";
 import QRCode from "react-qr-code";
 import {toast} from "react-toastify";
 
@@ -17,7 +17,7 @@ export const OTPModal = ({ closeModal }) => {
         document.body.style.overflow = 'unset';
     }
 }, [])
-  const { loading, userInfo, userId, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
+  const { loading, userInfo, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
     (state) => state.user
   );
 
@@ -37,7 +37,7 @@ export const OTPModal = ({ closeModal }) => {
   }
 
   const submitForm = (data) => {
-    const payload = {userId: userId, token: otp}
+    const payload = {userId: localStorage.getItem('userId'), token: otp}
     console.log(payload)
     dispatch(user2FA(payload));
   };
