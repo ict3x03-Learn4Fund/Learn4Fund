@@ -17,8 +17,9 @@ pipeline {
                         echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                sh 'cp /home/.env backend'
+                sh 'cp /home/.env backend'                
                 sh 'docker compose down --rmi all'
+                sh 'docker system prune -a --force'
                 sh 'docker compose -f docker-compose.dev.yml build --no-cache'
             }
         }
