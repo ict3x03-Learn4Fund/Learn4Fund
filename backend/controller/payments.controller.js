@@ -9,13 +9,8 @@ const Donation = require("../models/donationModel");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
-
-//set up of encryption and decryption
-const algorithm = "aes-256-cbc";
-const initVector = crypto.randomBytes(16);
-const Securitykey = crypto.randomBytes(32);
-const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
-const decipher = crypto.createDecipheriv(algorithm, Securitykey, initVector);
+const {sendEmail} = require("../middleware/mailer.js")
+const Account = require("../models/accountModel")
 
 //// encryption code
 // let decryptedData = decipher.update(encryptedCode, "hex", "utf-8")
@@ -67,6 +62,10 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     } = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "AccountId cannot be null." });
+    }
+    const user = await Account.findById(accountId);
+    if (!user){
+      return res.status(400).json({message: "User not found."})
     }
 
     // reduce quantity from courses from checkedout cart
@@ -129,14 +128,23 @@ const apiMakePayment = asyncHandler(async (req, res) => {
 
     // create vouchers using uuid
     // encrypt vouchers and save to voucher document
+    const emailList = [];
     const voucherList = [];
+    const expiryDate = new Date(+ new Date() + 365*24*60*60*1000);
     for (const purchased in checkedOutCart) {
+      const courseInfo = await Course.findById(checkedOutCart[purchased].cartItem.courseId)
       for (
         let quantity = 0;
         quantity < checkedOutCart[purchased].cartItem.quantity;
         quantity++
       ) {
-        const code = uuidv4()
+        const code = uuidv4()        
+        const emailVoucher = {
+          courseName: courseInfo.courseName,
+          voucherCode: code,
+          expiryDate: expiryDate,
+        };
+        emailList.push(emailVoucher);
         const salt = await bcrypt.genSalt(10);
         const hashedCode = await bcrypt.hash(code, salt);
         const voucher = await Voucher.create({
@@ -148,9 +156,25 @@ const apiMakePayment = asyncHandler(async (req, res) => {
         voucherList.push(voucher);
       }
     }
-    console.log(voucherList);
+    console.log(emailList)
 
-    return res.json({ transaction, voucherList });
+    let message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`
+    let list = ""
+    emailList.map((value) => {
+        list = `${value.courseName}:  ${value.voucherCode} \n`
+        message += list
+    })
+    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`
+
+
+    // send vouchers to user's email
+    const success = await sendEmail(user.email, "New Transaction Made", message)
+    if (success) {
+      return res.json({ transaction, voucherList });
+    } else {
+      return res.json({message: "failed to send email"})
+    }
+
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -158,18 +182,17 @@ const apiMakePayment = asyncHandler(async (req, res) => {
 
 /***
  * @desc Add payment method
- * @route POST /v1/api/courses/company
+ * @route POST /v1/api/payments/addCard
  * @access Private
  */
-const apiAddMethod = asyncHandler(async (req, res) => {
+const apiAddCard = asyncHandler(async (req, res) => {
   try {
-    const { accountId, creditCard, billAddress } = req.body;
+    const { accountId, creditCard} = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "Account Id not found" });
     }
 
     const existingCards = await CreditCard.find({ accountId: accountId });
-    const existingBills = await BillAddress.find({ accountId: accountId });
 
     const last4No = creditCard.cardNo.slice(-4);
 
@@ -177,9 +200,7 @@ const apiAddMethod = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedCardNo = await bcrypt.hash(creditCard.cardNo, salt);
     let newCreditCard;
-    let newAddr;
     let cardFlag = false;
-    let billFlag = false;
 
     for (const card in existingCards) {
       console.log(existingCards[card]);
@@ -188,11 +209,6 @@ const apiAddMethod = asyncHandler(async (req, res) => {
       }
     }
 
-    for (const bill in existingBills) {
-      if (existingBills[bill].postalCode == billAddress.postalCode) {
-        billFlag = true;
-      }
-    }
     if (!cardFlag) {
       newCreditCard = await CreditCard.create({
         accountId: accountId,
@@ -202,6 +218,35 @@ const apiAddMethod = asyncHandler(async (req, res) => {
         cardType: creditCard.cardType,
         expiryDate: creditCard.expiryDate,
       });
+    }
+
+    res.status(200).json(newCreditCard);
+  } catch (e) {
+    res.status(500).json(e.message);
+  }
+});
+
+/***
+ * @desc Add payment method
+ * @route POST /v1/api/payments/addAddr
+ * @access Private
+ */
+ const apiAddAddr = asyncHandler(async (req, res) => {
+  try {
+    const { accountId, billAddress } = req.body;
+    if (!accountId) {
+      return res.status(400).json({ message: "Account Id not found" });
+    }
+
+    const existingBills = await BillAddress.find({ accountId: accountId });
+
+    let newAddr;
+    let billFlag = false;
+
+    for (const bill in existingBills) {
+      if (existingBills[bill].postalCode == billAddress.postalCode) {
+        billFlag = true;
+      }
     }
     if (!billFlag) {
       newAddr = await BillAddress.create({
@@ -213,9 +258,9 @@ const apiAddMethod = asyncHandler(async (req, res) => {
         city: billAddress.city,
         postalCode: billAddress.postalCode,
       });
-    }
+    } 
 
-    res.status(200).json({ newCreditCard, newAddr });
+    res.status(200).json(newAddr);
   } catch (e) {
     res.status(500).json(e.message);
   }
@@ -300,7 +345,8 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
 
 module.exports = {
   apiMakePayment,
-  apiAddMethod,
+  apiAddAddr,
+  apiAddCard,
   apiDeleteCard,
   apiDeleteAddr,
   apiGetMethods,

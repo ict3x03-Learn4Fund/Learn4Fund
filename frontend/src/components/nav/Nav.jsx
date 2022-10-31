@@ -28,11 +28,11 @@ function Nav() {
   const [avatar, setAvatar] = useState();
 
   useEffect(() => {
-    if (otpSuccess) {
+    if (userId) {
       dispatch(getUserDetails())
       dispatch(getCartNumber());
     }
-  }, [otpSuccess, dispatch])
+  }, [userId, dispatch])
 
   useEffect(() => {
     if (userInfo) {

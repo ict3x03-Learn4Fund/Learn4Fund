@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../features/user/userActions";
 import { CreditCardModal } from "../modals/CreditCardModal";
+import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -31,6 +32,10 @@ const Cart = () => {
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));
   }, cartList);
+
+  useEffect(()=> {
+
+  }, [cartList])
 
   // retrieve cart
   const getCart = () => {
@@ -72,13 +77,15 @@ const Cart = () => {
       // save card and return id
       // save address and return address
       // create transaction
-      setTotalAmount((
-        checkout.reduce(
-          (partialSum, a) => partialSum + parseFloat(a.currentPriceTotal),
-          0.0
-        ) + parseFloat(donation)
-      ).toFixed(2));
-      console.log(totalAmount, "\n", donation, "\n", checkout)
+      setTotalAmount(
+        (
+          checkout.reduce(
+            (partialSum, a) => partialSum + parseFloat(a.currentPriceTotal),
+            0.0
+          ) + parseFloat(donation)
+        ).toFixed(2)
+      );
+      console.log(totalAmount, "\n", donation, "\n", checkout);
       setShowModal(true);
     } else {
       toast.error("Select items to checkout");
@@ -127,6 +134,17 @@ const Cart = () => {
       setCheckout([...checkout, item]);
     }
     console.log("checkout: ", checkout);
+  }
+
+  const removeDonations = () => {
+    cartsService.clearDonationsInCart(userId).then((res) => {
+      if (res.status == 200){
+        toast.success("Donations cleared");
+        getCart();
+      }
+    }).catch((err) => {
+      toast.error(err.response.data.message)
+    })
   }
 
   return (
@@ -259,9 +277,16 @@ const Cart = () => {
               <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
                 Donations made
               </span>
-              <span className="font-type1 text-[1vw] text-b1 font-bold">
-                ${donation}.00
-              </span>
+              <div>
+                <RemoveCircleOutlinedIcon
+                  fontSize="small"
+                  className="hover:text-red-500 justify-center"
+                  onClick={() => removeDonations()}
+                ></RemoveCircleOutlinedIcon>
+                <span className="font-type1 text-[1vw] text-b1 font-bold">
+                  ${donation}.00
+                </span>
+              </div>
             </div>
             <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2" />
             <div className="flex flex-row justify-between w-full h-fit my-2">
@@ -291,7 +316,15 @@ const Cart = () => {
           </button>
         </div>
       </div>
-      {showModal && <CreditCardModal closeModal={setShowModal} totalAmount={totalAmount} donation={donation} showDonation={showDonation} checkout={checkout} />}
+      {showModal && (
+        <CreditCardModal
+          closeModal={setShowModal}
+          totalAmount={totalAmount}
+          donation={donation}
+          showDonation={showDonation}
+          checkout={checkout}
+        />
+      )}
     </main>
   );
 };

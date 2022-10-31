@@ -26,12 +26,17 @@ const addDonationToCart = async (accountId, donationAmt, showDonation) => {
   return await http.post("/carts/addDonation", cart);
 }
 
+const clearDonationsInCart = async (accoundId) => {
+  return await http.get(`/carts/clearDonation/${accoundId}`)
+}
+
 const cartsService = {
   getCart,
   addCart,
   deleteCart,
   getTotal,
-  addDonationToCart
+  addDonationToCart,
+  clearDonationsInCart
 };
 
 export default cartsService;

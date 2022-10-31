@@ -49,7 +49,7 @@ export const CreditCardModal = ({
     const newCart = [];
     checkout.map((value, index) => {
       const cartItem = { courseId: value.courseId, quantity: value.quantity };
-      newCart.push({cartItem: cartItem});
+      newCart.push({ cartItem: cartItem });
     });
     return newCart;
   };
@@ -65,16 +65,19 @@ export const CreditCardModal = ({
       billAddressId: addrId,
       checkedOutCart: filteredCart,
     };
-    console.log(payload)
-    paymentsService.makePayment(payload).then((response) => {
-      if (response.status == 200) {
-        toast.success("Payment has been made successfully!")
-      } else {
-        toast.error(response.data.message)
-      }
-    }).catch((e) => {
-        toast.error(e.message)
-    })
+    console.log(payload);
+    paymentsService
+      .makePayment(payload)
+      .then((response) => {
+        if (response.status == 200) {
+          toast.success("Payment has been made successfully!");
+        } else {
+          toast.error(response.data.message);
+        }
+      })
+      .catch((e) => {
+        toast.error(e.message);
+      });
   };
 
   useEffect(() => {
@@ -95,7 +98,7 @@ export const CreditCardModal = ({
     }
     console.log("cardId ", cardId);
     console.log("addrId ", addrId);
-    makePayment()
+    makePayment();
   }
 
   function selectCardType(type) {
@@ -170,8 +173,8 @@ export const CreditCardModal = ({
                 </div>
                 {billMethod == "new" ? (
                   <Fragment>
-                    <div className="border-2 border-blue-500 min-h-[300px] m-4 rounded-lg space-y-4 px- pb-4">
-                      <span className="absolute font-bold text-blue-500 bg-white mt-[-15px] mx-4 px-2">
+                    <div className="border-2 border-green-500 min-h-[300px] m-4 rounded-lg space-y-4 px- pb-4">
+                      <span className="absolute font-bold text-green-500 bg-white mt-[-15px] mx-4 px-2">
                         Billing address
                       </span>
 
@@ -240,6 +243,18 @@ export const CreditCardModal = ({
                           className="p-2 border-2 border-black w-80"
                         />
                       </div>
+                      <div className="flex flex-wrap w-full h-full mx-4 font-bold">
+                        <input
+                          type="checkbox"
+                          className="w-[20px] h-[20px] self-center mr-4"
+                          checked={saveInfo}
+                          onClick={() => setSaveInfo(!saveInfo)}
+                        />
+                        <span className="self-center">
+                          Save payment information for future purchases
+                          <AiOutlineQuestionCircle className="inline ml-2" />
+                        </span>
+                      </div>
                     </div>
                   </Fragment>
                 ) : null}
@@ -299,8 +314,8 @@ export const CreditCardModal = ({
                 </div>
                 {payMethod == "new" ? (
                   <Fragment>
-                    <div className="border-2 border-blue-500 min-h-[300px] m-4 rounded-lg space-y-4 px-4 pb-4">
-                      <span className="absolute font-bold text-blue-500 bg-white mt-[-15px] mx-4 px-2">
+                    <div className="border-2 border-red-500 min-h-[300px] m-4 rounded-lg space-y-4 px-4 pb-4">
+                      <span className="absolute font-bold text-red-500 bg-white mt-[-15px] mx-4 px-2">
                         Card Information
                       </span>
                       <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
@@ -338,7 +353,7 @@ export const CreditCardModal = ({
                       </div>
 
                       <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
-                        <div className="self-center w-32">Card number</div>
+                        <div className="self-center w-32">Card Number</div>
                         <input
                           type="number"
                           name="holder name"
@@ -369,23 +384,22 @@ export const CreditCardModal = ({
                           className="p-2 border-2 border-black w-14"
                         />
                       </div>
+                      <div className="flex flex-wrap w-full h-full mx-4 font-bold">
+                        <input
+                          type="checkbox"
+                          className="w-[20px] h-[20px] self-center mr-4"
+                          checked={saveInfo}
+                          onClick={() => setSaveInfo(!saveInfo)}
+                        />
+                        <span className="self-center">
+                          Save payment information for future purchases
+                          <AiOutlineQuestionCircle className="inline ml-2" />
+                        </span>
+                      </div>
                     </div>
                   </Fragment>
                 ) : null}
               </div>
-            </div>
-
-            <div className="flex flex-wrap w-full h-full mx-4 font-bold px-4">
-              <input
-                type="checkbox"
-                className="w-[20px] h-[20px] self-center mr-4"
-                checked={saveInfo}
-                onClick={() => setSaveInfo(!saveInfo)}
-              />
-              <span className="self-center">
-                Save payment information for future purchases
-                <AiOutlineQuestionCircle className="inline ml-2" />
-              </span>
             </div>
           </div>
 
