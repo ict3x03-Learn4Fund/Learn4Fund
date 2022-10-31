@@ -28,15 +28,15 @@ function Nav() {
   const [avatar, setAvatar] = useState();
 
   useEffect(() => {
-    if (otpSuccess) {
-      dispatch(getUserDetails())
+    if (userId && userInfo) {
+      dispatch(getUserDetails());
       dispatch(getCartNumber());
     }
-  }, [otpSuccess, dispatch])
+  }, [userId, dispatch]);
 
   useEffect(() => {
     if (userInfo) {
-      setAvatar(userInfo.avatarImg)
+      setAvatar(userInfo.avatarImg);
     }
   }, [userInfo]);
 
@@ -61,7 +61,7 @@ function Nav() {
   };
 
   useEffect(() => {
-    console.log("cart no: ",cartNo )
+    console.log("cart no: ", cartNo);
   }, cartNo);
   return (
     <section
@@ -74,7 +74,11 @@ function Nav() {
           {userInfo ? (
             <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
               <img
-                src={ avatar ? `http://localhost:5000/v1/api/images/getImg/${userInfo?.avatarImg}` : picture}
+                src={
+                  avatar
+                    ? `http://localhost:5000/v1/api/images/getImg/${userInfo?.avatarImg}`
+                    : picture
+                }
                 alt={"user profile"}
                 className="w-[32px] h-[32px] mr-[8px] bg-w1 self-center"
                 style={{ borderRadius: "100%" }}
@@ -155,23 +159,25 @@ function Nav() {
                 </span>
               </div>
             )}
-            <div
-              onClick={() => {
-                selectedTab("cart");
-              }}
-              className={
-                "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                (tab === "cart" ? "underline" : "")
-              }
-            >
-              <BsCart className="w-[18px] h-[18px] mr-[8px] self-center" />
-              <span className=" h-[22px] font-normal leading-[22px] font-type1">
-                Cart
-              </span>
-              <span className="flex mx-1 w-[16px] h-[16px] rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
-                {cartNo}
-              </span>
-            </div>
+            {userInfo && (
+              <div
+                onClick={() => {
+                  selectedTab("cart");
+                }}
+                className={
+                  "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
+                  (tab === "cart" ? "underline" : "")
+                }
+              >
+                <BsCart className="w-[18px] h-[18px] mr-[8px] self-center" />
+                <span className=" h-[22px] font-normal leading-[22px] font-type1">
+                  Cart
+                </span>
+                <span className="flex mx-1 w-[16px] h-[16px] rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
+                  {cartNo}
+                </span>
+              </div>
+            )}
 
             {userInfo ? (
               <div

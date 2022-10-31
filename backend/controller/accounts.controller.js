@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
+const dotenv = require("dotenv").config();
 //  Account Schema
 const Account = require("../models/accountModel");
 const Logs = require("../models/logsModel");
@@ -64,12 +65,17 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "User not registered yet." });
     }
     const { base32: secret } = user.secret;
-    const verified = speakEasy.totp.verify({
+    var verified = speakEasy.totp.verify({
       secret,
       encoding: "base32",
       token,
     });
-    console.log(verified);
+    
+    if (process.env.NODE_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
+      console.log('DEBUG: Current environment is "testing", skipping 2fa verification.')
+      verified = true;
+    }
+    
     if (verified) {
       const access_token = generateToken(userId);
       res.cookie("access_token", access_token, {

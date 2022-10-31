@@ -12,7 +12,7 @@ const getDonations = async () => {
 const getTotal = async () => {
   // Making calls to server side
   const response = await http.get("/donations/total");
-  return response.data;
+  return response;
 };
 
 // Add donation
@@ -24,11 +24,23 @@ const addDonation = async (accountId, amount, showDonation) => {
   return response.data;
 };
 
+// get top 5 donors
+const getTop5 = async () => {
+  return await http.get("/donations/getTop5")
+}
+
+// get top 10 recent donors
+const getTop10 = async () => {
+  return await http.get("/donations/topRecent")
+}
+
 // Client side functions
 const donationsService = {
   getDonations,
   getTotal,
   addDonation,
+  getTop5,
+  getTop10,
 };
 
 export default donationsService;
