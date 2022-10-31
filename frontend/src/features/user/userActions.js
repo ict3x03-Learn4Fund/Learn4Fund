@@ -29,10 +29,8 @@ export const userLogin = createAsyncThunk(
     async ({ email, password, token }, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.login(email, password);
-            if(verifyUser.status===200){
             await authService.verify2FA({ token: token, userId: verifyUser._id });
-            
-            localStorage.setItem('userId', verifyUser._id);}
+            localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
