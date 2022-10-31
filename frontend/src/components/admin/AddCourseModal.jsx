@@ -46,19 +46,17 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
       const uploadImage = (e) => {
         e.preventDefault();
-        console.log(file);
         formData.append("image", file);
         imagesService
           .uploadImage(formData)
           .then((response) => {
             if (response.status == 200) {
-              console.log(response.data);
+              updatedList.courseImg = response.data.id;
               const imgId = response.data.id;
               coursesService
                 .uploadCourseImage(imgId)
                 .then(() => {
-                  toast.success("Successfully uploaded image to this user.");
-                  // setAvatar(response.data.id);
+                  toast.success("Successfully uploaded image of course");
                 })
                 .catch((error) => {
                   toast.error(error.response.data.message);
@@ -162,18 +160,14 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             <div className='flex-col w-1/2 space-y-2'>
             <div className='flex h-[12vh] flex-wrap mr-8 mt-2'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={updatedList.courseImg ? `http://localhost:5000/v1/api/images/getImg/${updatedList.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
-                {/* <input
-                className="block w-full text-sm text-slate-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-full file:border-0
-              file:text-sm file:font-semibold
-              file:bg-violet-50 file:text-violet-700
-              hover:file:bg-violet-100 mb-2"
+                <div className='flex-col w-2/5'>
+                <input
                 type="file"
                 name="file"
                 onChange={(e) => handleFile(e)}
-              ></input> */}
-                <button className='btn h-[6vh] self-center m-auto' onClick={(e) => uploadImage(e)}>Upload image</button>
+              ></input>
+                <button className='btn h-[6vh] self-center' onClick={(e) => uploadImage(e)}>Upload image</button>
+                </div>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input type="text" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseOriginalPrice}/>
