@@ -53,6 +53,10 @@ const accountSchema = mongoose.Schema(
         type: Number,
         default: 0,
     },
+    loggedTimestamp: {
+        type: Date,
+        default: Date.now
+    },
     role: {
         type: String,
         default: "user",

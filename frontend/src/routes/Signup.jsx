@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userActions";
+import {logout} from "../features/user/userSlice";
 import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -23,6 +24,7 @@ const Signup = () => {
       setModalOpen(true);
     }
     if (error) {
+      dispatch(logout());
       toast.error(stateErrorMsg);
     }
   }, [dispatch, success, error]);
@@ -179,9 +181,12 @@ const Signup = () => {
         dispatch(registerUser(data));
       })
       .catch((error) => {
-        alert(error);
+        toast.error(error);
       });
+
     captchaRef.current.reset();
+
+    
   };
 
   const onSubmit = (data) => {

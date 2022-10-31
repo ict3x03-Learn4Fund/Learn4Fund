@@ -9,6 +9,7 @@ import {
   userLogin,
   getUserDetails,
   getCartNumber,
+  user2FA
 } from "../features/user/userActions";
 import { logout } from "../features/user/userSlice";
 import QRCode from "react-qr-code";
@@ -49,13 +50,17 @@ export const OTPModal = ({ closeModal, formData }) => {
   }
 
   const submitForm = () => {
-    formData.token = otp;
-    dispatch(userLogin(formData));
-    
-      
+    if(qrUrl){
+      dispatch(user2FA({token: otp }))
+    }else{
+    if(formData){formData.token = otp;
+    dispatch(userLogin(formData));}
+    }
   };
 
   useEffect(() => {
+    if(!qrUrl){
+
     if (success) {
       navigate("/");
       toast.success("Login Successful!");
@@ -68,7 +73,18 @@ export const OTPModal = ({ closeModal, formData }) => {
       closeModal(false);
     }
     
-  },[dispatch, success, error, stateErrorMsg]);
+  }
+  if(otpSuccess){
+    navigate("/");
+    toast.success("OTP Verified!");
+    dispatch(getUserDetails());
+    dispatch(getCartNumber(localStorage.getItem("userId")));
+  }
+  if (otpError) {
+    return;
+  }
+    
+  },[dispatch, success, error, otpSuccess, otpError, stateErrorMsg, qrUrl]);
 
 
   return (
