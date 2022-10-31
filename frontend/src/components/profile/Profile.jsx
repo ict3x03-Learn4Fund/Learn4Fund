@@ -229,15 +229,6 @@ function Profile() {
               <button className="btn" onClick={() => updateSubscription()}>{userInfo?.emailSubscription ? "Toggle Off": "Toggle On"}</button>
             </div>
           </div>
-          <div>
-            <div className="flex w-full justify-between">
-              <div className="self-center">
-                <b>Show Donation Amounts</b> (
-                <span className="text-red-500">Off</span>)
-              </div>
-              <button className="btn">On/Off</button>
-            </div>
-          </div>
           <div className="mt-5 flex w-full justify-between">
             <div className="self-center">
               <b>Delete my account</b>
