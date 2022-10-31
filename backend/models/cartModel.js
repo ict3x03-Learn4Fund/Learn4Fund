@@ -4,7 +4,10 @@ mongoose.set('sanitizeFilter', true)
 
 const cartModel = mongoose.Schema(
   {
-    accountId: mongoose.SchemaTypes.ObjectId,
+    accountId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Account",
+    },
     coursesAdded: {
       type: Array,
       default: [],

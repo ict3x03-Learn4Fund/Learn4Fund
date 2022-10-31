@@ -2,7 +2,10 @@ const mongoose = require('mongoose')
 mongoose.set('sanitizeFilter', true)
 const creditCardSchema = mongoose.Schema(
   {
-    accountId: mongoose.SchemaTypes.ObjectId,
+    accountId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Account",
+    },
     name: {
       type: String,
       default: "",

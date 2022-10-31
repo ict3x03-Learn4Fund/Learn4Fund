@@ -28,6 +28,7 @@ const apiCreateCourse = asyncHandler(async (req, res) => {
     courseDescription: req.body.courseDescription,
     courseTutor: req.body.courseTutor,
     quantity: req.body.quantity,
+    company: req.body.company
   })
   res.status(200).json(course);
 });

@@ -6,7 +6,7 @@ import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { user2FA } from "../features/user/userActions";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import authService from "../services/accounts";
 
 function ChangePass() {

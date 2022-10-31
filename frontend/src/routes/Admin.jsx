@@ -6,7 +6,7 @@ import http from "../http-common";
 import { useNavigate } from "react-router-dom";
 import adminAuthService from "../services/admin";
 import axios from "axios";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 function testPostLog() {
   const data = { email: "addme@gmail.com", reason: "Account lockout" };
