@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { user2FA } from "../features/user/userActions";
 import { MdAlternateEmail } from "react-icons/md";
 import authService from "../services/accounts";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 function ResetPassword() {
   const {

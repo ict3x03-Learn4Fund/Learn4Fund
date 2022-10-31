@@ -69,10 +69,8 @@ export const user2FA = createAsyncThunk(
             const response = await authService.verify2FA(arg);
             if (response.status == 200){
                 localStorage.setItem('userId', response.data._id)
-                return response.data
-            } else {
-                return rejectWithValue(response.data.message)
             }
+            return response.data
         } catch (error) {
             console.log(error)
             // return custom error message from API if any

@@ -22,15 +22,15 @@ const transactionSchema = mongoose.Schema(
     checkedOutCart: Array,
     accountId: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'Account'
+      ref: "Account"
     },
     cardId: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'CreditCard'
+      ref: "CreditCard"
     },
     billAddressId: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'BillAddress'
+      ref: "BillAddress"
     },
   },
   {

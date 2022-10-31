@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCartNumber, userLogin } from "../features/user/userActions";
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 
 function Login() {

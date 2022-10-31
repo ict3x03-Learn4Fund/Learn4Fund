@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { BsAward } from "react-icons/bs";
 import Banner from "../assets/images/donation banner.png";
 import cartsService from "../services/carts";

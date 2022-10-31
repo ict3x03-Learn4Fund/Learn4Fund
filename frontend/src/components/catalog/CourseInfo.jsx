@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import reviewsService from "../../services/reviews";
 import { useParams, useNavigate } from "react-router-dom";
 import cartsService from "../../services/carts";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { getUserDetails, getCartNumber } from '../../features/user/userActions'
 
 function CourseInfo() {  

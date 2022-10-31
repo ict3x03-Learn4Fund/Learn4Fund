@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import noimage from "../../assets/vectors/noimage.png";
 import imagesService from "../../services/images";
 import authService from "../../services/accounts";

@@ -15,22 +15,20 @@ import { getUserDetails, getCartNumber } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useNav } from "../../hooks/useNav";
 import cartsService from "../../services/carts";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 function Nav() {
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState(0);
-  const { userInfo, userId, cartNo, otpSuccess } = useSelector(
-    (state) => state.user
-  );
+  const { userInfo, userId, cartNo, otpSuccess } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [adminStatus, setAdmin] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [avatar, setAvatar] = useState();
 
   useEffect(() => {
-    if (userId) {
+    if (userId && userInfo) {
       dispatch(getUserDetails());
       dispatch(getCartNumber());
     }

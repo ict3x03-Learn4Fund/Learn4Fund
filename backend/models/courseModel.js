@@ -43,6 +43,10 @@ const courseSchema = mongoose.Schema(
     deleteIndicator: {
         type: Boolean,
         default: false,
+    },
+    company: {
+      type: String,
+      default: "",
     }
   },
   {
