@@ -28,17 +28,17 @@ function Nav() {
   const [avatar, setAvatar] = useState();
 
   useEffect(() => {
-    if (userId && userInfo) {
+    if (userId && otpSuccess) {
       dispatch(getUserDetails());
       dispatch(getCartNumber());
     }
-  }, [userId, dispatch]);
+  }, [userId, otpSuccess, dispatch]);
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && otpSuccess) {
       setAvatar(userInfo.avatarImg);
     }
-  }, [userInfo]);
+  }, [userInfo, otpSuccess]);
 
   useEffect(() => {
     if (userInfo != null && userInfo.role == "admin") {

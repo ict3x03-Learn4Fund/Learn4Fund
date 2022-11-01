@@ -6,6 +6,7 @@ import { userLogin, registerUser, getUserDetails, user2FA, getCartNumber } from 
 const userId = localStorage.getItem('userId')
   ? localStorage.getItem('userId')
   : null
+const otpSuccess = localStorage.getItem('otpSuccess') ? localStorage.getItem('otpSuccess') : null
 
 const initialState = {
   loading: false,
@@ -14,7 +15,7 @@ const initialState = {
   userId, // for storing the user Id
   error: null,
   success: false, // for monitoring the registration process.
-  otpSuccess: false,
+  otpSuccess, // check if user has login with otp successfully
   otpError: false,
   cartNo: 0,
   stateErrorMsg: null,
@@ -26,6 +27,7 @@ const userSlice = createSlice({
   reducers: {
     logout: (state) => {
         localStorage.removeItem('userId') // deletes token from storage
+        localStorage.removeItem('otpSuccess')
         state.loading = false
         state.userInfo = null
         state.userId = null
@@ -44,6 +46,7 @@ const userSlice = createSlice({
         state.loading = true
         state.success = false
         state.error = false
+        state.stateErrorMsg = null
       },
       [userLogin.fulfilled]: (state, { payload }) => {
         state.loading = false
@@ -63,6 +66,7 @@ const userSlice = createSlice({
         state.error = false
         state.qrUrl = null
         state.userId = null
+        state.stateErrorMsg = null
       },
       [registerUser.fulfilled]: (state, { payload }) => {
         state.loading = false
@@ -91,7 +95,7 @@ const userSlice = createSlice({
       [user2FA.pending]: (state) => {
         state.loading = true
         state.otpError = false
-        state.otpSuccess = false
+        state.stateErrorMsg = null
       },
       [user2FA.fulfilled]: (state, { payload }) => {
         state.loading = false
