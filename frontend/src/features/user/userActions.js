@@ -9,7 +9,7 @@ export const registerUser = createAsyncThunk(
     // callback function
     async (newUserInfo, { rejectWithValue }) => {
         try {
-            const verifyUser = await authService.register(newUserInfo); // change to set local storage at 2fa
+            const verifyUser = await authService.register(newUserInfo); 
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -69,6 +69,7 @@ export const user2FA = createAsyncThunk(
             const response = await authService.verify2FA(arg);
             if (response.status == 200){
                 localStorage.setItem('userId', response.data._id)
+                localStorage.setItem('otpSuccess', true)
             }
             return response.data
         } catch (error) {
