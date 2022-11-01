@@ -4,6 +4,8 @@ const {
   apiAddDonations,
   apiGetTotal,
   apiGetDonations,
+  apiGetTop5Donors,
+  apiTopRecent,
 } = require("../controller/donations.controller");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -15,7 +17,7 @@ router.route("/").get(apiGetDonations);
 
 router.route("/total").get(apiGetTotal);
 
-router.route("/add").post(protect,
+router.route("/add").post(
   [
     body('accountId', 'Account error')
       .notEmpty().bail()
@@ -36,5 +38,9 @@ router.route("/add").post(protect,
     }
     apiAddDonations(req, res)
   });
+
+  router.route("/getTop5").get(apiGetTop5Donors);
+
+  router.route("/topRecent").get(apiTopRecent);
 
 module.exports = router;

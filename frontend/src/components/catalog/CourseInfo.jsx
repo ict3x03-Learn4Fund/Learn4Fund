@@ -79,7 +79,7 @@ function CourseInfo() {
     }
     // sessionStorage.setItem("cartItems", quantitySelected);
     addCartItem();
-    dispatch(getCartNumber(courseID))
+    dispatch(getCartNumber())
   }
 
   // add cart item
@@ -91,7 +91,7 @@ function CourseInfo() {
         toast.success("Item added into cart.");
       })
       .catch((e) => {
-        toast.success(e.message);
+        toast.error(e.message);
         console.log(e);
       });
   };

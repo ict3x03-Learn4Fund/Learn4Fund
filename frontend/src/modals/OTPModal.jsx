@@ -26,9 +26,6 @@ export const OTPModal = ({ closeModal, formData }) => {
     loading,
     success,
     error,
-    userInfo,
-    otpError,
-    otpSuccess,
     qrUrl,
     stateErrorMsg,
   } = useSelector((state) => state.user);

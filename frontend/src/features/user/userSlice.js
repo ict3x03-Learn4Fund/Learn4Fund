@@ -10,7 +10,7 @@ const initialState = {
   userInfo: null, // for user object
   error: null,
   success: false, // for monitoring the registration process.
-  otpSuccess: false,
+  otpSuccess: false, // check if user has login with otp successfully
   otpError: false,
   cartNo: 0,
   stateErrorMsg: null,
@@ -43,6 +43,7 @@ const userSlice = createSlice({
     [userLogin.pending]: (state) => {
       state.loading = true
       state.success = false
+      state.stateErrorMsg = null
       state.error = false
     },
     [userLogin.fulfilled]: (state, { payload }) => {
@@ -62,6 +63,7 @@ const userSlice = createSlice({
       state.success = false
       state.error = false
       state.qrUrl = null
+      state.stateErrorMsg = null
       state.userId = null
     },
     [registerUser.fulfilled]: (state, { payload }) => {
@@ -92,6 +94,7 @@ const userSlice = createSlice({
       state.loading = true
       state.otpError = false
       state.otpSuccess = false
+      state.stateErrorMsg = null
     },
     [user2FA.fulfilled]: (state, { payload }) => {
       state.loading = false
