@@ -180,8 +180,8 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       list = `${value.courseName}: [ID] ${value.voucherId} [CODE] ${value.voucherCode} \n`;
       message += list;
     });
-    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!\n`;
-    message += `Regards,\nTitans Division`;
+    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`;
+    message += `\n\nRegards,\nTitans Division`;
     message += `\n\nThis is an auto-generated email. Please do not reply.`;
     message += `\nRef Id: ${transaction._id}`;
     // send vouchers to user's email
