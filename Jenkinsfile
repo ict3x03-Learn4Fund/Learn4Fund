@@ -17,9 +17,10 @@ pipeline {
                         echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                sh 'cp /home/.env backend'  
-                sh 'docker system prune -a --force'              
+                sh 'cp /home/.env backend'                  
+                sh 'rm -rf /var/jenkins_home/workspace'
                 sh 'docker compose down --rmi all'
+                sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.yml build --no-cache'
             }
         }
