@@ -40,6 +40,7 @@ export const OTPModal = ({ closeModal }) => {
     const payload = {userId: userId, token: otp}
     console.log(payload)
     dispatch(user2FA(payload));
+    dispatch(getCartNumber())
   };
 
   useEffect(() => {
