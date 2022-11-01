@@ -28,7 +28,7 @@ function Nav() {
   const [avatar, setAvatar] = useState();
 
   useEffect(() => {
-    if (userId) {
+    if (userId && otpSuccess) {
       dispatch(getUserDetails());
       dispatch(getCartNumber());
     }
