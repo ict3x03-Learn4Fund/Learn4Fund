@@ -17,7 +17,8 @@ pipeline {
                         echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                sh 'cp /home/.env backend'                
+                sh 'cp /home/.env backend'  
+                sh 'docker system prune -a --force'              
                 sh 'docker compose down --rmi all'
                 sh 'docker compose -f docker-compose.yml build --no-cache'
             }
@@ -49,7 +50,7 @@ pipeline {
 
         stage("Deploy"){
             steps {
-                sh 'docker compose -f docker-compose.yml up --force-recreate -d'
+                sh 'docker compose -f docker-compose.yml up --force-recreate'
             }
         }
 
