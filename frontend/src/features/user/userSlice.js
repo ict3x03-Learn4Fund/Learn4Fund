@@ -110,7 +110,7 @@ const userSlice = createSlice({
       },
       [getCartNumber.fulfilled]: (state, { payload }) => {
         state.loading = false
-        state.cartNo = payload
+        state.cartNo = payload.data.totalNo
       },
       [getCartNumber.rejected]: (state, { payload }) => {
         state.loading = false
