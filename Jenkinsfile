@@ -1,6 +1,11 @@
 pipeline {
     agent any
-    stages {        
+    stages {       
+        stage ("Prepping") {
+            steps{
+                sh 'rm -rf /var/jenkins_home/workspace/*'
+            }
+        }
         stage("Git Fetch") {
             steps {
                 git branch: "test/vm", url: "https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
@@ -17,8 +22,7 @@ pipeline {
                         echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                sh 'cp /home/.env backend'                  
-                sh 'rm -rf /var/jenkins_home/workspace/*'
+                sh 'cp /home/.env backend'                                  
                 sh 'docker compose down --rmi all'
                 sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.yml build --no-cache'
