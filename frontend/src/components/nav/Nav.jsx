@@ -14,50 +14,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useNav } from "../../hooks/useNav";
-import cartsService from "../../services/carts";
-import {toast} from "react-toastify";
 
 function Nav() {
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState(0);
-  const { userInfo, userId, cartNo, otpSuccess } = useSelector((state) => state.user);
+  const { userInfo, cartNo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [adminStatus, setAdmin] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [avatar, setAvatar] = useState();
 
-  useEffect(() => {
-    if (userId) {
-      dispatch(getUserDetails());
-      dispatch(getCartNumber());
+  // get user info
+  useEffect(()=> {
+    if (localStorage.getItem("userId")){
+      dispatch(getUserDetails())
     }
-  }, [userId, dispatch]);
+  }, [])
 
   useEffect(() => {
-    if (userInfo && otpSuccess) {
-      setAvatar(userInfo.avatarImg);
+    if (userInfo) {
+      dispatch(getCartNumber(userInfo.id));
+      setAvatar(userInfo.avatarImg)
+      console.log(new Date(userInfo.loggedTimestamp).getTime())
+      if(new Date().getTime() > new Date(userInfo.loggedTimestamp).getTime()+1000*60*30){
+        dispatch(logout())
+      }
     }
   }, [userInfo]);
-
-  useEffect(() => {
-    if (userInfo != null && userInfo.role == "admin") {
-      setAdmin(true);
-    } else {
-      setAdmin(false);
-    }
-  }, userInfo);
 
   const handleLogout = () => {
     // logout();
     dispatch(logout());
     setTab("");
     navigate("/");
-  };
-
-  const selectedTab = (tab) => {
-    setTab(tab);
-    navigate("/" + tab);
   };
 
   useEffect(() => {
@@ -99,10 +87,10 @@ function Nav() {
           )}
 
           <div className="flex w-full lg:w-1/2 justify-center lg:justify-end self-center">
-            {adminStatus && (
+            {userInfo && userInfo.role == "admin" && (
               <div
                 onClick={() => {
-                  selectedTab("admin");
+                  navigate("/admin");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -117,7 +105,7 @@ function Nav() {
             )}
             <div
               onClick={() => {
-                selectedTab("");
+                navigate("/");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -131,7 +119,7 @@ function Nav() {
             </div>
             <div
               onClick={() => {
-                selectedTab("donate");
+                navigate("/donate");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -146,7 +134,7 @@ function Nav() {
             {userInfo && (
               <div
                 onClick={() => {
-                  selectedTab("settings");
+                  navigate("/settings");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -159,25 +147,23 @@ function Nav() {
                 </span>
               </div>
             )}
-            {userInfo && (
-              <div
-                onClick={() => {
-                  selectedTab("cart");
-                }}
-                className={
-                  "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                  (tab === "cart" ? "underline" : "")
-                }
-              >
-                <BsCart className="w-[18px] h-[18px] mr-[8px] self-center" />
-                <span className=" h-[22px] font-normal leading-[22px] font-type1">
-                  Cart
-                </span>
-                <span className="flex mx-1 w-[16px] h-[16px] rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
-                  {cartNo}
-                </span>
-              </div>
-            )}
+            <div
+              onClick={() => {
+                navigate("/cart");
+              }}
+              className={
+                "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
+                (tab === "cart" ? "underline" : "")
+              }
+            >
+              <BsCart className="w-[18px] h-[18px] mr-[8px] self-center" />
+              <span className=" h-[22px] font-normal leading-[22px] font-type1">
+                Cart
+              </span>
+              <span className="flex mx-1 w-[16px] h-[16px] rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
+                {cartNo}
+              </span>
+            </div>
 
             {userInfo ? (
               <div
@@ -192,7 +178,7 @@ function Nav() {
             ) : (
               <div
                 onClick={() => {
-                  selectedTab("login");
+                  navigate("/login");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +

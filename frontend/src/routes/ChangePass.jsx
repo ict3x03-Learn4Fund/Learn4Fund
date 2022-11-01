@@ -64,7 +64,6 @@ function ChangePass() {
   const changePassword = () => {
     // console.log(userId, jwt, password)
     authService.changePass(userId, jwt, password).then((response) => {
-      console.log(response)
       if (response.status == 200){
         toast.success(response.data.message)
         navigate("/login")
@@ -72,7 +71,6 @@ function ChangePass() {
         toast.error(response.data.message)
       }
     }).catch((error) => {
-      console.log(error)
       toast.error(error.message)
     })
   }

@@ -43,8 +43,7 @@ router.route("/create").post(protect,               //TODO: Check if admin
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
             .notEmpty().bail()
-            .isString().bail()
-            .isAlpha().trim(),
+            .isString().bail().trim(),
 
     ], (req, res) => {
         const errors = validationResult(req);
@@ -96,8 +95,7 @@ router.route("/update/:id").put(protect,
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
             .notEmpty().bail()
-            .isString().bail()
-            .isAlpha().trim(),
+            .isString().bail().trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
             .isInt({min: 1}),

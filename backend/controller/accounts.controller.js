@@ -38,6 +38,7 @@ const apiRegister = asyncHandler(async (req, res) => {
       firstName,
       lastName,
       emailSubscription,
+      loggedTimestamp: Date.now(),
       password: hashedPassword,
       secret: secret,
     });
@@ -124,7 +125,7 @@ const apiLogin = asyncHandler(async (req, res) => {
       // IF SUCCEED RESET THE lockTimes
       Account.updateOne(
         { email: email },
-        { $set: { loginTimes: 0 } },
+        { $set: { loginTimes: 0, loggedTimestamp: new Date() } },
         function (err, result) {                                      // [Authentication] Reset the loginTimes
           if (err) {
             console.log("Set loginTimes failed. Error: " + err);
@@ -282,6 +283,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
+    loggedTimestamp,
     role,
   } = await Account.findById(req.account.id);
   res.status(200).json({
@@ -295,6 +297,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
+    loggedTimestamp
   });
 });
 

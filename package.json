@@ -4,6 +4,9 @@
   "description": "run npm install on first pull.",
   "main": "index.js",
   "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "cd frontend && npm run start",
+    "server": "cd backend && nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { AiOutlineGoogle } from "react-icons/ai";
-import { FaFacebookF } from "react-icons/fa";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getCartNumber, userLogin } from "../features/user/userActions";
+import { Link, useNavigate } from "react-router-dom";
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
-import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 
 function Login() {
@@ -18,18 +13,13 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { loading, userInfo, error, success, stateErrorMsg } = useSelector(
-    (state) => state.user
-  );
+
   const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const dispatch = useDispatch();
-  const [errorMsg, setErrorMsg] = useState("");
+  const [userCredentials, setUserCredentials] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [check, setCheck] = useState(false);
 
   function handleEmailChange(event) {
     setEmail(event.target.value);
@@ -38,20 +28,14 @@ function Login() {
     setPassword(event.target.value);
   }
 
-  // redirect authenticated user to profile screen
   useEffect(() => {
-    console.log(success);
-    if (success) {
-      setModalOpen(true);
-    }
-    if (error) {
-      toast.error(stateErrorMsg);
-    }
-  }, [dispatch, success, error]);
+    setTab("login");
+    window.scrollTo(0, 0);
+},[setTab])
 
   const submitForm = (data) => {
-    dispatch(userLogin(data));
-    console.log(success);
+    setUserCredentials(data);
+    setModalOpen(true);
   };
 
   return (
@@ -123,34 +107,33 @@ function Login() {
               <button
                 className="p-2 w-full rounded bg-b1 border-2 hover:bg-b2 text-w1 font-bold"
                 type="submit"
-                disabled={loading}
               >
                 Login with Email
               </button>
             </div>
-            <a
-              className="underline text-sm hover:text-blue-400 text-blue-900"
+            <button
+              className="p-2 w-full rounded bg-g2 border-2 hover:bg-b2 text-w1 font-bold"
               onClick={() => {
                 navigate("/reset");
               }}
             >
               forget password?
-            </a>
+            </button>
             <div className="flex flex-row flex-nowrap w-full my-1">
               <hr className="flex flex-wrap w-full border-1 border-[black] self-center mr-4" />
               <p className="font-type2">OR</p>
               <hr className="flex flex-wrap w-full border-1 border-[black] self-center ml-4" />
             </div>
-            <Link
-              to="/signup"
+            <a
+              href={window.location.hostname == 'localhost' ? "http://"+window.location.host + "/signup":"https://"+window.location.host + "/signup" }
               className="cursor-pointer p-2 w-full rounded bg-g2 text-w1 font-bold hover:text-w1 hover:bg-orange-500 text-center"
             >
               Sign up
-            </Link>
+            </a>
           </div>
         </form>
       </div>
-      {modalOpen ? <OTPModal closeModal={setModalOpen}></OTPModal> : null}
+      {modalOpen ? <OTPModal closeModal={setModalOpen} formData={userCredentials}></OTPModal> : null}
     </main>
   );
 }
