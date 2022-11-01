@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { AiOutlineQuestionCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import validator from "validator";
 import { BiErrorCircle } from "react-icons/bi";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../features/user/userActions";
@@ -21,12 +21,12 @@ export const CreditCardModal = ({
   checkout,
 }) => {
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     return () => {
-        // Anything in here is fired on component unmount.
-        document.body.style.overflow = 'unset';
-    }
-}, [])
+      // Anything in here is fired on component unmount.
+      document.body.style.overflow = "unset";
+    };
+  }, []);
   const [checkedState, setCheckedState] = useState([true, false]);
   const { userInfo, userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -109,10 +109,8 @@ export const CreditCardModal = ({
       .then(async (response) => {
         if (response.status == 200) {
           toast.success("Payment has been made successfully!");
-          await timeout(10)
-          closeModal(false);
-          setLoading(false);
-          window.location.reload(false)
+          await timeout(100);
+          window.location.reload(false);
         } else {
           toast.error(response.data.message);
         }
@@ -150,7 +148,12 @@ export const CreditCardModal = ({
       toast.error("Please select a billing address to proceed with payment");
       return;
     }
-    if (payMethod == "new" && (typeof erroredInputs.cardNumber !== "undefined") && (typeof erroredInputs.cvc !== "undefined") && (typeof erroredInputs.expiryDate !== "undefined")) {
+    if (
+      payMethod == "new" &&
+      typeof erroredInputs.cardNumber !== "undefined" &&
+      typeof erroredInputs.cvc !== "undefined" &&
+      typeof erroredInputs.expiryDate !== "undefined"
+    ) {
       toast.error("Error filling up card details.");
       return;
     }
@@ -171,7 +174,7 @@ export const CreditCardModal = ({
       .then((response) => {
         console.log("status", response.status);
         if (response.status == 200) {
-          setLoading(true)
+          setLoading(true);
           makePayment();
           modalOpen(false);
         } else {
@@ -179,8 +182,14 @@ export const CreditCardModal = ({
           toast.error(response.data.message);
         }
       })
-      .catch((err) => {
-        toast.error(err.response.data.message);
+      .catch((error) => {
+        if (error.response && error.response.data.message) {
+          return toast.error(error.response.data.message);
+        } else if (error.response.data) {
+          return toast.error(error.response.data);
+        } else {
+          return toast.error(error.message);
+        }
       });
   };
 
@@ -294,8 +303,8 @@ export const CreditCardModal = ({
   }
 
   function timeout(delay) {
-    return new Promise( res => setTimeout(res, delay) );
-}
+    return new Promise((res) => setTimeout(res, delay));
+  }
 
   /////////// Input Validations
   const {
@@ -718,12 +727,14 @@ export const CreditCardModal = ({
                       </div>
                     )}
                   </div>
-                  { loading ? (<div
-                    class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-blue-600"
-                    role="status"
-                  >
-                    <span class="visually-hidden">Loading...</span>
-                  </div>) : null}
+                  {loading ? (
+                    <div
+                      class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-blue-600"
+                      role="status"
+                    >
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  ) : null}
                   <div className="flex flex-col w-full space-y-2 mt-6">
                     <button
                       className="p-2 w-full rounded bg-success text-w1 font-bold"
