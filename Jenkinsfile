@@ -61,9 +61,5 @@ pipeline {
                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
             }                        
         }
-        always {
-            sh 'rm -rf /var/jenkins_home/workspace/*'
-            sh 'sleep 5'
-        }
     }
 }
