@@ -7,7 +7,7 @@ import reviewsService from "../../services/reviews";
 import { useParams, useNavigate } from "react-router-dom";
 import cartsService from "../../services/carts";
 import { toast } from "react-toastify";
-import { getUserDetails, getCartNumber } from "../../features/user/userActions";
+import { getCartNumber } from "../../features/user/userActions";
 
 function CourseInfo() {
   const { loading, userInfo, error, success, cartNo } = useSelector(
@@ -101,11 +101,15 @@ function CourseInfo() {
 
   // add cart item
   const addCartItem = () => {
+    if(quantitySelected == 0){
+      return;
+    }
     cartsService
       .addCart(userInfo.id, courseDetails._id, quantitySelected)
       .then((response) => {
         console.log(response.data);
         toast.success("Item added into cart.");
+        dispatch(getCartNumber(userInfo.id));
       })
       .catch((e) => {
         toast.error(e.message);

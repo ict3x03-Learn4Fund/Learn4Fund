@@ -104,18 +104,7 @@ const Cart = () => {
 
   function removeItem(item, position) {
     deleteCart(item.courseId);
-    const updatedCheckedState = checkedState.map((item, index) =>
-      index === position ? !item : item
-    );
-
-    setCheckedState(updatedCheckedState);
-    if (checkout.includes(item)) {
-      setCheckout([
-        ...checkout.filter((element) => {
-          return element !== item;
-        }),
-      ]);
-    }
+    setCheckout([])
   }
 
   function addToCheckout(item) {
