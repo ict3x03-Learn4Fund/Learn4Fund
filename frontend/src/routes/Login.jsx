@@ -125,7 +125,7 @@ function Login() {
               <hr className="flex flex-wrap w-full border-1 border-[black] self-center ml-4" />
             </div>
             <Link
-              to="/signup"
+              to='/signup'
               className="cursor-pointer p-2 w-full rounded bg-g2 text-w1 font-bold hover:text-w1 hover:bg-orange-500 text-center"
             >
               Sign up

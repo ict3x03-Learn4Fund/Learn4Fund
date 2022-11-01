@@ -1,6 +1,8 @@
 // features/user/userSlice.js
 import { createSlice } from '@reduxjs/toolkit'
+import { useRef } from 'react'
 import { userLogin, registerUser, getUserDetails, user2FA, getCartNumber } from './userActions'
+
 
 const initialState = {
   loading: false,
@@ -18,6 +20,11 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    clearSignupState: (state) => {
+      state.success = false
+      state.error = null
+      state.qrUrl = null
+    },
     logout: (state) => {
       localStorage.removeItem('userId') // deletes token from storage
       state.loading = false
@@ -112,5 +119,5 @@ const userSlice = createSlice({
 })
 
 // export actions
-export const { logout } = userSlice.actions
+export const { logout, clearSignupState } = userSlice.actions
 export default userSlice.reducer

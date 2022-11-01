@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userActions";
+import {clearSignupState} from "../features/user/userSlice";
 import {logout} from "../features/user/userSlice";
 import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
@@ -19,7 +20,6 @@ const Signup = () => {
   const captchaRef = useRef(null);
 
   useEffect(() => {
-    console.log(success);
     if (success) {
       setModalOpen(true);
     }
@@ -28,6 +28,11 @@ const Signup = () => {
       toast.error(stateErrorMsg);
     }
   }, [dispatch, success, error]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    dispatch(clearSignupState());
+  }, [dispatch]);
 
   const {
     register,

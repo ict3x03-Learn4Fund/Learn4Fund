@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-
 import { useNavigate, useLocation } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
@@ -9,9 +8,9 @@ import {
   userLogin,
   getUserDetails,
   getCartNumber,
-  user2FA
+  user2FA,
 } from "../features/user/userActions";
-import { logout } from "../features/user/userSlice";
+import { clearSignupState, logout } from "../features/user/userSlice";
 import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
 
@@ -49,45 +48,47 @@ export const OTPModal = ({ closeModal, formData }) => {
     setOtp(event.target.value);
   }
 
+  function handleCloseModal(){
+    dispatch(clearSignupState());
+    closeModal(false);
+  }
+
   const submitForm = async () => {
-    if(qrUrl){
-      await dispatch(user2FA({token: otp })).then((res) => {
+    if (qrUrl) {
+      await dispatch(user2FA({ token: otp }))
+        .then((res) => {
           navigate("/");
-    toast.success("OTP Verified!");
-    dispatch(getUserDetails());
-    dispatch(getCartNumber(localStorage.getItem("userId")));
-        
-      }).catch((e) => {
-        toast.error("Wrong Code!");
-        console.log(e);
-        return;
-      });
-    }else{
-    if(formData){formData.token = otp;
-    dispatch(userLogin(formData));}
+          toast.success("OTP Verified!");
+          dispatch(getUserDetails());
+          dispatch(getCartNumber(localStorage.getItem("userId")));
+        })
+        .catch((e) => {
+          toast.error("Wrong Code!");
+          console.log(e);
+          return;
+        });
+    } else {
+      if (formData) {
+        formData.token = otp;
+        dispatch(userLogin(formData));
+      }
     }
   };
 
   useEffect(() => {
-    if(!qrUrl){
-
-    if(success){
-      dispatch(getUserDetails(localStorage.getItem("userId")));
-          dispatch(getCartNumber());
-          navigate("/");
-          closeModal();
+    if (!qrUrl) {
+      if (success) {
+        toast.success('Logged in')
+        dispatch(getUserDetails(localStorage.getItem("userId")));
+        dispatch(getCartNumber());
+        navigate("/");
+      }
+      if (error) {
+        dispatch(logout());
+        toast.error(stateErrorMsg);
+      }
     }
-    if(error){
-      dispatch(logout());
-      toast.error(stateErrorMsg);
-      closeModal(false);
-    }
-    
-  }
-  
-    
-  },[dispatch, success, error, stateErrorMsg, qrUrl]);
-
+  }, [dispatch, success, error, stateErrorMsg, qrUrl]);
 
   return (
     <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300">
@@ -100,7 +101,7 @@ export const OTPModal = ({ closeModal, formData }) => {
 
             <button
               className="text-[black] bg-transparent text-[24px]"
-              onClick={() => closeModal(false)}
+              onClick={() => {handleCloseModal()}}
             >
               <AiOutlineCloseSquare />
             </button>
