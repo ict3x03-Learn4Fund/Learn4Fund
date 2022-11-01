@@ -20,7 +20,7 @@ pipeline {
                 sh 'cp /home/.env backend'                                  
                 sh 'docker compose down --rmi all'
                 sh 'docker system prune -a --force --volumes'
-                sh 'docker compose -f docker-compose.yml build --no-cache'
+                sh 'docker compose -f docker-compose.dev.yml build --no-cache'
             }
         }
 
@@ -50,7 +50,7 @@ pipeline {
 
         stage("Deploy"){
             steps {
-                sh 'docker compose -f docker-compose.yml up --force-recreate'
+                sh 'docker compose -f docker-compose.dev.yml up --force-recreate'
             }
         }
 
