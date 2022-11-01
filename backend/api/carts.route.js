@@ -141,11 +141,20 @@ router.route("/addDonation").post(protect,
  * @route Post /v1/api/carts/clearDonation/:id
  * @access Private
  */
-router.route("/clearDonation/:id").get(protect,
+router.route("/clearDonation/:id").get(
   [
     param('id', 'Invalid account')
       .notEmpty().bail()
-      .isAlphanumeric(),
-  ],apiClearDonation)
+      .isAlphanumeric().bail()
+      .isLength({ min: 24, max: 24 }),
+  ],(req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errArray = errors.array();
+      const errMessage = errArray.map((err) => err.msg).join("\n");
+      return res.status(400).json({ errors: errMessage });
+    }
+    apiClearDonation(req, res)
+});
 
 module.exports = router
