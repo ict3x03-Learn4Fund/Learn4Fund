@@ -61,7 +61,6 @@ function App() {
               <Route exact path="donate" element={<Donations />} />
               <Route exact path="tos" element={<Toc />} />
               <Route exact path="privacy" element={<Privacy />} />
-              <Route path="captcha" element={<ReCAPTCHA sitekey="6Le7wVsiAAAAAJsqEU2e94S3VDqf2UFpRpz2l6De"/>} />
               <Route exact path="cookies" element={<Cookie />} />
               <Route element={<ProtectedRoute />}>
                 <Route exact path="settings" element={<Settings />} />
