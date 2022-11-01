@@ -16,7 +16,7 @@ const router = express.Router()
  * @route GET /v1/api/payments/:id
  * @access Private
  */
-router.route("/:id").get(
+router.route("/:id").get(protect,
     [
         param('id', 'Invalid account ID')
             .notEmpty().bail()
@@ -37,7 +37,7 @@ router.route("/:id").get(
  * @route POST /v1/api/payments/pay
  * @access Private
  */
-router.route("/pay").post(
+router.route("/pay").post(protect,
     [
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
@@ -53,7 +53,7 @@ router.route("/pay").post(
             .notEmpty().bail()
             .isInt().isLength({ min: 4, max: 4 }),
         body('cardType', 'Invalid card type').notEmpty().bail().custom(value => {
-            if (value !== 'Visa' && value !== 'MasterCard') {
+            if (value !== 'VisaCard' && value !== 'MasterCard') {
                 throw new Error('Invalid card type')
             }
             return true;
@@ -86,7 +86,7 @@ router.route("/pay").post(
  * @route POST /v1/api/payments/addAddr
  * @access Private
  */
-router.route("/addAddr").post(
+router.route("/addAddr").post(protect,
     [
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
@@ -125,7 +125,7 @@ router.route("/addAddr").post(
         apiAddAddr(req, res)
 })
 
-router.route("/addCard").post(
+router.route("/addCard").post(protect,
     [
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
@@ -140,9 +140,9 @@ router.route("/addCard").post(
             .isString().isLength({ max: 50 }).bail()
             .trim(),
         body('creditCard.cardType', 'Invalid card type')
-            .notEmpty().bail().
-            custom(value => {
-                if (value !== 'Visa' && value !== 'MasterCard') {
+            .notEmpty().bail()
+            .custom(value => {
+                if (value !== 'VisaCard' && value !== 'MasterCard') {
                     throw new Error('Invalid card type')
             }
             return true;
@@ -158,7 +158,7 @@ router.route("/addCard").post(
         }
         apiAddCard(req, res)
 })
-router.route("/deleteCard/:id").get(
+router.route("/deleteCard/:id").get(protect,
     [
         param('id', 'Invalid ID')
             .notEmpty().bail()
@@ -174,7 +174,7 @@ router.route("/deleteCard/:id").get(
         apiDeleteCard(req, res)
 })
 
-router.route("/deleteAddr/:id").get(
+router.route("/deleteAddr/:id").get(protect,
     [
         param('id', 'Invalid ID')
             .notEmpty().bail()
@@ -189,7 +189,7 @@ router.route("/deleteAddr/:id").get(
         }
         apiDeleteAddr(req, res)
 })
-router.route("/getTransactions/:id").get(
+router.route("/getTransactions/:id").get(protect,
     [
         param('id', 'Invalid ID')
             .notEmpty().bail()
