@@ -71,9 +71,11 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       token,
     });
     
-    if (process.env.NODE_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
+    if (process.env.CURRENT_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
       console.log('DEBUG: Current environment is "testing", skipping 2fa verification.')
       verified = true;
+    }else{
+      console.log('DEBUG: Current environment is "deployment", performing 2fa verification.')
     }
     
     if (verified) {

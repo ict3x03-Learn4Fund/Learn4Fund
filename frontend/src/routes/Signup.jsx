@@ -168,7 +168,7 @@ const Signup = () => {
 
   const submitData = async (data) => {
     var token = captchaRef.current.getValue();    
-    if (process.env.REACT_APP_ENV === 'testing'){ // [UI Testing] Skip captcha verification for UI testing phase
+    if (process.env.REACT_APP_CURRENT_ENV === 'testing'){ // [UI Testing] Skip captcha verification for UI testing phase
       toast.error("SKIPPING CAPTCHA");
       dispatch(registerUser(data));
     }else{
