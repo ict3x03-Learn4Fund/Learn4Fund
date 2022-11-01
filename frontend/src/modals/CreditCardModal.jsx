@@ -102,7 +102,6 @@ export const CreditCardModal = ({
       last4No: reqLast4No,
       cardType: reqCardType,
     };
-    console.log(payload);
     paymentsService
       .makePayment(payload)
       .then(async (response) => {
@@ -157,24 +156,20 @@ export const CreditCardModal = ({
       toast.error("Please enter the 3 digit cvv.");
       return;
     }
-    console.log("hello");
     setModalOpen(true);
   }
 
   // for otp submit
   const submitOtpForm = () => {
     const payload = { userId: userInfo.id, token: otp };
-    console.log(payload);
     authService
       .verify2FA(payload)
       .then((response) => {
-        console.log("status", response.status);
         if (response.status == 200) {
           setLoading(true);
           makePayment();
           modalOpen(false);
         } else {
-          console.log("Error");
           toast.error(response.data.message);
         }
       })
@@ -209,8 +204,6 @@ export const CreditCardModal = ({
   const { firstName, lastName, address, unit, city, postalCode } = addressForm;
 
   const onChangeAddr = (e) => {
-    console.log(addressForm);
-    console.log(e.target.value);
     setAddressForm((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -222,7 +215,6 @@ export const CreditCardModal = ({
       toast.error("Enter valid Postal Code!");
       return;
     }
-    console.log(addressForm);
     paymentsService
       .addAddr(userInfo.id, addressForm)
       .then((res) => {
@@ -248,7 +240,6 @@ export const CreditCardModal = ({
   const { name, cardNo, expiryDate } = cardForm;
 
   const onChangeCard = (e) => {
-    console.log(e.target.value);
     setCardForm((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -262,7 +253,6 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     const request = { name, cardNo, cardType, expiryDate };
-    console.log(userInfo.id, request);
     paymentsService
       .addCard(userInfo.id, request)
       .then((res) => {
@@ -591,10 +581,11 @@ export const CreditCardModal = ({
                             name="cardNo"
                             required
                             maxLength={19}
-                            onChange={onChangeCard}
+                            // onChange={onChangeCard}
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
-                            {...getCardNumberProps()}
+                            defaultValue={cardNo}
+                            {...getCardNumberProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.cardNumber &&
@@ -611,9 +602,10 @@ export const CreditCardModal = ({
                             name="expiryDate"
                             required
                             placeholder="mm/yyyy"
+                            defaultValue={expiryDate}
                             onChange={onChangeCard}
                             className="p-2 border-2 border-black w-40"
-                            {...getExpiryDateProps()}
+                            {...getExpiryDateProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.expiryDate &&
