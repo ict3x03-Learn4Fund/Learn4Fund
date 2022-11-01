@@ -152,20 +152,23 @@ const apiMakePayment = asyncHandler(async (req, res) => {
         quantity++
       ) {
         const code = uuidv4();
-        const emailVoucher = {
-          courseName: courseInfo.courseName,
-          voucherCode: code,
-          expiryDate: expiryDate,
-        };
-        emailList.push(emailVoucher);
+        
         const salt = await bcrypt.genSalt(10);
         const hashedCode = await bcrypt.hash(code, salt);
         const voucher = await Voucher.create({
           courseId: checkedOutCart[purchased].cartItem.courseId,
           voucherCode: hashedCode,
+          salt: salt,
           accountId: accountId,
           transactionId: transaction._id,
         });
+        const emailVoucher = {
+          courseName: courseInfo.courseName,
+          voucherCode: code,
+          expiryDate: expiryDate,
+          voucherId: voucher._id,
+        };
+        emailList.push(emailVoucher);
         voucherList.push(voucher);
       }
     }
@@ -174,11 +177,13 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     let message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`;
     let list = "";
     emailList.map((value) => {
-      list = `${value.courseName}:  ${value.voucherCode} \n`;
+      list = `${value.courseName}: [ID] ${value.voucherId} [CODE] ${value.voucherCode} \n`;
       message += list;
     });
     message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`;
-
+    message += `\n\nRegards,\nTitans Division`;
+    message += `\n\nThis is an auto-generated email. Please do not reply.`;
+    message += `\nRef Id: ${transaction._id}`;
     // send vouchers to user's email
     const success = await sendEmail(
       user.email,

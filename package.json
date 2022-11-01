@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ict3x03-Learn4Fund/Learn4Fund#readme",
   "dependencies": {
+    "concurrently": "^7.5.0",
     "dotenv": "^16.0.3"
   }
 }
