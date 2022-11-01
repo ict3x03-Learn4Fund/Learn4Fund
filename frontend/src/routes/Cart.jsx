@@ -133,7 +133,7 @@ const Cart = () => {
 
   const removeDonations = () => {
     cartsService
-      .clearDonationsInCart(userId)
+      .clearDonationsInCart(userInfo.id)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Donations cleared");

@@ -475,7 +475,7 @@ const Signup = () => {
               </div>
               <div className="flex flex-row w-full justify-center">
                 <input type="checkbox" className="mr-2" />{" "}
-                <Link to="/policy" className="hover:text-orange-500">
+                <Link to="/privacy" className="hover:text-orange-500">
                   Accept our Terms and Conditions
                 </Link>
               </div>

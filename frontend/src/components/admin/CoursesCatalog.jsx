@@ -90,7 +90,7 @@ const CoursesCatalog = () => {
             </tr>
           </thead>
           <tbody className="table-group-divider">
-            {dataCourses.sort(sortObjectArrayByProperty(dataCourses, sortTable)).map((course) => (
+            {dataCourses.sort(sortObjectArrayByProperty(dataCourses, sortTable)).filter(course=>!course.deleteIndicator).map((course) => (
               <tr key={course._id}>
                 <td className='w-1/6'>{course._id.substring(course._id.length-5)}</td>
                 <td className='w-1/6'><p className="truncate ... w-full max-w-[200px]"><b>{course.company }</b><br/> {  course.courseName}</p></td>

@@ -27,11 +27,6 @@ function Donations() {
     setTab("donate");
   },[]);
 
-  useEffect(() => {
-    if (userId){
-      dispatch(getUserDetails())
-    }
-  }, [userId])
 
 
   const getTop5 = () => {

@@ -163,7 +163,7 @@ export const CreditCardModal = ({
 
   // for otp submit
   const submitOtpForm = () => {
-    const payload = { userId: userId, token: otp };
+    const payload = { userId: userInfo.id, token: otp };
     console.log(payload);
     authService
       .verify2FA(payload)
@@ -224,7 +224,7 @@ export const CreditCardModal = ({
     }
     console.log(addressForm);
     paymentsService
-      .addAddr(userId, addressForm)
+      .addAddr(userInfo.id, addressForm)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Successfully save new address.");
@@ -262,9 +262,9 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     const request = { name, cardNo, cardType, expiryDate };
-    console.log(userId, request);
+    console.log(userInfo.id, request);
     paymentsService
-      .addCard(userId, request)
+      .addCard(userInfo.id, request)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Successfully save new card.");
@@ -473,7 +473,7 @@ export const CreditCardModal = ({
                           <input
                             type="submit"
                             className="btn ml-4 w-3/4 bg-green-800"
-                            value="Save Addres"
+                            value="Save Address"
                           />
                         ) : null}
                       </div>
