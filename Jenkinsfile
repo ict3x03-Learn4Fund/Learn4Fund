@@ -49,7 +49,7 @@ pipeline {
 
         stage("Deploy"){
             steps {
-                sh 'docker compose -f docker-compose.dev.yml up --force-recreate -d'
+                sh 'docker compose -f docker-compose.yml up --force-recreate -d'
             }
         }
 
