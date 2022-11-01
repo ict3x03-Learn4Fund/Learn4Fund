@@ -69,7 +69,6 @@ export const user2FA = createAsyncThunk(
             const response = await authService.verify2FA(arg);
             if (response.status == 200){
                 localStorage.setItem('userId', response.data._id)
-                localStorage.setItem('otpSuccess', true)
             }
             return response.data
         } catch (error) {
