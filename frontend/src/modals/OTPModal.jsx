@@ -82,6 +82,7 @@ export const OTPModal = ({ closeModal, formData }) => {
       }
       if (error) {
         dispatch(logout());
+        closeModal(false)
         toast.error(stateErrorMsg);
       }
     }
