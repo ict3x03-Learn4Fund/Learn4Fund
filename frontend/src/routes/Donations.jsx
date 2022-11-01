@@ -102,7 +102,7 @@ function Donations() {
         }
       })
       .catch((e) => {
-        toast.error(e.message);
+        toast.error("Error adding donations")
       });
   };
 

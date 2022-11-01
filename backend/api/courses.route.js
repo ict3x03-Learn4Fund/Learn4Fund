@@ -36,13 +36,12 @@ router.route("/create").post(protect,               //TODO: Check if admin
         body('courseTutor', 'Tutor name is invalid')
             .notEmpty().bail()
             .isString().bail()
-            .trim(),
+            .escape().trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
             .isInt({min: 1}),
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
-            .notEmpty().bail()
             .isString().bail()
             .isAlpha().trim(),
 
