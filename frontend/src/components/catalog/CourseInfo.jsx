@@ -98,7 +98,7 @@ function CourseInfo() {
         toast.success("Item added into cart.");
       })
       .catch((e) => {
-        toast.error(e.message);
+        toast.error("Error adding item to cart");
         console.log(e);
       });
   };
