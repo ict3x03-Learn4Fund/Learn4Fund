@@ -477,7 +477,7 @@ export const CreditCardModal = ({
                           <input
                             type="submit"
                             className="btn ml-4 w-3/4 bg-green-800"
-                            value="Save Addres"
+                            value="Save Address"
                           />
                         ) : null}
                       </div>
