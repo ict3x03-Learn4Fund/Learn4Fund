@@ -146,7 +146,7 @@ const Signup = () => {
   };
 
   const confirmPasswordCheck = (e) => {
-    if (e.target.value == accountForm.password) {
+    if (e.target.value == accountForm.password || e.target.value == accountForm.password2) {
       setFufillPassword((prevState) => [
         prevState[0],
         prevState[1],

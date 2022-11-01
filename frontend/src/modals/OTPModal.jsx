@@ -49,9 +49,19 @@ export const OTPModal = ({ closeModal, formData }) => {
     setOtp(event.target.value);
   }
 
-  const submitForm = () => {
+  const submitForm = async () => {
     if(qrUrl){
-      dispatch(user2FA({token: otp }))
+      await dispatch(user2FA({token: otp })).then((res) => {
+          navigate("/");
+    toast.success("OTP Verified!");
+    dispatch(getUserDetails());
+    dispatch(getCartNumber(localStorage.getItem("userId")));
+        
+      }).catch((e) => {
+        toast.error("Wrong Code!");
+        console.log(e);
+        return;
+      });
     }else{
     if(formData){formData.token = otp;
     dispatch(userLogin(formData));}
@@ -61,11 +71,11 @@ export const OTPModal = ({ closeModal, formData }) => {
   useEffect(() => {
     if(!qrUrl){
 
-    if (success) {
-      navigate("/");
-      toast.success("Login Successful!");
-      dispatch(getUserDetails());
-      dispatch(getCartNumber(localStorage.getItem("userId")));
+    if(success){
+      dispatch(getUserDetails(localStorage.getItem("userId")));
+          dispatch(getCartNumber());
+          navigate("/");
+          closeModal();
     }
     if(error){
       dispatch(logout());
@@ -74,17 +84,9 @@ export const OTPModal = ({ closeModal, formData }) => {
     }
     
   }
-  if(otpSuccess){
-    navigate("/");
-    toast.success("OTP Verified!");
-    dispatch(getUserDetails());
-    dispatch(getCartNumber(localStorage.getItem("userId")));
-  }
-  if (otpError) {
-    return;
-  }
+  
     
-  },[dispatch, success, error, otpSuccess, otpError, stateErrorMsg, qrUrl]);
+  },[dispatch, success, error, stateErrorMsg, qrUrl]);
 
 
   return (
