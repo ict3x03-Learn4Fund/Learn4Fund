@@ -25,9 +25,7 @@ router.route("/:id").get(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid Request" });
         }
         apiGetMethods(req, res)
 })
@@ -75,9 +73,7 @@ router.route("/pay").post(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid payment request" });
         }
         apiMakePayment(req, res)
 })
@@ -118,9 +114,7 @@ router.route("/addAddr").post(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid address" });
         }
         apiAddAddr(req, res)
 })
@@ -148,13 +142,12 @@ router.route("/addCard").post(protect,
             return true;
         }),
         body('creditCard.expiryDate', 'Invalid expiry date')
+            .notEmpty().bail()
             .matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/),
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid card" });
         }
         apiAddCard(req, res)
 })
@@ -167,9 +160,7 @@ router.route("/deleteCard/:id").get(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid ID" });
         }
         apiDeleteCard(req, res)
 })
@@ -183,9 +174,7 @@ router.route("/deleteAddr/:id").get(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid Request" });
         }
         apiDeleteAddr(req, res)
 })
@@ -198,9 +187,7 @@ router.route("/getTransactions/:id").get(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            const errArray = errors.array();
-            const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: "Invalid Request" });
         }
         apiGetTransactions(req, res)
 })
