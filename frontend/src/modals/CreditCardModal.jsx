@@ -249,7 +249,7 @@ export const CreditCardModal = ({
     } else {
       cardType = "MasterCard";
     }
-    const request = { name, cardNumber, cardType, expiryDate };
+    const request = { name, cardNo: cardNumber, cardType, expiryDate };
     paymentsService
       .addCard(userInfo.id, request)
       .then((res) => {
