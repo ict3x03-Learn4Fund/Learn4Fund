@@ -34,11 +34,15 @@ const storage = new GridFsStorage({
   url: process.env.COURSES_DB_URI,
   file: (req, file) => {
     return new Promise((resolve, reject) => {
+      console.log(file)
       crypto.randomBytes(16, (err, buf) => {
         if (err) {
           return reject(err);
         }
         const filename = buf.toString("hex") + path.extname(file.originalname);
+        if (file.mimetype != "image/jpeg" && file.mimetype != "image/png") {
+          return reject("wrong file type");
+        }
         const fileInfo = {
           filename: filename,
           bucketName: "uploads",
@@ -53,11 +57,12 @@ const store = multer({ storage });
 const uploadMiddleware = (req, res, next) => {
   const upload = store.single('image');
   upload(req, res, function (err) {
+    console.log(err)
     if (err instanceof multer.MulterError) {
       return res.status(400).send('File too large');
     } else if (err) {
       // check if our filetype error occurred
-      if (err === 'filetype') return res.status(400).send('Image files only');
+      if (err === 'wrong file type') return res.status(400).send({message: 'Image files of type jpeg and png only'});
       // An unknown error occurred when uploading.
       return res.status(500).json({err: err});
     }
