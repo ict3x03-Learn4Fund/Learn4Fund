@@ -116,17 +116,17 @@ function App() {
             {toggleModal && <PromotionModal closeModal={setToggleModal} />}
             {newsModal && <NewsLetterModal closeModal={setNewsModal} />}
             <ToastContainer
-position="bottom-right"
-autoClose={3000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-/>
+              position="bottom-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
             <Footer />
           </>
         
