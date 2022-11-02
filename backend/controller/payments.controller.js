@@ -130,10 +130,10 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       const newDonation = {
         amount: donationAmount,
         showDonation: showDonation,
-        date: new Date()
+        date: new Date(),
       };
       donor.donationList.push(newDonation);
-      donor.markModified("donationList")
+      donor.markModified("donationList");
       donor.save();
     }
 
@@ -152,7 +152,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
         quantity++
       ) {
         const code = uuidv4();
-        
+
         const salt = await bcrypt.genSalt(10);
         const hashedCode = await bcrypt.hash(code, salt);
         const voucher = await Voucher.create({
@@ -172,28 +172,34 @@ const apiMakePayment = asyncHandler(async (req, res) => {
         voucherList.push(voucher);
       }
     }
-    console.log(emailList);
-
-    let message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`;
+    let message = "";
     let list = "";
-    emailList.map((value) => {
-      list = `${value.courseName}: [ID] ${value.voucherId} [CODE] ${value.voucherCode} \n`;
-      message += list;
-    });
-    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`;
-    message += `\n\nRegards,\nTitans Division`;
-    message += `\n\nThis is an auto-generated email. Please do not reply.`;
-    message += `\nRef Id: ${transaction._id}`;
-    // send vouchers to user's email
-    const success = await sendEmail(
-      user.email,
-      "New Transaction Made",
-      message
-    );
-    if (success) {
-      return res.status(200).json({ transaction, voucherList });
+    console.log(emailList);
+    if (emailList.length != 0) {
+      message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`;
+      list = "";
+
+      emailList.map((value) => {
+        list = `${value.courseName}: [ID] ${value.voucherId} [CODE] ${value.voucherCode} \n`;
+        message += list;
+      });
+      message += `The expiry dates for all the vouchers are: ${expiryDate}. \nThanks for purchasing!`;
+      message += `\n\nRegards,\nTitans Division`;
+      message += `\n\nThis is an auto-generated email. Please do not reply.`;
+      message += `\nRef Id: ${transaction._id}`;
+      // send vouchers to user's email
+      const success = await sendEmail(
+        user.email,
+        "New Transaction Made",
+        message
+      );
+      if (success) {
+        return res.status(200).json({ transaction, voucherList });
+      } else {
+        return res.status(400).json({ message: "failed to send email" });
+      }
     } else {
-      return res.status(400).json({ message: "failed to send email" });
+      return res.status(200).json({ transaction, voucherList });
     }
   } catch (error) {
     return res.status(400).json({ message: error.message });

@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
   const { userInfo } = useSelector((state) => state.user)
   const navigate = useNavigate();
   useEffect(()=>{
-    if (!localStorage.getItem('userId') || !userInfo) {
+    if (!localStorage.getItem('userId')) {
       toast.warning('You are not authorised to access this page')
     setTimeout(() => {
       navigate('/login')
