@@ -1,15 +1,16 @@
 pipeline {
     agent any
     stages {       
-        stage("Git Fetch") {
-            steps {
-                load '/var/jenkins_home/env/learn4fund.groovy'
-                git branch: "dev", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
-            }
-        }
+        // stage("Git Fetch") {
+        //     steps {
+                // load '/var/jenkins_home/env/learn4fund.groovy'
+        //         git branch: "dev", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
+        //     }
+        // }
 
         stage("Test Build") {
             steps {                
+                load '/var/jenkins_home/env/learn4fund.groovy'
                 script{
                     try{
                         sh 'rm dependency-check-report.html'
