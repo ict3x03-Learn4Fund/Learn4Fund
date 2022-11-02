@@ -174,9 +174,10 @@ const Signup = () => {
   };
 
   const submitData = async (data) => {
-    var token = captchaRef.current.getValue();    
-    if (process.env.REACT_APP_ENV === 'testing'){ // [UI Testing] Skip captcha verification for UI testing phase
-      toast.error("SKIPPING CAPTCHA");
+    var token = captchaRef.current.getValue();
+    toast.error("SKIPPING CAPTCHA DEBUGDEBUG1");
+    if (process.env.REACT_APP_CURRENT_ENV === 'testing'){ // [UI Testing] Skip captcha verification for UI testing phase
+      toast.error("SKIPPING CAPTCHA DEBUGDEBUG2");
       dispatch(registerUser(data));
     }else{
       if (!token) {

@@ -17,7 +17,7 @@ const protect = asyncHandler((req,res,next) =>{
                     token = cookie.split('access_token=')[1]                                //[Authentication] Get token from cookie
 
                     if (token == null) {
-                        return res.status(401).json({ message: 'Not logged in' })
+                        return res.status(401).json({ message: 'Missing token' })
                     }
             
                     //verify token

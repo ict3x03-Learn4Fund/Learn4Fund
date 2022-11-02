@@ -72,9 +72,11 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       token,
     });
     
-    if (process.env.NODE_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
+    if (process.env.CURRENT_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
       console.log('DEBUG: Current environment is "testing", skipping 2fa verification.')
       verified = true;
+    }else{
+      console.log('DEBUG: Current environment is "deployment", performing 2fa verification.')
     }
     
     if (verified) {
@@ -309,11 +311,19 @@ const apiResetPassword = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "User does not exists." });
     }
     const { base32: secret } = user.secret;
-    const verified = speakEasy.totp.verify({
+    var verified = speakEasy.totp.verify({
       secret,
       encoding: "base32",
       token,
     });
+
+    if (process.env.CURRENT_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
+      console.log('DEBUG: Current environment is "testing", skipping 2fa verification.')
+      verified = true;
+    }else{
+      console.log('DEBUG: Current environment is "deployment", performing 2fa verification.')
+    }
+
     if (verified) {
       const jwt = generateToken(user._id);
       const link = `http://localhost:3000/reset/${user._id}/${jwt}`;

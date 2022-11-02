@@ -87,4 +87,4 @@ OR
 **Push merged code to master branch in Github**
 - git push
 
-Note: Best practice to commit your changes regularly
+Note: Best practice to commit your changes regularly.
