@@ -1,52 +1,45 @@
 pipeline {
-    agent none
-    stages {        
+    agent any
+    stages {       
         stage("Git Fetch") {
-            agent any
             steps {
                 git branch: "test/vm", url: "https://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@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
             }
         }
 
-        stage('Prep environment') {
-            agent any
+        stage("Test Build") {
             steps {
+                sh 'echo "test build"'
                 script{
                     try{
-                        sh 'docker stop $(docker ps -q)'
+                        sh 'rm dependency-check-report.html'
+                        sh 'rm dependency-check-report.xml'
                     }catch (err){
-                        echo 'Skipping, no running containers'
+                        echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                // Copy env file to backend
-                sh 'pwd_path=$(pwd)'
-                sh 'cd $pwd_path'
-                sh 'cd backend && cp /home/.env .'                
+                sh 'cp /home/.env backend'                                  
+                sh 'docker compose down --rmi all'
+                sh 'docker system prune -a --force --volumes'
+                sh 'docker compose -f docker-compose.dev.yml build --no-cache'
             }
         }
 
-        stage("Build") {
-            agent {
-                docker {
-                    image 'node:lts-buster-slim'
-                    args '-p 3000:3000 -p 5000:5000'
-                    reuseNode true
-                }
-            }
+        stage("Test Deployment"){
             steps {
-                // npm install backend
-                sh 'pwd_path=$(pwd)'
-                sh 'cd $pwd_path'
-                sh 'cd backend && npm i'
+                sh 'docker compose -f docker-compose.dev.yml up --force-recreate -d'
+            }
+        }
 
-                // npm intall frontend
-                sh 'cd $pwd_path'
-                sh 'cd frontend && npm i --verbose'
+        stage("UI Testing"){
+            steps {
+                sh 'echo "Waiting testing website to be up..."'
+                sh 'sleep 60'
+                sh 'python3 /home/test_linux.py'
             }
         }
 
         stage('SonarQube analysis') {
-            agent any
             tools {nodejs "node"}
             steps{
                 script{
@@ -55,45 +48,48 @@ pipeline {
                         sh "${scannerHome}/bin/sonar-scanner \
                         -D sonar.login=admin \
                         -D sonar.password=123 \
-                        -D sonar.projectKey=sonarqubetest \
+                        -D sonar.projectKey=sonarqube \
                         -D sonar.exclusions=vendor/**,resources/**,**/*.java \
-                        -D sonar.host.url=http://10.104.16.20:9000/"
+                        -D sonar.host.url=http://128.199.99.77:9000/ \
+                        -Dsonar.projectBaseDir=/var/jenkins_home/workspace/Learn4fund_main"
                         }
                 }
             }
         }
 
         stage("OWASP Dependency Check") {
-            agent any
             steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4Fund/backend', odcInstallation: 'Default'
+                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_main/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
             }
         }
 
-        stage("Deploy"){
-            agent {
-            docker {
-                image 'node:lts-buster-slim'
-                args '-p 3000:3000 -p 5000:5000'
-                reuseNode true
-            }
-            }
+        stage("Production Build") {
             steps {
-                // Deploy Backend
-                sh 'pwd_path=$(pwd)'
-                sh 'cd $pwd_path'
-                sh 'cd backend && npm run start &'
-
-                // Deploy Frontend
-                sh 'cd $pwd_path'
-                sh 'cd frontend && npm run start'
+                script{
+                    try{
+                        sh 'rm dependency-check-report.html'
+                        sh 'rm dependency-check-report.xml'
+                    }catch (err){
+                        echo 'Skipping, ODC reports pre-generated.'
+                    }
+                }
+                sh 'cp /home/.env backend'                                  
+                sh 'docker compose down --rmi all'
+                sh 'docker system prune -a --force --volumes'
+                sh 'docker compose -f docker-compose.yml build --no-cache'
             }
         }
+
+        stage("Production Deployment"){
+            steps {
+                sh 'docker compose -f docker-compose.yml up --force-recreate -d'
+            }
+        }
+
     }
     post {
         success {
             script{
-                agent any
                 dependencyCheckPublisher pattern: 'dependency-check-report.xml'
             }                        
         }

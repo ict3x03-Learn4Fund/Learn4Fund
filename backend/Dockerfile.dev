@@ -9,4 +9,4 @@ RUN npm install
 COPY . .
 
 #CMD ["npm", "run", "start", "--node-flags", "--max-old-space-size=512"]
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
