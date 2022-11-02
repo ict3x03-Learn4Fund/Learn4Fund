@@ -47,8 +47,7 @@ function ResetPassword() {
         toast.success(response.data.message)
       }
     }).catch((error) => {
-      console.log(error.response.data.message)
-      toast.error(error.response.data.message)
+      toast.error(error.response.data.message) 
     })
   }
 
@@ -67,13 +66,12 @@ function ResetPassword() {
                   <MdAlternateEmail className="self-center text-w1" />
                 </div>
               </span>
-              <input
+              <input required 
                 className="flex w-3/4 h-[40px] input"
                 autoComplete="off"
                 type="text"
                 maxLength={255}
                 {...register("email", {
-                  required: true,
                   pattern:
                     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                 })}
@@ -97,11 +95,11 @@ function ResetPassword() {
                   <BsShieldLockFill className="self-center text-w1" />
                 </div>
               </span>
-              <input
+              <input required
                 className="flex w-3/4 h-[40px] input"
                 maxLength={7} // Code is 7 digits
                 type="password"
-                {...register("code", { required: true, pattern: /^[0-9]*$/ })} // [Validation] Number only
+                {...register("code", { pattern: /^[0-9]*$/ })} // [Validation] Number only
                 placeholder="Enter 2fa token"
                 value={otp}
                 onChange={handleOtp}
@@ -121,7 +119,7 @@ function ResetPassword() {
               <button
                 className="p-2 w-full rounded bg-success text-w1 font-bold"
                 type="submit"
-                disabled={loading} // [Validation] React Hook Form
+                disabled={loading}
               >
                 Reset 
               </button>
