@@ -13,7 +13,7 @@ const verifyVoucherLimiter = rateLimit({                                  // [Do
     message: "Tries exceeded 50, please try again in 60 mins",
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    handler: (request, response, next, options) => {
+    handler: (request, response, options) => {
         // Send logs to db
         Logs.create({
             email: request.body["companyId"],
