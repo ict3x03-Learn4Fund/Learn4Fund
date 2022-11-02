@@ -113,7 +113,7 @@ router.route("/addAddr").post(protect,
         apiAddAddr(req, res)
 })
 
-router.route("/addCard").post(protect,
+router.route("/addCard").post(
     [
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
@@ -121,6 +121,7 @@ router.route("/addCard").post(protect,
             .isLength({ min: 24, max: 24 }),
         body('creditCard.cardNo', 'Card No. is required')
             .notEmpty().bail()
+            .customSanitizer(value => value.replace(/\s*/g, ""))
             .isInt().isLength({ min: 16, max: 16 }).bail()
             .trim(),
         body('creditCard.name', 'Name is required')
@@ -137,11 +138,14 @@ router.route("/addCard").post(protect,
         }),
         body('creditCard.expiryDate', 'Invalid expiry date')
             .notEmpty().bail()
+            .customSanitizer(value => value.replace(/\s*/g, ""))
             .matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/),
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: "Invalid card" });
+            const errArray = errors.array();
+            const errMessage = errArray.map((err) => err.msg).join("\n");
+            return res.status(400).json({ message: errMessage });
         }
         apiAddCard(req, res)
 })
