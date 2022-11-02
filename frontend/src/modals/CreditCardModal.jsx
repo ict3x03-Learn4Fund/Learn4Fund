@@ -34,9 +34,6 @@ export const CreditCardModal = ({
   //for otp modal
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardName, setCardName] = useState("");
   const [payMethod, selectPayMethod] = useState("previous");
   const [billMethod, selectBillMethod] = useState("previous");
   const [cardList, setCardList] = useState([]);
@@ -88,7 +85,7 @@ export const CreditCardModal = ({
     if (existLast4No) {
       reqLast4No = existLast4No;
     } else {
-      reqLast4No = cardNo.slice(-4);
+      reqLast4No = cardNumber.slice(-4);
     }
 
     const payload = {
@@ -233,11 +230,11 @@ export const CreditCardModal = ({
   //Handle form for card
   const [cardForm, setCardForm] = useState({
     name: "",
-    cardNo: "",
+    cardNumber: "",
     expiryDate: "",
   });
   const [saveCardStatus, setSaveCardStatus] = useState();
-  const { name, cardNo, expiryDate } = cardForm;
+  const { name, cardNumber, expiryDate } = cardForm;
 
   const onChangeCard = (e) => {
     setCardForm((prevState) => ({
@@ -252,7 +249,7 @@ export const CreditCardModal = ({
     } else {
       cardType = "MasterCard";
     }
-    const request = { name, cardNo, cardType, expiryDate };
+    const request = { name, cardNumber, cardType, expiryDate };
     paymentsService
       .addCard(userInfo.id, request)
       .then((res) => {
@@ -577,14 +574,14 @@ export const CreditCardModal = ({
                           <div className="self-center w-32">Card Number</div>
                           <input
                             type="number"
-                            id="cardNo"
-                            name="cardNo"
+                            id="cardNumber"
+                            name="cardNumber"
                             required
                             maxLength={19}
                             // onChange={onChangeCard}
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
-                            defaultValue={cardNo}
+                            defaultValue={cardNumber}
                             {...getCardNumberProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
