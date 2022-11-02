@@ -60,6 +60,10 @@ function Profile() {
   const uploadImage = (e) => {
     e.preventDefault();
     console.log(file);
+    if (file.type != "image/jpeg" && file.type != "image/png"){
+      toast.error("Please choose only jpeg and png images")
+      return
+    }
     formData.append("image", file);
     imagesService
       .uploadImage(formData)
@@ -79,7 +83,10 @@ function Profile() {
         }
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        if (error.response.data.message){
+          return toast.error(error.response.data.message)
+        }
+        toast.error(error.message);
       });
   };
 
@@ -204,6 +211,7 @@ function Profile() {
                 type="file"
                 accept="image/jpeg,image/png"
                 name="file"
+                accept=".jpeg, .png"
                 onChange={(e) => handleFile(e)}
               ></input>
               <div className="flex-row justify-center self-center">

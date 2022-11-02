@@ -52,7 +52,12 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
       const uploadImage = (e) => {
         e.preventDefault();
+        if (file.type != "image/jpeg" && file.type != "image/png"){
+          toast.error("Please choose only jpeg and png images")
+          return
+        }
         formData.append("image", file);
+        
         imagesService
           .uploadImage(formData)
           .then((response) => {
@@ -70,6 +75,9 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             }
           })
           .catch((error) => {
+            if (error.response.data.message){
+              return toast.error(error.response.data.message)
+            }
             toast.error(error.message);
           });
       };
@@ -171,6 +179,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 <input
                 type="file"
                 name="file"
+                accept=".jpeg, .png"
                 onChange={(e) => handleFile(e)}
               ></input>
                 <button className='btn h-[6vh] self-center' onClick={(e) => uploadImage(e)}>Upload image</button>
