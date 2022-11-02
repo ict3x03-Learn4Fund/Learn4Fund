@@ -56,8 +56,6 @@ export const OTPModal = ({ closeModal, formData }) => {
         .then((res) => {
           navigate("/");
           toast.success("OTP Verified!");
-          dispatch(getUserDetails());
-          dispatch(getCartNumber(localStorage.getItem("userId")));
         })
         .catch((e) => {
           toast.error("Wrong Code!");

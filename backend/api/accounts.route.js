@@ -84,7 +84,6 @@ router.route("/register").post(createAccountLimiter,
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
-      .isStrongPassword({minLength: 12, minLowercase:1, minUppercase: 1, minNumbers:1, pointsForContainingLower: 10, pointsForContainingNumber:45, pointsForContainingUpper: 45})
       .isLength({max: 128}),                                         // [Validation] check if password is at least 12 characters
     check("firstName", "Invalid First Name")
       .notEmpty()
@@ -101,23 +100,11 @@ router.route("/register").post(createAccountLimiter,
       .not().matches(emojiRegex)
       .withMessage("No emoji allowed").bail()                         // [Validation] check if first name contains emoji
       .isLength({ max: 25 })                                         // [Validation] max length
-      .escape(),                                                       // [Sanitization] Escape HTML characters
-    check("phone", "Phone number is invalid")
-      .notEmpty()
-      .withMessage("Phone number is required").bail()                        // [Validation] check if phone number is empty
-      .isMobilePhone().bail()                                                // [Validation] check if phone number is valid
-      .isNumeric().bail()                                                    // [Validation] check if phone number is number
-      .trim() // Remove whitespace from both sides of a string
-      .isLength({ min: 6, max: 12 }),                                  // [Validation] Check if phone number is between 6 and 12 digits
-    check("countryCode", "Country code is invalid")
-      .notEmpty().bail()
-      .withMessage("Country code is required")                        // [Validation] check if country code is empty
-      .matches(/^(\+\d{2,3})$/)                                       // [Validation] check if country code starts with + and has 2 or 3 digits
-      .trim(),                                                        // [Sanitization] Remove whitespace from both sides of a string
+      .escape(),                                                       // [Sanitization] Escape HTML characters                                         // [Validation] max length
   ],(req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(400).json({ message: "Invalid User Inputs" });
     }
     apiRegister(req, res);
   }
@@ -198,7 +185,7 @@ router.route("/reset/:id/:jwt").get(
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(400).json({ message: "Error Reset Credentials" });
     }
     apiVerifyReset(req, res);
 })
@@ -223,7 +210,7 @@ router.route("/reset/:id/:jwt").post(
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(400).json({ message: "Invalid Verify JWT" });
     }
     apiChangePassword(req, res);
 });

@@ -48,6 +48,7 @@ export const getUserDetails = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
+            console.log(user)
             // send user's id to retrieve account information
             const data = await authService.getAccount(localStorage.getItem('userId'));
             return data

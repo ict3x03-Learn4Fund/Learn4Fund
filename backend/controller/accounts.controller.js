@@ -22,8 +22,6 @@ const apiRegister = asyncHandler(async (req, res) => {
     firstName,
     lastName,
     emailSubscription,
-    phone,
-    countryCode,
   } = req.body;
 
   try {
