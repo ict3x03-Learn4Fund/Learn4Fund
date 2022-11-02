@@ -4,7 +4,7 @@ pipeline {
         stage("Git Fetch") {
             steps {
                 load '/var/jenkins_home/env/learn4fund.groovy'
-                git branch: "test/vm", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
+                git branch: "dev", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
             }
         }
 
