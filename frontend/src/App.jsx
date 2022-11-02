@@ -27,6 +27,7 @@ import { OTPModal } from "./modals/OTPModal";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ChangePass from "./routes/ChangePass";
 
+
 function App() {
   const [bannerClose, setBannerClose] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
@@ -72,7 +73,6 @@ function App() {
             <Route exact path="signup" element={<Signup/>} />
             <Route exact path="courses" element={<Catalog />} />
             <Route exact path="courses/:courseID" element={<CourseInfo />} />
-            {/* <Route exact path="promo" element={<Promopage />} /> */}
 
             <Route
               path="*"

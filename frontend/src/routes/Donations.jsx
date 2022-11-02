@@ -266,8 +266,8 @@ function Donations() {
 
           <div className="flex flex-wrap w-full h-[184px] overflow-y-auto py-2 content-start">
             <div className="flex-row flex-wrap w-full h-fit text-[1vw] ">
-              {top10List.map((value) => (
-                <div className="flex w-full justify-between">
+              {top10List.map((value, index) => (
+                <div key={index} className="flex w-full justify-between">
                   <div className="flex flex-nowrap font-type1 font-bold">
                     {value.name} - ${value.amount}
                   </div>

@@ -24,13 +24,13 @@ const Signup = () => {
       setModalOpen(true);
     }
     if (error) {
-      dispatch(logout());
       toast.error(stateErrorMsg);
     }
   }, [dispatch, success, error]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    dispatch(logout());
     dispatch(clearSignupState());
   }, []);
 
