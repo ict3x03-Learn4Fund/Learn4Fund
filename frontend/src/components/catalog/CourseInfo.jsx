@@ -99,9 +99,8 @@ function CourseInfo() {
     if (quantitySelected > courseDetails.quantity) {
       toast.error("amount exceeded");
     }
-    // sessionStorage.setItem("cartItems", quantitySelected);
     addCartItem();
-    dispatch(getCartNumber());
+    dispatch(getCartNumber(userInfo.id));
   }
 
   // add cart item

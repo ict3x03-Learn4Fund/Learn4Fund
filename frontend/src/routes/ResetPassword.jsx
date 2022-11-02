@@ -36,7 +36,7 @@ function ResetPassword() {
   const resetPassword = () => {
     const request = {email: email, token: otp}
     authService.resetPass(request).then((response) => {
-      if (response.status == 200){
+      if (response.status === 200){
         toast.success(response.data.message)
       }
     }).catch((error) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import {
