@@ -37,7 +37,6 @@ export const OTPModal = ({ closeModal, formData }) => {
   } = useForm();
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  const { state } = useLocation();
   const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
 

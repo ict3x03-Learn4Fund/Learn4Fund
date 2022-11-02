@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BsShieldLockFill } from "react-icons/bs";
@@ -20,7 +19,6 @@ export const CreditCardModal = ({
 }) => {
   const [checkedState, setCheckedState] = useState([true, false]);
   const { userInfo } = useSelector((state) => state.user);
-  const navigate = useNavigate();
 
   //for otp modal
   const [otp, setOtp] = useState("");

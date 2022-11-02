@@ -8,11 +8,11 @@ import { getCartNumber, user2FA, getUserDetails } from "../../features/user/user
 import authService from "../../services/accounts";
 
 function ChangePassword() {
-  const { loading, userInfo, userId, otpError, qrUrl, stateErrorMsg } = useSelector(
+  const { userId } = useSelector(
     (state) => state.user
   );
   
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg] = useState("");
   const {
     register,
     handleSubmit,
@@ -28,19 +28,13 @@ function ChangePassword() {
 
   const [accountForm, setAccountForm] = useState({
     password: "",
-    passwrod2: "",
+    password2: "",
   });
 
   const { password, password2 } = accountForm;
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const onChange = (e) => {
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
 
   const checkPassword = (e) => {
     

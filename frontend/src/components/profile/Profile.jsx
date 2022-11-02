@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 function Profile() {
   const [file, setFile] = useState(null);
   const formData = new FormData();
-  const { userInfo, userId } = useSelector((state) => state.user);
+  const { userInfo } = useSelector((state) => state.user);
   const [avatar, setAvatar] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();

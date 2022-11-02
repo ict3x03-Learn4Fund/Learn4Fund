@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useNav } from "../hooks/useNav";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { user2FA } from "../features/user/userActions";
+import { useSelector } from "react-redux";
 import { MdAlternateEmail } from "react-icons/md";
 import authService from "../services/accounts";
 import {toast} from "react-toastify";
@@ -16,11 +13,7 @@ function ResetPassword() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { setTab } = useNav();
   const [otp, setOtp] = useState("");
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
   const { loading } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
