@@ -1,10 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { AiOutlineQuestionCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import validator from "validator";
-import { BiErrorCircle } from "react-icons/bi";
 import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
@@ -19,16 +18,8 @@ export const CreditCardModal = ({
   showDonation,
   checkout,
 }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-        // Anything in here is fired on component unmount.
-        document.body.style.overflow = 'unset';
-    }
-}, [])
   const [checkedState, setCheckedState] = useState([true, false]);
   const { userInfo } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   //for otp modal
@@ -46,6 +37,16 @@ export const CreditCardModal = ({
   const [loading, setLoading] = useState(false);
   let cardType = "";
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    getMethods();
+
+    return () => {
+      // Anything in here is fired on component unmount.
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   const getMethods = () => {
     paymentsService
       .getMethods(userInfo.id)
@@ -58,9 +59,8 @@ export const CreditCardModal = ({
       .catch((error) => {
         if (error.response && error.response.data.message) {
           return toast.error(error.response.data.message);
-        }
-        else {
-          return toast.error(error.message)
+        } else {
+          return toast.error(error.message);
         }
       });
   };
@@ -104,27 +104,23 @@ export const CreditCardModal = ({
       last4No: reqLast4No,
       cardType: reqCardType,
     };
-    paymentsService
+    await paymentsService
       .makePayment(payload)
-      .then(async (response) => {
+      .then((response) => {
         if (response.status == 200) {
+          setModalOpen(false);
+          closeModal(false);
           toast.success("Payment has been made successfully!");
-          await timeout(100);
-          window.location.reload(false);
+          // await timeout(100);
+          // window.location.reload(false);
         } else {
-          toast.error(response.data.message);
+          toast.error("Payment failed!");
         }
       })
       .catch((e) => {
         toast.error(e.response.data.message);
       });
   };
-
-  useEffect(() => {
-    if (userInfo) {
-      getMethods();
-    }
-  }, []);
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -170,7 +166,6 @@ export const CreditCardModal = ({
         if (response.status == 200) {
           setLoading(true);
           makePayment();
-          modalOpen(false);
         } else {
           toast.error(response.data.message);
         }
@@ -178,9 +173,7 @@ export const CreditCardModal = ({
       .catch((error) => {
         if (error.response && error.response.data.message) {
           return toast.error(error.response.data.message);
-        } else if (error.response.data) {
-          return toast.error(error.response.data);
-        } else {
+        }  else {
           return toast.error(error.message);
         }
       });
@@ -607,7 +600,9 @@ export const CreditCardModal = ({
                             defaultValue={expiryDate}
                             onChange={onChangeCard}
                             className="p-2 border-2 border-black w-40"
-                            {...getExpiryDateProps({onChange: (e) => onChangeCard(e)})}
+                            {...getExpiryDateProps({
+                              onChange: (e) => onChangeCard(e),
+                            })}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.expiryDate &&
