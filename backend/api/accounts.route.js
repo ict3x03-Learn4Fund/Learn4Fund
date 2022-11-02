@@ -34,7 +34,7 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
     "Too many accounts created from this IP, please try again after an hour",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (request, response, next, options) => {
+  handler: (request, response, options) => {
     // Send logs to db
     Logs.create({
       email: request.body['email'],
@@ -46,17 +46,34 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
   }
 });
 const verify2FALimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
-  windowMs: 1 * 60 * 1000, // 1 mins
-  max: 5, // Limit each IP to 5 code verification requests per 1 mins
-  message: "Too much tries, please try again in 15 mins",
+  windowMs: 3 * 60 * 1000, // 3 mins
+  max: 5, // Limit each IP to 5 code verification requests per 3 mins
+  message: "Too much tries, please try again in 3 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (request, response, next, options) => {
+  handler: (request, response, options) => {
     // Send logs to db
     Logs.create({
       email: request.body["userId"],
       type: "auth",
       reason: "Attempt to verify 2fa was rate limited.",
+      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+    });
+    response.status(options.statusCode).send(options.message)
+  }
+});
+const resetPasswordLimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
+  windowMs: 10 * 60 * 1000, // 10 mins
+  max: 5, // Limit each IP to 5 code verification requests per 10 mins
+  message: "Too much tries, please try again in 10 mins",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (request, response, options) => {
+    // Send logs to db
+    Logs.create({
+      email: request.body["userId"],
+      type: "auth",
+      reason: "Attempt to reset password was rate limited.",
       time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
     });
     response.status(options.statusCode).send(options.message)
@@ -84,7 +101,6 @@ router.route("/register").post(createAccountLimiter,
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
-      .isStrongPassword({minLength: 12, minLowercase:1, minUppercase: 1, minNumbers:1, pointsForContainingLower: 10, pointsForContainingNumber:45, pointsForContainingUpper: 45})
       .isLength({max: 128}),                                         // [Validation] check if password is at least 12 characters
     check("firstName", "Invalid First Name")
       .notEmpty()
@@ -162,7 +178,7 @@ router.route('/verify2FA').post(verify2FALimiter,
 router.route("/getAccount").get(protect, apiGetAccount);
 
 // @route POST api/accounts/reset (send link to email)
-router.route("/reset").post(
+router.route("/reset").post(resetPasswordLimiter,
   [
     check("email", 'Email is invalid')
       .notEmpty().bail()
@@ -185,7 +201,7 @@ router.route("/reset").post(
 })
 
 // @route GET api/accounts/reset/:id/:jwt (verify after click link in email)
-router.route("/reset/:id/:jwt").get(
+router.route("/reset/:id/:jwt").get(resetPasswordLimiter,
   [
     check('id', 'Invalid account ID')
       .notEmpty().bail()
@@ -204,7 +220,7 @@ router.route("/reset/:id/:jwt").get(
 })
 
 // @route POST api/accounts/reset/:id/:jwt (after verify link)
-router.route("/reset/:id/:jwt").post(
+router.route("/reset/:id/:jwt").post(resetPasswordLimiter,
   [
     check('id', 'Invalid account ID')
       .notEmpty().bail()
@@ -217,7 +233,6 @@ router.route("/reset/:id/:jwt").post(
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
-      .isStrongPassword({minLength: 12, minLowercase:1, minUppercase: 1, minNumbers:1, pointsForContainingLower: 10, pointsForContainingNumber:45, pointsForContainingUpper: 45})
       .isLength({ min: 12, max: 128 }),
     
   ], (req, res) => {
@@ -278,7 +293,7 @@ router.route("/update").post(protect,
       .trim()                                                         // [Sanitization] remove whitespace
       .not().matches(emojiRegex)
       .withMessage("First name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 }).bail()                                         // [Validation] max length
+      .isLength({ min:2, max: 25 }).bail()                                         // [Validation] max length
       .escape(),                                                       // [Sanitization] Escape HTML characters
     check("lastName", "Invalid Last Name")
       .notEmpty()
@@ -286,7 +301,7 @@ router.route("/update").post(protect,
       .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
       .not().matches(emojiRegex)
       .withMessage("Last name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 })                                         // [Validation] max length
+      .isLength({ min:2, max: 25 })                                         // [Validation] max length
       .escape(),  
   ],
   (req, res) => {
