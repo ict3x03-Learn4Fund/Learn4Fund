@@ -5,8 +5,8 @@ const Course = require("../models/courseModel");
 
 /***
  * @desc Add cart
- * @route POST /v1/api/carts/create
- * @access Public
+ * @route POST /v1/api/carts/add
+ * @access Private
  */
 const apiAddCart = asyncHandler(async (req, res) => {
   try {
@@ -44,7 +44,7 @@ const apiAddCart = asyncHandler(async (req, res) => {
 
     return res.status(200).json(cart);
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: "Error adding to cart" });
   }
 });
 
@@ -164,7 +164,7 @@ const apiDeleteCart = asyncHandler(async (req, res) => {
 
 /***
  * @desc Add Donations to cart
- * @route Post /v1/api/carts/donate
+ * @route Post /v1/api/carts/addDonation
  * @access Private
  */
 const apiAddDonationToCart = asyncHandler(async (req, res) => {
@@ -185,7 +185,11 @@ const apiAddDonationToCart = asyncHandler(async (req, res) => {
     return res.status(400).json({message: e.message })
   }
 });
-
+/***
+ * @desc Remove Donations from cart
+ * @route Post /v1/api/carts/clearDonation/:id
+ * @access Private
+ */
 const apiClearDonation = asyncHandler(async (req, res) => {
   try {
     const accountId = req.params.id

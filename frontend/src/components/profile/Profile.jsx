@@ -44,11 +44,16 @@ function Profile() {
           toast.success("Details Updated Successfully.");
           dispatch(getUserDetails());
         } else {
-          toast.error(res.data.message);
+          if (res.data.message && res.data.message === Array) {
+            res.data.message.map((err) => toast.error(err.msg));
+          }
+          else{ toast.error("Error updating profile. Try again later.");}
+          
         }
       })
       .catch((err) => {
-        toast.error(err.response.data.message);
+        toast.error("Error updating profile. Try again later.");
+        console.log(err.response.data.message);
       });
   };
 
@@ -74,7 +79,7 @@ function Profile() {
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        toast.error(error.response.data.message);
       });
   };
 
@@ -178,7 +183,7 @@ function Profile() {
           </div>
 
           <div className="flex w-1/2 h-full justify-evenly">
-            <form>
+            <form enctype="multipart/form-data" >
               <img
                 src={
                   avatar
@@ -197,6 +202,7 @@ function Profile() {
               file:bg-violet-50 file:text-violet-700
               hover:file:bg-violet-100 mb-2"
                 type="file"
+                accept="image/jpeg,image/png"
                 name="file"
                 onChange={(e) => handleFile(e)}
               ></input>
