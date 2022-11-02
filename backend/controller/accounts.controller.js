@@ -320,10 +320,10 @@ const apiResetPassword = asyncHandler(async (req, res) => {
       if (emailSuccess){
         return res.status(200).json({message: "An email has been sent to you to reset your password."});
       } else {
-        return res.status(400).json({message: "Failed to sent email."});
+        return res.status(400).json({message: "Failed to sent email. Please try again."});
       }
     } else {
-      return res.status(400).json({message: "token not valid."});
+      return res.status(400).json({message: "Request failed."});
     }
   } catch (error) {
     return res.status(400).json({message: error.message});
@@ -355,12 +355,12 @@ const apiChangePassword = asyncHandler(async (req,res) => {
     const jwtToken = req.params.jwt;
     const {password} = req.body;
     if (!jwtToken) {
-      return res.status(400).json({message: "No token, authorization denied"});
+      return res.status(400).json({message: "Not authorized"});
     } 
     const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, {algorithm:"HS512"});
     const user = await Account.findById(decoded.id)
     if (!user){
-      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+      return res.status(400).json({message: "Not authenticated"});
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -387,7 +387,7 @@ const apiNormalChangePass = asyncHandler(async (req,res) => {
     const {userId, password} = req.body;
     const user = await Account.findById(userId)
     if (!user){
-      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+      return res.status(400).json({message: "Not authenticated"});
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -432,10 +432,10 @@ const apiUpdateDetails = asyncHandler(async (req,res) => {
     const {userId, firstName, lastName, email} = req.body;
     const user = await Account.findById(userId);
     if (!firstName || !lastName || !email){
-      return res.status(400).json({message: "details cannot be empty."})
+      return res.status(400).json({message: "Empty fields"})
     }
     if (!user){
-      return res.status(400).json({message: "User is not found."})
+      return res.status(400).json({message: "User is not found"})
     }
     if (user.firstName != firstName){
       user.firstName = firstName;
@@ -448,7 +448,7 @@ const apiUpdateDetails = asyncHandler(async (req,res) => {
         user.email = email;
       }
       else {
-        return res.status(400).json({message: "Invalid email."})
+        return res.status(400).json({message: "Invalid email"})
       }
     }
     user.save()
@@ -464,7 +464,7 @@ const apiUpdateSubscription = asyncHandler(async (req,res) => {
     const {userId, emailSubscription} = req.body;
     const user = await Account.findById(userId);
     if (!user){
-      return res.status(400).json({message: "User is not found."})
+      return res.status(400).json({message: "User is not found"})
     }
     user.emailSubscription = emailSubscription
     user.save()
@@ -479,7 +479,7 @@ const apiDelete = asyncHandler(async (req, res) => {
     const userId = req.params.id;
     const user = await Account.findById(userId);
     if (!user){
-      return res.status(400).json({message: "User is not found."})
+      return res.status(400).json({message: "User is not found"})
     }
     const userDeleted = await Account.findByIdAndDelete(userId);
     return res.status(200).json(userDeleted)
@@ -493,7 +493,7 @@ const apiDelete = asyncHandler(async (req, res) => {
 const generateToken = (id) => {                       // [Session/Authentication] Generate JWT 
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     algorithm: "HS512",
-    expiresIn: "2h",
+    expiresIn: "35m",
   });
 };
 

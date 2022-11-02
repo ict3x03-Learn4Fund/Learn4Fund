@@ -1,23 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useNav } from "../hooks/useNav";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { user2FA } from "../features/user/userActions";
 import {toast} from "react-toastify";
 import authService from "../services/accounts";
+import validator from "validator";
 
 function ChangePass() {
-  const { setTab } = useNav();
-  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const dispatch = useDispatch();
-  const [errorMsg, setErrorMsg] = useState("");
   const { loading } = useSelector((state) => state.user);
-  const [email, setEmail] = useState("");
   const {
     register,
     handleSubmit,
@@ -55,6 +49,12 @@ function ChangePass() {
   };
 
   const changePassword = () => {
+    if (userId && jwt && password) {
+      if (!validator.isAlphanumeric(userId) && !validator.isLength(userId, { min: 24, max: 24 }) || !validator.isJWT(jwt)) {
+        toast.error("Request denied");
+        return;
+      }
+    }
     authService.changePass(userId, jwt, password).then((response) => {
       console.log(response)
       if (response.status == 200){
@@ -90,12 +90,12 @@ function ChangePass() {
                   <BsShieldLockFill className="self-center text-w1" />
                 </div>
               </span>
-              <input
+              <input required
                 className="flex w-3/4 h-[40px] input"
                 type="password"
                 {...register("password", {
                   required: true,
-                  pattern: /.{12,}/,
+                  pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]))^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{12,}$)/,
                 })}
                 placeholder="Enter your password"
                 id="password"
@@ -107,7 +107,7 @@ function ChangePass() {
             {errors.password && (
               <div>
                 <p style={{ color: "red" }}>
-                  <b>Password too short</b>
+                  <b>Invalid Password</b>
                 </p>
               </div>
             )}
@@ -134,7 +134,6 @@ function ChangePass() {
                 value={password2}
                 onChange={onChange}
               />
-
             </div>
             <div className="flex flex-nowrap flex-col items-center	 w-full justify-center">
               {errors.password2 && (

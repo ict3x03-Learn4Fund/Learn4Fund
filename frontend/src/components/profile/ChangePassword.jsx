@@ -6,6 +6,7 @@ import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { getCartNumber, user2FA, getUserDetails } from "../../features/user/userActions";
 import authService from "../../services/accounts";
+import validator from "validator";
 
 function ChangePassword() {
   const { userId } = useSelector(
@@ -139,31 +140,48 @@ function ChangePassword() {
 
   // for otp submit
   const submitForm = (data) => {
-    const payload = {userId: userId, token: otp}
-    console.log(payload)
-    authService.verify2FA(payload).then((response) => {
-      console.log("status", response.status)
-      if (response.status == 200){
-        console.log(userId, password)
-        authService.normalChangePass(userId, password).then((res) => {
-          if (res.status == 200){
-            toast.success("Password changed successfully!")
-            setModalOpen(false)
-          }
-          else {
-            toast.error(res.data.message);
+    if (userId && otp && password) {
+      if (!validator.isAlphanumeric(userId) && !validator.isLength(userId, { min: 24, max: 24 })) {
+        toast.error("Request denied");
+        return;
+      }
+      else {
+        const payload = {userId: userId, token: otp}
+        console.log(payload)
+        authService.verify2FA(payload).then((response) => {
+          console.log("status", response.status)
+          if (response.status == 200){
+            console.log(userId, password)
+            authService.normalChangePass(userId, password).then((res) => {
+              if (res.status == 200){
+                toast.success("Password changed successfully!")
+                setModalOpen(false)
+              }
+              else {
+                toast.error(res.data.message);
+              }
+            }).catch((err) => {
+              toast.error(err.response.data.message);
+              // console.log(err.response.data.message)
+            })
+  
+          } else {
+            toast.error(response.data.message);
           }
         }).catch((err) => {
-          toast.error(err.response.data.message);
-          // console.log(err.response.data.message)
+          toast.error(err.response.data.message)
         })
-
-      } else {
-         toast.error(response.data.message);
       }
-    }).catch((err) => {
-      toast.error(err.response.data.message)
-    })
+    }
+    else {
+      if (password) {
+        toast.error("Request denied");
+      }
+      else {
+        toast.error("Enter all fields");
+      }
+    }
+    
   };
 
   return (
@@ -300,7 +318,7 @@ function ChangePassword() {
                     </span>
                     <input
                       className="flex w-3/4 h-[40px] input"
-                      maxLength={7} // Code is 7 digits
+                      maxLength={6} // Code is 6 digits
                       type="password"
                       {...register("code", {
                         required: true,

@@ -16,7 +16,6 @@ const Signup = () => {
   );
   const { error, success, stateErrorMsg } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [showCaptcha, setShowCaptcha] = useState(false);
   //for captcha
   const captchaRef = useRef(null);
 
@@ -33,7 +32,6 @@ const Signup = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     dispatch(clearSignupState());
-    setShowCaptcha(true)
   }, []);
 
   const [agreementCheckbox, setAgreementCheckbox] = useState(false);
