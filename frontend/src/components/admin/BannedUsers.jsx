@@ -4,7 +4,7 @@ import ActivityList from './UserManagementActivityList'
 
 const BannedUsers = ({accounts, fetchData}) => {
   return (
-    <div className="flex flex-row flex-wrap w-full bg-w1 rounded m-8 p-8 content-start">
+    <div className="flex flex-row flex-wrap w-full bg-w1 rounded m-8 p-8 content-start overflow-y-auto">
       <span className="flex w-full font-type1 text-[20px] font-bold">
         User Management
       </span>
@@ -13,7 +13,7 @@ const BannedUsers = ({accounts, fetchData}) => {
 
       
       <div className="w-full table-responsive">
-        <table className="table w-full table-striped table-bordered table-hover overflow: auto">
+        <table className="table w-full table-striped table-bordered table-hover table">
           <thead>
             <tr className="align-middle">
               <th>ID</th>

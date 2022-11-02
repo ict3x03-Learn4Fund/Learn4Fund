@@ -112,7 +112,7 @@ function CourseInfo() {
         dispatch(getCartNumber(userInfo.id));
       })
       .catch((e) => {
-        toast.error(e.message);
+        toast.error("Error adding item to cart");
         console.log(e);
       });
   };
