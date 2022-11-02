@@ -69,12 +69,17 @@ function CourseInfo() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     retrieveCourses();
     retrieveReviews();
     calculateAverageStars();
-    verifyReview();
   }, [courseID]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (userInfo) {
+      verifyReview();
+    }
+  },[]);
 
   // Add quantity to const variable
   function handleChange(event) {

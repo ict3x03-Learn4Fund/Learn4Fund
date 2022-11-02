@@ -204,13 +204,13 @@ router.route("/reset/:id/:jwt").post(
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
-      .isStrongPassword({minLength: 12, minLowercase:1, minUppercase: 1, minNumbers:1, pointsForContainingLower: 10, pointsForContainingNumber:45, pointsForContainingUpper: 45})
       .isLength({ min: 12, max: 128 }),
     
   ], (req, res) => {
     const errors = validationResult(req);
+    console.log(errors)
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Verify JWT" });
+      return res.status(400).json({ message: "Invalid Credentials" });
     }
     apiChangePassword(req, res);
 });

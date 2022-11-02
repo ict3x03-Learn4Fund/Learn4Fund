@@ -136,7 +136,7 @@ function Profile() {
         <p className="flex w-full">Manage and protect your account</p>
         <span className="h-[2px] bg-[black] w-full my-2" />
 
-        <div className="flex flex-col flex-wrap w-full">
+        <div className="flex flex-col flex-wrap w-full h-1/2">
           <div className="flex-row w-1/2 p-2 border-r-2 font-type1 space-y-4">
             <form>
               <table class="table">
@@ -198,24 +198,23 @@ function Profile() {
                     : noimage
                 }
                 alt={"avatar of user"}
-                className="w-[100px] h-[100px] mr-[8px] bg-w1 self-center border-2"
+                className="w-[140px] h-[140px] m-auto bg-w1 self-center border-2"
                 style={{ borderRadius: "100%" }}
               />
               <input
-                className="block w-full text-sm text-slate-500
+                className="mt-2 block w-full text-sm text-slate-500
               file:mr-4 file:py-2 file:px-4
               file:rounded-full file:border-0
               file:text-sm file:font-semibold
               file:bg-violet-50 file:text-violet-700
               hover:file:bg-violet-100 mb-2"
                 type="file"
-                accept="image/jpeg,image/png"
                 name="file"
-                accept=".jpeg, .png"
+                accept=".jpeg, .png, image/jpeg,image/png"
                 onChange={(e) => handleFile(e)}
               ></input>
-              <div className="flex-row justify-center self-center">
-                <button className="btn" onClick={(e) => uploadImage(e)}>
+              <div className="flex-row w-full justify-center self-center">
+                <button className="btn w-full" onClick={(e) => uploadImage(e)}>
                   Save Profile picture
                 </button>
               </div>

@@ -31,7 +31,6 @@ function ChangePass() {
   });
   const { password, password2 } = accountForm;
 
-  const [passwordStrength, setPasswordStrength] = useState(0);
   const [fufillPassword, setFufillPassword] = useState([
     false,
     false,
@@ -63,13 +62,14 @@ function ChangePass() {
 
   const changePassword = () => {
     authService.changePass(userId, jwt, password).then((response) => {
+      console.log(response)
       if (response.status == 200){
         toast.success(response.data.message)
         navigate("/login")
       } 
       else { toast.error(response.data.message) }
     }).catch((error) => {
-      toast.error(error.message.data.message)
+      toast.error(error.response.data.message)
     })
   }
 
@@ -80,100 +80,9 @@ function ChangePass() {
     }));
   };
 
-  const checkPassword = (e) => {
-    if (
-      /(?=^.{12,}$)(?=.*\d)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
-        e.target.value
-      )
-    ) {
-      setPasswordStrength(100);
-    } else {
-      setPasswordStrength(0);
-    }
 
-    if (e.target.value.length >= 12) {
-      setFufillPassword((prevState) => [
-        true,
-        prevState[1],
-        prevState[2],
-        prevState[3],
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        false,
-        prevState[1],
-        prevState[2],
-        prevState[3],
-      ]);
-    }
 
-    if (/(?=.*[A-Z])(?=.*[a-z])/.test(e.target.value)) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        true,
-        prevState[2],
-        prevState[3],
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        false,
-        prevState[2],
-        prevState[3],
-      ]);
-    }
-
-    if (/(?=.*\d)(?=.*[A-Z])/.test(e.target.value)) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        true,
-        prevState[3],
-      ]);
-    } else if (/(?=.*\d)(?=.*[a-z])/.test(e.target.value)) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        true,
-        prevState[3],
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        false,
-        prevState[3],
-      ]);
-    }
-
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const confirmPasswordCheck = (e) => {
-    if (e.target.value == accountForm.password) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        prevState[2],
-        true,
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        prevState[2],
-        false,
-      ]);
-    }
-
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
+  
 
   return (
     <main>
@@ -201,7 +110,7 @@ function ChangePass() {
                 id="password"
                 name="password"
                 value={password}
-                onChange={checkPassword}
+                onChange={onChange}
               />
             </div>
             {errors.password && (
@@ -232,19 +141,11 @@ function ChangePass() {
                 id="password2"
                 name="password2"
                 value={password2}
-                onChange={confirmPasswordCheck}
+                onChange={onChange}
               />
 
-              {/* <p id="errorMsg" name="errorMsg" value={errorMsg}></p> */}
             </div>
             <div className="flex flex-nowrap flex-col items-center	 w-full justify-center">
-              {errors.password && (
-                <div>
-                  <p style={{ color: "red" }}>
-                    <b>Password is empty!</b>
-                  </p>
-                </div>
-              )}
               {errors.password2 && (
                 <div>
                   <p style={{ color: "red" }}>

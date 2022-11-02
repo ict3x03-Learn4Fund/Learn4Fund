@@ -402,7 +402,7 @@ const Signup = () => {
                   checked={agreementCheckbox}
                   onChange={setAgreementCheckbox}
                 />{" "}
-                <Link to="/privacy" className="hover:text-orange-500">
+                <Link to="/tos" className="hover:text-orange-500">
                   Accept our Terms and Conditions
                 </Link>
               </div>
