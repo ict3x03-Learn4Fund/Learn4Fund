@@ -235,7 +235,6 @@ function Profile() {
               file:bg-violet-50 file:text-violet-700
               hover:file:bg-violet-100 mb-2"
                 type="file"
-                accept="image/jpeg,image/png"
                 name="file"
                 accept=".jpeg, .png"
                 onChange={(e) => handleFile(e)}
