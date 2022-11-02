@@ -1,18 +1,36 @@
 import http from "../http-common"
 
-// class that handles the calling of different api service
-class CoursesDataServices {
-    getAll(page = 0) {
-        return http.get(`?page=${page}`);
-    }
-
-    get(id) {
-        return http.get(`/id/${id}`);
-    }
-
-    find(query, by = "email", page = 0){
-        return http.get(`?${by}=${query}&page=${page}`);
-    }
+const getAll = async () =>{
+    const response = await http.get("/courses")
+    return response;
 }
 
-export default new CoursesDataServices();
+const deleteCourse = async (id) =>{
+    const response = await http.post(`/courses/delete/${id}`)
+    return response;
+}
+
+const createCourse = async (data) =>{
+    const response = await http.post("/courses/create", data)
+    return response;
+}
+
+const updateCourse = async (id, data) =>{
+    const response = await http.put(`/courses/update/${id}`, data)
+    return response;
+}
+
+const uploadCourseImage = async (imgId) => {
+    const response = await http.post(`/courses/uploadCourseImage`, imgId);
+    return response;
+  }
+
+const coursesService = {
+    getAll,
+    createCourse,
+    updateCourse,
+    deleteCourse,
+    uploadCourseImage
+};
+
+export default coursesService;

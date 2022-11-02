@@ -1,35 +1,43 @@
-version: '3'
-services:  
-    backend:   
-        build:
-            context: ./backend
-            dockerfile: Dockerfile.dev
-        volumes: 
-            - /app/node_modules
-            - ./backend:/app 
-        ports:
-            - "5000:5000"   
-        restart: always    
+# docker compose file version
+version: '3.8'
 
-    frontend:   
+# all of your services list will define here
+services:
+    backend:
+#        mem_limit: "1300M"   
+        build: # build image
+            context: ./backend #directory location
+            dockerfile: Dockerfile.dev # dockerfile name
+        volumes:
+            - /app/node_modules
+            - ./backend:/app
+        environment:
+             # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
+             # container service name and port on which it is running
+            - CHOKIDAR_USEPOLLING=true #for hot reloading
+            - CURRENT_ENV=testing
+        restart: always
+        #added    
+        ports:
+            - 5000:5000
+
+    frontend:
+        mem_limit: "1300M"
+        stdin_open: true
         build:
             context: ./frontend
             dockerfile: Dockerfile.dev
-        volumes: 
-            - /app/node_modules
-            - ./frontend:/app    
-        #request will forward to same url, so we only need /api to distinguish that this request will forward to our backend           
-        environment: 
+        volumes:
+            - /app/node_modules # we reference the node_modules which is present in app directory inside the docker, to our current node modules which is present in front directory
+            - ./frontend:/app  # frontend directory is used as a volume(bind mount)  
+        restart: always
+        environment:
+            #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
-    
-    nginx:
-        build:
-            context: ./nginx
-            dockerfile: Dockerfile.dev
-        ports: 
-            - 3000:80
-        restart: always
-
-volumes: 
+            - REACT_APP_CURRENT_ENV=testing
+        ports:
+            - 3000:3000
+# volumes are defined here
+volumes:
     db-volume:

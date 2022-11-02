@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+
+.btn {
+    @apply bg-blue-500 uppercase text-[12px] text-white font-bold p-2 rounded;
+}
+
+.btn:hover{
+    @apply bg-blue-700;
+}
+
+.btn:focus {
+    @apply outline-none shadow-lg;
+}
+
+.btn:active{
+    @apply bg-blue-900;
+}
+
+.footerlink {
+    @apply cursor-pointer underline underline-offset-2 font-bold;
+}
+
+.footerlink:hover {
+    @apply text-red-600;
+}
+
+.link {
+    @apply cursor-pointer underline underline-offset-2 text-b2 font-bold;
+}
+
+.link:hover {
+    @apply text-orange-600;
+}
+
+.input {
+    @apply font-type1 font-normal leading-[20px] text-center self-center rounded-r border-2 border-b1;
+}
+
+@tailwind utilities;
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
+

@@ -1,13 +1,12 @@
 FROM node:latest
 
-WORKDIR '/app'
+# WORKDIR '/app'
 
 COPY package.json package-lock.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY . .
 
+#CMD ["npm", "run", "start", "--node-flags", "--max-old-space-size=512"]
 CMD ["npm", "run", "dev"]
-
-EXPOSE 5000
