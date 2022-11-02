@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userActions";
@@ -16,6 +16,7 @@ const Signup = () => {
   );
   const { error, success, stateErrorMsg } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const [showCaptcha, setShowCaptcha] = useState(false);
   //for captcha
   const captchaRef = useRef(null);
 
@@ -31,7 +32,10 @@ const Signup = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    dispatch(clearSignupState());
+    setShowCaptcha(true)
   }, []);
+
   const [agreementCheckbox, setAgreementCheckbox] = useState(false);
 
   const {
@@ -413,6 +417,7 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
+            
             <ReCAPTCHA
               sitekey={reCaptchaKey}
               className="flex justify-center w-full mt-2"
