@@ -1,15 +1,16 @@
 pipeline {
     agent any
     stages {       
-        stage("Git Fetch") {
-            steps {
-                load '/var/jenkins_home/env/learn4fund.groovy'
-                git branch: "dev", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
-            }
-        }
+        // stage("Git Fetch") {
+        //     steps {
+                // load '/var/jenkins_home/env/learn4fund.groovy'
+        //         git branch: "dev", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
+        //     }
+        // }
 
         stage("Test Build") {
             steps {                
+                load '/var/jenkins_home/env/learn4fund.groovy'
                 script{
                     try{
                         sh 'rm dependency-check-report.html'
@@ -18,11 +19,11 @@ pipeline {
                         echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                sh 'cp /home/.backend.env backend'
-                sh 'cp /home/.frontend.env frontend'
+                sh 'cp /home/.backend.env backend/.env'
+                sh 'cp /home/.frontend.env frontend/.env'
                 sh 'docker compose down --rmi all'
                 sh 'docker system prune -a --force --volumes'
-                sh 'docker compose -f docker-compose.dev.yml build --no-cache'
+                sh 'docker compose -f docker-compose.dev.yml build --no-cache --pull'
             }
         }
 
@@ -52,7 +53,7 @@ pipeline {
                         -D sonar.projectKey=sonarqube \
                         -D sonar.exclusions=vendor/**,resources/**,**/*.java \
                         -D sonar.host.url=http://128.199.99.77:9000/ \
-                        -Dsonar.projectBaseDir=/var/jenkins_home/workspace/Learn4fund_main"
+                        -Dsonar.projectBaseDir=/var/jenkins_home/workspace/Learn4fund_final"
                         }
                 }
             }
@@ -60,7 +61,7 @@ pipeline {
 
         stage("OWASP Dependency Check") {
             steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_main/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
+                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
             }
         }
 
@@ -74,11 +75,11 @@ pipeline {
                         echo 'Skipping, ODC reports pre-generated.'
                     }
                 }
-                sh 'cp /home/.backend.env backend'
-                sh 'cp /home/.frontend.env frontend'                              
+                sh 'cp /home/.backend.env backend/.env'
+                sh 'cp /home/.frontend.env frontend/.env'                              
                 sh 'docker compose down --rmi all'
                 sh 'docker system prune -a --force --volumes'
-                sh 'docker compose -f docker-compose.yml build --no-cache'
+                sh 'docker compose -f docker-compose.yml build --no-cache --pull'
             }
         }
 
