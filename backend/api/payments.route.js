@@ -57,7 +57,7 @@ router.route("/pay").post(protect,
             return true;
         }),
         body('cardId', 'Missing card ID')
-            .if(('cardId').notEmpty())
+            .if(body('cardId').notEmpty())
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
         body('billAddressId', 'Missing billing address ID')

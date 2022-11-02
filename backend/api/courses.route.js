@@ -108,7 +108,7 @@ router.route("/update/:id").put(protect,
             return res.status(400).json({ errors: errMessage });
         }
         apiUpdateCourse(req, res)
-}) //TODO: Check if admin
+}) 
     
 // POST /api/courses/:id private
 router.route("/delete/:id").post(protect,
