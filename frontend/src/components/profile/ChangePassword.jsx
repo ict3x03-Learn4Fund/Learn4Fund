@@ -170,16 +170,17 @@ function ChangePassword() {
           if (res.status == 200){
             toast.success("Password changed successfully!")
             setModalOpen(false)
-          } else {
-            toast.error(res.data.message)
           }
-        }).catch ((err) => {
-          toast.error(err.response.data.message)
+          else {
+            toast.error(res.data.message);
+          }
+        }).catch((err) => {
+          toast.error(err.response.data.message);
+          // console.log(err.response.data.message)
         })
 
       } else {
-        console.log("Error")
-        toast.error(response.data.message)
+         toast.error(response.data.message);
       }
     }).catch((err) => {
       toast.error(err.response.data.message)
@@ -201,12 +202,11 @@ function ChangePassword() {
             <div className="self-center px-2 w-[200px]">
               <b>New Password</b>
             </div>
-            <input
+            <input required
               className="input"
               type="password"
               {...register("password", {
-                required: true,
-                pattern: /.{12,}/,
+                pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]))^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{12,}$)/,
               })}
               placeholder="Enter password"
               id="password"
@@ -218,7 +218,7 @@ function ChangePassword() {
           {errors.password && (
             <div>
               <p style={{ color: "red" }}>
-                <b>Password too short</b>
+                Invalid password
               </p>
             </div>
           )}
@@ -226,11 +226,10 @@ function ChangePassword() {
             <div className="self-center px-2 w-[200px]">
               <b>Confirm Password</b>
             </div>
-            <input
+            <input required
               className="input"
               type="password"
               {...register("password2", {
-                required: true,
                 validate: (val) => {
                   if (watch("password") != val) {
                     return "Passwords do not match";
@@ -245,7 +244,7 @@ function ChangePassword() {
           {errors.password2 && (
             <div>
               <p style={{ color: "red" }}>
-                <b>Passwords do not match</b>
+                Passwords do not match
               </p>
             </div>
           )}
