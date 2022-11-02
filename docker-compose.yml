@@ -1,36 +1,37 @@
-version: '3.8'
-
-services:
-    backend:
+version: '3'
+services:  
+    backend:   
         build:
             context: ./backend
-            dockerfile: Dockerfile.dev
-        volumes:
+            dockerfile: Dockerfile
+        volumes: 
             - /app/node_modules
-            - ./backend:/app
-        environment:
-            - CURRENT_ENV=deployment
-        restart: always            
+            - ./backend:/app 
         ports:
-            - 5000:5000
+            - "5000:5000"   
+        restart: always    
 
     frontend:
-        mem_limit: "1300M"
-        stdin_open: true
+        ports:
+            - "3000:3000"   
         build:
             context: ./frontend
-            dockerfile: Dockerfile.dev
-        volumes:
+            dockerfile: Dockerfile
+        volumes: 
             - /app/node_modules
-            - ./frontend:/app
-        restart: always
-        environment:
+            - ./frontend:/app    
+        #request will forward to same url, so we only need /api to distinguish that this request will forward to our backend           
+        environment: 
             - REACT_APP_BACKEND_URL=/api
-            - REACT_APP_CURRENT_ENV=deployment
-            - REACT_APP_API_URL=http://localhost:5000/v1/api/accounts/checkCaptcha
-            - REACT_APP_RECAPTCHA_SITE_KEY=6LfWAsciAAAAAERYL1EmEuEuB-_HUcOITh0ZUGNC
-        ports:
-            - 3000:3000
+            - CHOKIDAR_USEPOLLING=true
+    
+    # nginx:
+    #     build:
+    #         context: ./nginx
+    #         dockerfile: Dockerfile.dev
+    #     ports: 
+    #         - 3000:80
+    #     restart: always
 
-volumes:
+volumes: 
     db-volume:

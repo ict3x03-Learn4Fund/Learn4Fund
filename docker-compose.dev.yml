@@ -1,16 +1,22 @@
+# docker compose file version
 version: '3.8'
 
+# all of your services list will define here
 services:
     backend:
-        build:
-            context: ./backend
-            dockerfile: Dockerfile.dev
+#        mem_limit: "1300M"   
+        build: # build image
+            context: ./backend #directory location
+            dockerfile: Dockerfile.dev # dockerfile name
         volumes:
             - /app/node_modules
             - ./backend:/app
         environment:
-            - CURRENT_ENV=testing
-        restart: always            
+             # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
+             # container service name and port on which it is running
+            - CHOKIDAR_USEPOLLING=true #for hot reloading
+        restart: always
+        #added    
         ports:
             - 5000:5000
 
@@ -21,16 +27,15 @@ services:
             context: ./frontend
             dockerfile: Dockerfile.dev
         volumes:
-            - /app/node_modules
-            - ./frontend:/app
+            - /app/node_modules # we reference the node_modules which is present in app directory inside the docker, to our current node modules which is present in front directory
+            - ./frontend:/app  # frontend directory is used as a volume(bind mount)  
         restart: always
         environment:
+            #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
             - REACT_APP_BACKEND_URL=/api
-            - REACT_APP_CURRENT_ENV=testing
-            - REACT_APP_API_URL=http://localhost:5000/v1/api/accounts/checkCaptcha
-            - REACT_APP_RECAPTCHA_SITE_KEY=6LfWAsciAAAAAERYL1EmEuEuB-_HUcOITh0ZUGNC
+            - CHOKIDAR_USEPOLLING=true
         ports:
             - 3000:3000
-
+# volumes are defined here
 volumes:
     db-volume:
