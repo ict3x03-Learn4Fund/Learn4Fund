@@ -8,6 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import cartsService from "../../services/carts";
 import { toast } from "react-toastify";
 import { getCartNumber } from "../../features/user/userActions";
+import validator from "validator";
 
 function CourseInfo() {
   const { loading, userInfo, error, success, cartNo } = useSelector(
@@ -101,7 +102,8 @@ function CourseInfo() {
 
   // add cart item
   const addCartItem = () => {
-    if(quantitySelected == 0){
+    if (quantitySelected == 0) {
+      toast.error("Please select quantity");
       return;
     }
     cartsService
@@ -137,9 +139,21 @@ function CourseInfo() {
   };
 
   const handleNewReview = () => {
+    var escapedReview = reviewDescription
+    if (validator.isEmpty(userInfo.id) || validator.isEmpty(courseID)) {
+      toast.error("Error adding review");
+      return;
+    }
+    if (!validator.isEmpty(reviewDescription)) {
+      escapedReview = validator.escape(reviewDescription);
+    }
+    else {
+      toast.error("Please enter a review");
+      return;
+    }
     const newReview = {
       rating: stars,
-      description: reviewDescription,
+      description: escapedReview,
       accountId: userInfo.id,
       courseId: courseID,
     };
@@ -317,7 +331,7 @@ function CourseInfo() {
           >
             {reviews.map((review, index) => {
               return (
-                <div className="flex-row flex-wrap w-full my-2 text-[1vw]">
+                <div className="flex-row flex-wrap w-full my-2 mt-[24px] mx-[16px] p-[24px]">
                   <div className="flex w-full justify-between">
                     <div className="flex flex-nowrap font-type1 font-bold">
                       {review.name} [{review.rating}{" "}
