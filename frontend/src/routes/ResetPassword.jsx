@@ -8,7 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { user2FA } from "../features/user/userActions";
 import { MdAlternateEmail } from "react-icons/md";
 import authService from "../services/accounts";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import validator from "validator";
 
 function ResetPassword() {
   const {
@@ -33,7 +34,7 @@ function ResetPassword() {
     setEmail(event.target.value);
   }
 
-  const submitForm = (data) => {
+  const submitForm = () => {
     resetPassword();
   };
 
@@ -41,14 +42,22 @@ function ResetPassword() {
   });
 
   const resetPassword = () => {
-    const request = {email: email, token: otp}
-    authService.resetPass(request).then((response) => {
-      if (response.status == 200){
-        toast.success(response.data.message)
+    if (email && otp){
+      if (!validator.isEmail(email) || (!validator.isInt(otp) && !validator.isLength(otp, { min: 6, max: 6 }) && !validator.matches(otp,/^[0-9]*$/))) {
+        toast.error("Invalid Credentials");
+        return;
       }
-    }).catch((error) => {
-      toast.error(error.response.data.message) 
-    })
+      else {
+        const request = {email: email, token: otp}
+        authService.resetPass(request).then((response) => {
+          if (response.status == 200){
+            toast.success(response.data.message)
+          }
+        }).catch((error) => {
+          toast.error(error.response.data.message) 
+        })
+      }
+    }
   }
 
   return (
@@ -71,23 +80,23 @@ function ResetPassword() {
                 autoComplete="off"
                 type="text"
                 maxLength={255}
-                {...register("email", {
-                  pattern:
-                    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                })}
+                // {...register("email", {
+                //   pattern:
+                //     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                // })}
                 placeholder="Enter Email"
                 value={email}
                 onChange={handleEmailChange}
               />
             </div>
             <div className="flex flex-nowrap w-full justify-center">
-              {errors.email && (
+              {/* {errors.email && (
                 <div>
                   <p style={{ color: "red" }}>
                     <b>Please enter a valid Email address</b>
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
             <div className="flex flex-nowrap w-full justify-center mt-4">
               <span className="self-center w-1/4 h-[40px] bg-b1 rounded-l">
@@ -99,7 +108,7 @@ function ResetPassword() {
                 className="flex w-3/4 h-[40px] input"
                 maxLength={7} // Code is 7 digits
                 type="password"
-                {...register("code", { pattern: /^[0-9]*$/ })} // [Validation] Number only
+                // {...register("code", { pattern: /^[0-9]*$/ })} // [Validation] Number only
                 placeholder="Enter 2fa token"
                 value={otp}
                 onChange={handleOtp}
@@ -107,13 +116,13 @@ function ResetPassword() {
               <p id="errorMsg" name="errorMsg" value={errorMsg}></p>
             </div>
             <div className="flex flex-nowrap w-full justify-center">
-              {errors.code && (
+              {/* {errors.code && (
                 <div>
                   <p style={{ color: "red" }}>
                     <b>Invalid format, numbers only</b>
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
             <div className="flex flex-col w-full space-y-2 mt-6">
               <button
