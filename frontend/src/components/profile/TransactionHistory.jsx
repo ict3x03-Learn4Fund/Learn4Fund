@@ -10,7 +10,7 @@ function TransactionHistory() {
   const dispatch = useDispatch();
 
   const retrieveTransactions = () => {
-    paymentsService.getTransactions(userInfo.id).then((response) => {
+    paymentsService.getTransactions(userId).then((response) => {
       if (response.status == 200) {
         console.log(response.data);
         setTransaction(response.data.reverse());

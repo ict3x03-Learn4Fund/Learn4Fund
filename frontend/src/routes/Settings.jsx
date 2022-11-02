@@ -1,19 +1,11 @@
 import React, {useState} from 'react'
-import { useEffect } from 'react'
 import Account from '../components/profile/Account'
 import ChangePassword from '../components/profile/ChangePassword'
 import Profile from '../components/profile/Profile'
 import TransactionHistory from '../components/profile/TransactionHistory'
-import { useNav } from "../hooks/useNav";
 
 function Settings() {
     const [menu, setMenu] = useState(0)
-    const {setTab} = useNav();
-
-    useEffect(() => {
-      window.scrollTo(0, 0);
-      setTab('settings');
-    },[])
   return (
     <main>
         <div className='flex flex-col flex-wrap w-full h-screen bg-b1'>

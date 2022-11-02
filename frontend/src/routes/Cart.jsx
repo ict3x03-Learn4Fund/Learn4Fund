@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
 import {toast} from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails, getCartNumber } from "../features/user/userActions";
 import { CreditCardModal } from "../modals/CreditCardModal";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
-import { useNav } from "../hooks/useNav";
-import { getCartNumber } from "../features/user/userActions";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -14,24 +14,21 @@ const Cart = () => {
   const [donation, setDonation] = useState(0);
   const [showDonation, setShowDonation] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
-  const { userInfo } = useSelector((state) => state.user);
-  const {setTab} = useNav();
-  const [checkedState, setCheckedState] = useState();
+  const { userInfo, userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  const [checkedState, setCheckedState] = useState();
   useEffect(() => {
     window.scrollTo(0, 0);
-    setTab("cart")
-    if (userInfo) {
+
+    if (userId) {
+      console.log(userId);
+      getUserDetails();
       getCart();
     } else {
       toast.error("Please login to view cart");
     }
   }, []);
-
-  useEffect(() => {
-    getCart();
-    dispatch(getCartNumber(localStorage.getItem("userId")));
-  },[showModal]);
 
 
   useEffect(() => {
@@ -43,7 +40,7 @@ const Cart = () => {
   // retrieve cart
   const getCart = () => {
     cartsService
-      .getCart(userInfo.id)
+      .getCart(userId)
       .then((response) => {
         console.log(response.data);
         setCartList(response.data.coursesAdded);
@@ -98,7 +95,7 @@ const Cart = () => {
   // retrieve cart
   const deleteCart = (courseId) => {
     cartsService
-      .deleteCart(userInfo.id, courseId)
+      .deleteCart(userId, courseId)
       .then((response) => {
         setCartList(response.data.coursesAdded);
         toast.success("Items successfully deleted from cart.");
@@ -111,7 +108,19 @@ const Cart = () => {
 
   function removeItem(item, position) {
     deleteCart(item.courseId);
-    setCheckout([])
+    dispatch(getCartNumber(userId));
+    const updatedCheckedState = checkedState.map((item, index) =>
+      index === position ? !item : item
+    );
+
+    setCheckedState(updatedCheckedState);
+    if (checkout.includes(item)) {
+      setCheckout([
+        ...checkout.filter((element) => {
+          return element !== item;
+        }),
+      ]);
+    }
   }
 
   function addToCheckout(item) {
@@ -129,7 +138,7 @@ const Cart = () => {
 
   const removeDonations = () => {
     cartsService
-      .clearDonationsInCart(userInfo.id)
+      .clearDonationsInCart(userId)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Donations cleared");

@@ -4,18 +4,16 @@ import { BsAward } from "react-icons/bs";
 import Banner from "../assets/images/donation banner.png";
 import cartsService from "../services/carts";
 import { useDispatch, useSelector } from "react-redux";
+import { getUserDetails, getCartNumber } from "../features/user/userActions";
 import donationsService from "../services/donations";
-import { useNav } from "../hooks/useNav";
 
 function Donations() {
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, userId } = useSelector((state) => state.user);
   const [showDonation, setShowDonation] = useState("on");
   const [top5List, setTop5List] = useState([]);
   const [top10List, setTop10List] = useState([]);
   const [total, setTotal] = useState(0);
   const offerAmtRef = useRef(0.0);
-  const { setTab } = useNav();
-
   const dispatch = useDispatch();
   
   useEffect(() => {
@@ -23,10 +21,13 @@ function Donations() {
       getTop5();
       getTop10();
       getTotal();
-      window.scrollTo(0, 0);
-    setTab("donate");
   },[]);
 
+  useEffect(() => {
+    if (userId){
+      dispatch(getUserDetails())
+    }
+  }, [userId])
 
 
   const getTop5 = () => {
@@ -91,7 +92,7 @@ function Donations() {
       showName = true;
     }
     cartsService
-      .addDonationToCart(userInfo.id, offerAmtRef.current.value, showName)
+      .addDonationToCart(userId, offerAmtRef.current.value, showName)
       .then((response) => {
         if (response.status == 200) {
           console.log(response.data);
@@ -101,7 +102,7 @@ function Donations() {
         }
       })
       .catch((e) => {
-        toast.error("Error adding donations")
+        toast.error(e.message);
       });
   };
 
@@ -261,8 +262,8 @@ function Donations() {
             </span>
           </div>
 
-          <div className="flex flex-wrap w-full h-[184px] overflow-y-auto py-2 content-start">
-            <div className="flex-row flex-wrap w-full h-fit text-[1vw] ">
+          <div className="flex flex-wrap w-full h-[184px] overflow-auto-scroll py-2 content-start">
+            <div className="flex-row flex-wrap w-full h-fit text-[1vw]">
               {top10List.map((value) => (
                 <div className="flex w-full justify-between">
                   <div className="flex flex-nowrap font-type1 font-bold">

@@ -1,5 +1,5 @@
 const express = require("express");
-const { apiGetReviews, apiCreateReview, apiVerifyReview} = require("../controller/reviews.controller");
+const { apiGetReviews, apiCreateReview } = require("../controller/reviews.controller");
 const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 const { check, validationResult } = require("express-validator")
@@ -24,9 +24,5 @@ router.route("/create").post(protect,
             apiCreateReview(req, res); //[Create review]
         }
     });
-
-// @route POST api/reviews/verifyReview
-router.route("/verifyReview").post(protect, apiVerifyReview)
-
 
 module.exports = router;

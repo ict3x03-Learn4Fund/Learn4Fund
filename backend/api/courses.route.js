@@ -36,14 +36,15 @@ router.route("/create").post(protect,               //TODO: Check if admin
         body('courseTutor', 'Tutor name is invalid')
             .notEmpty().bail()
             .isString().bail()
-            .escape().trim(),
+            .trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
             .isInt({min: 1}),
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
             .notEmpty().bail()
-            .isString().bail().trim(),
+            .isString().bail()
+            .isAlpha().trim(),
 
     ], (req, res) => {
         const errors = validationResult(req);
@@ -95,7 +96,8 @@ router.route("/update/:id").put(protect,
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
             .notEmpty().bail()
-            .isString().bail().trim(),
+            .isString().bail()
+            .isAlpha().trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
             .isInt({min: 1}),
@@ -108,7 +110,7 @@ router.route("/update/:id").put(protect,
             return res.status(400).json({ errors: errMessage });
         }
         apiUpdateCourse(req, res)
-}) 
+}) //TODO: Check if admin
     
 // POST /api/courses/:id private
 router.route("/delete/:id").post(protect,

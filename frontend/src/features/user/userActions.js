@@ -10,7 +10,6 @@ export const registerUser = createAsyncThunk(
     async (newUserInfo, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.register(newUserInfo); // change to set local storage at 2fa
-            localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -26,11 +25,9 @@ export const registerUser = createAsyncThunk(
 
 export const userLogin = createAsyncThunk(
     'user/login',
-    async ({ email, password, token }, { rejectWithValue }) => {
+    async ({ email, password }, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.login(email, password);
-            await authService.verify2FA({ token: token, userId: verifyUser._id });
-            localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
             // return custom error message from API if any
@@ -48,8 +45,10 @@ export const getUserDetails = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
+            console.log("user: ",user)
+            const userId = localStorage.getItem("userId")
             // send user's id to retrieve account information
-            const data = await authService.getAccount(localStorage.getItem('userId'));
+            const data = await authService.getAccount(user.userId);
             return data
         } catch (error) {
             if (error.response && error.response.data.message) {
@@ -63,10 +62,14 @@ export const getUserDetails = createAsyncThunk(
 
 export const user2FA = createAsyncThunk(
     'user/auth2FA',
-    async ({token}, {getState, rejectWithValue }) => {
+    async (arg, { getState, rejectWithValue }) => {
         try {
             let {user} = getState()
-            const response = await authService.verify2FA({token: token, userId: user.userId});
+            console.log("hello ",arg)
+            const response = await authService.verify2FA(arg);
+            if (response.status == 200){
+                localStorage.setItem('userId', response.data._id)
+            }
             return response.data
         } catch (error) {
             console.log(error)
@@ -88,9 +91,9 @@ export const getCartNumber = createAsyncThunk(
     async (arg, {getState, rejectWithValue}) => {
         try {
             let {user} = getState()
-            const response = await cartsService.getTotal(user.userInfo.id)
+            const response = await cartsService.getTotal(user.userId)
             if (response.status == 200){
-                return response.data.totalNo
+                return response
             } else {
                 return rejectWithValue(response.message)
             }
