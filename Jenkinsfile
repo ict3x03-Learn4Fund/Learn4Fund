@@ -52,7 +52,7 @@ pipeline {
                         -D sonar.projectKey=sonarqube \
                         -D sonar.exclusions=vendor/**,resources/**,**/*.java \
                         -D sonar.host.url=http://128.199.99.77:9000/ \
-                        -Dsonar.projectBaseDir=/var/jenkins_home/workspace/Learn4fund_main"
+                        -Dsonar.projectBaseDir=/var/jenkins_home/workspace/Learn4fund_final"
                         }
                 }
             }
@@ -60,7 +60,7 @@ pipeline {
 
         stage("OWASP Dependency Check") {
             steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_main/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
+                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
             }
         }
 
