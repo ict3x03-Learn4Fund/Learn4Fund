@@ -1,11 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { AiOutlineQuestionCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import validator from "validator";
-import { BiErrorCircle } from "react-icons/bi";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
-import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
@@ -20,24 +18,13 @@ export const CreditCardModal = ({
   showDonation,
   checkout,
 }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-        // Anything in here is fired on component unmount.
-        document.body.style.overflow = 'unset';
-    }
-}, [])
   const [checkedState, setCheckedState] = useState([true, false]);
-  const { userInfo, userId } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   //for otp modal
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardName, setCardName] = useState("");
   const [payMethod, selectPayMethod] = useState("previous");
   const [billMethod, selectBillMethod] = useState("previous");
   const [cardList, setCardList] = useState([]);
@@ -50,9 +37,19 @@ export const CreditCardModal = ({
   const [loading, setLoading] = useState(false);
   let cardType = "";
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    getMethods();
+
+    return () => {
+      // Anything in here is fired on component unmount.
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   const getMethods = () => {
     paymentsService
-      .getMethods(userId)
+      .getMethods(userInfo.id)
       .then((response) => {
         if (response.status == 200) {
           setAddressList(response.data.billAddrs);
@@ -60,7 +57,11 @@ export const CreditCardModal = ({
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        if (error.response && error.response.data.message) {
+          return toast.error(error.response.data.message);
+        } else {
+          return toast.error(error.message);
+        }
       });
   };
   const prepareCheckoutCart = () => {
@@ -89,11 +90,11 @@ export const CreditCardModal = ({
     if (existLast4No) {
       reqLast4No = existLast4No;
     } else {
-      reqLast4No = cardNo.slice(-4);
+      reqLast4No = cardNumber.slice(-4);
     }
 
     const payload = {
-      accountId: userId,
+      accountId: userInfo.id,
       donationAmount: donation,
       showDonation: showDonation,
       totalAmount: totalAmount,
@@ -103,33 +104,23 @@ export const CreditCardModal = ({
       last4No: reqLast4No,
       cardType: reqCardType,
     };
-    console.log(payload);
-    paymentsService
+    await paymentsService
       .makePayment(payload)
-      .then(async (response) => {
+      .then((response) => {
         if (response.status == 200) {
-          toast.success("Payment has been made successfully!");
-          await timeout(10)
+          setModalOpen(false);
           closeModal(false);
-          setLoading(false);
-          window.location.reload(false)
+          toast.success("Payment has been made successfully!");
+          // await timeout(100);
+          // window.location.reload(false);
         } else {
-          toast.error(response.data.message);
+          toast.error("Payment failed!");
         }
       })
       .catch((e) => {
-        toast.error(e.message);
+        toast.error(e.response.data.message);
       });
   };
-
-  useEffect(() => {
-    if (userId) {
-      dispatch(getUserDetails());
-      console.log(totalAmount, donation, checkout);
-      getMethods();
-      console.log(addressList);
-    }
-  }, []);
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -150,7 +141,12 @@ export const CreditCardModal = ({
       toast.error("Please select a billing address to proceed with payment");
       return;
     }
-    if (payMethod == "new" && (typeof erroredInputs.cardNumber !== "undefined") && (typeof erroredInputs.cvc !== "undefined") && (typeof erroredInputs.expiryDate !== "undefined")) {
+    if (
+      payMethod == "new" &&
+      typeof erroredInputs.cardNumber !== "undefined" &&
+      typeof erroredInputs.cvc !== "undefined" &&
+      typeof erroredInputs.expiryDate !== "undefined"
+    ) {
       toast.error("Error filling up card details.");
       return;
     }
@@ -158,29 +154,28 @@ export const CreditCardModal = ({
       toast.error("Please enter the 3 digit cvv.");
       return;
     }
-    console.log("hello");
     setModalOpen(true);
   }
 
   // for otp submit
   const submitOtpForm = () => {
-    const payload = { userId: userId, token: otp };
-    console.log(payload);
+    const payload = { userId: userInfo.id, token: otp };
     authService
       .verify2FA(payload)
       .then((response) => {
-        console.log("status", response.status);
         if (response.status == 200) {
-          setLoading(true)
+          setLoading(true);
           makePayment();
-          modalOpen(false);
         } else {
-          console.log("Error");
           toast.error(response.data.message);
         }
       })
-      .catch((err) => {
-        toast.error(err.response.data.message);
+      .catch((error) => {
+        if (error.response && error.response.data.message) {
+          return toast.error(error.response.data.message);
+        }  else {
+          return toast.error(error.message);
+        }
       });
   };
 
@@ -204,8 +199,6 @@ export const CreditCardModal = ({
   const { firstName, lastName, address, unit, city, postalCode } = addressForm;
 
   const onChangeAddr = (e) => {
-    console.log(addressForm);
-    console.log(e.target.value);
     setAddressForm((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -217,9 +210,8 @@ export const CreditCardModal = ({
       toast.error("Enter valid Postal Code!");
       return;
     }
-    console.log(addressForm);
     paymentsService
-      .addAddr(userId, addressForm)
+      .addAddr(userInfo.id, addressForm)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Successfully save new address.");
@@ -236,14 +228,13 @@ export const CreditCardModal = ({
   //Handle form for card
   const [cardForm, setCardForm] = useState({
     name: "",
-    cardNo: "",
+    cardNumber: "",
     expiryDate: "",
   });
   const [saveCardStatus, setSaveCardStatus] = useState();
-  const { name, cardNo, expiryDate } = cardForm;
+  const { name, cardNumber, expiryDate } = cardForm;
 
   const onChangeCard = (e) => {
-    console.log(e.target.value);
     setCardForm((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -256,10 +247,9 @@ export const CreditCardModal = ({
     } else {
       cardType = "MasterCard";
     }
-    const request = { name, cardNo, cardType, expiryDate };
-    console.log(userId, request);
+    const request = { name, cardNo: cardNumber, cardType, expiryDate };
     paymentsService
-      .addCard(userId, request)
+      .addCard(userInfo.id, request)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Successfully save new card.");
@@ -294,8 +284,8 @@ export const CreditCardModal = ({
   }
 
   function timeout(delay) {
-    return new Promise( res => setTimeout(res, delay) );
-}
+    return new Promise((res) => setTimeout(res, delay));
+  }
 
   /////////// Input Validations
   const {
@@ -468,7 +458,7 @@ export const CreditCardModal = ({
                           <input
                             type="submit"
                             className="btn ml-4 w-3/4 bg-green-800"
-                            value="Save Addres"
+                            value="Save Address"
                           />
                         ) : null}
                       </div>
@@ -582,14 +572,15 @@ export const CreditCardModal = ({
                           <div className="self-center w-32">Card Number</div>
                           <input
                             type="number"
-                            id="cardNo"
-                            name="cardNo"
+                            id="cardNumber"
+                            name="cardNumber"
                             required
                             maxLength={19}
-                            onChange={onChangeCard}
+                            // onChange={onChangeCard}
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
-                            {...getCardNumberProps()}
+                            defaultValue={cardNumber}
+                            {...getCardNumberProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.cardNumber &&
@@ -606,9 +597,12 @@ export const CreditCardModal = ({
                             name="expiryDate"
                             required
                             placeholder="mm/yyyy"
+                            defaultValue={expiryDate}
                             onChange={onChangeCard}
                             className="p-2 border-2 border-black w-40"
-                            {...getExpiryDateProps()}
+                            {...getExpiryDateProps({
+                              onChange: (e) => onChangeCard(e),
+                            })}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.expiryDate &&
@@ -718,12 +712,14 @@ export const CreditCardModal = ({
                       </div>
                     )}
                   </div>
-                  { loading ? (<div
-                    class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-blue-600"
-                    role="status"
-                  >
-                    <span class="visually-hidden">Loading...</span>
-                  </div>) : null}
+                  {loading ? (
+                    <div
+                      class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full text-blue-600"
+                      role="status"
+                    >
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  ) : null}
                   <div className="flex flex-col w-full space-y-2 mt-6">
                     <button
                       className="p-2 w-full rounded bg-success text-w1 font-bold"

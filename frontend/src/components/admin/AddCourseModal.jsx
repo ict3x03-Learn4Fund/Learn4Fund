@@ -8,6 +8,7 @@ import imagesService from "../../services/images";
 
 export const AddCourseModal = ({closeModal, courseInfo}) => {
   const [file, setFile] = useState(null);
+  const [checkBox, setCheckBox] = useState(false);
   const formData = new FormData();
     const { loading, userInfo, error, success } = useSelector(state => state.user)
     const [updatedList,setUpdatedList] = React.useState({
@@ -33,6 +34,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
     useEffect(() => {
       if (courseInfo._id){
+        setCheckBox(courseInfo.canBeDiscounted);
         setUpdatedList(courseInfo)
       }
     }, [courseInfo, setUpdatedList])
@@ -44,21 +46,28 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
         }));
       };
 
+      useEffect(() => {
+        console.log('changed!')
+      },[updatedList])
+
       const uploadImage = (e) => {
         e.preventDefault();
-        console.log(file);
+        if (file.type != "image/jpeg" && file.type != "image/png"){
+          toast.error("Please choose only jpeg and png images")
+          return
+        }
         formData.append("image", file);
+        
         imagesService
           .uploadImage(formData)
           .then((response) => {
             if (response.status == 200) {
-              console.log(response.data);
+              updatedList.courseImg = response.data.id;
               const imgId = response.data.id;
               coursesService
                 .uploadCourseImage(imgId)
                 .then(() => {
-                  toast.success("Successfully uploaded image to this user.");
-                  // setAvatar(response.data.id);
+                  toast.success("Successfully uploaded image of course");
                 })
                 .catch((error) => {
                   toast.error(error.response.data.message);
@@ -66,14 +75,17 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             }
           })
           .catch((error) => {
+            if (error.response.data.message){
+              return toast.error(error.response.data.message)
+            }
             toast.error(error.message);
           });
       };
 
     const swapSelection = () =>{
-        updatedList.canBeDiscounted = !updatedList.canBeDiscounted
-        setUpdatedList(updatedList);
-         console.log(updatedList)
+        setCheckBox(!checkBox)
+        updatedList.canBeDiscounted = checkBox;
+        setUpdatedList(updatedList)
     }
 
     const addOrUpdateCourse = () => {
@@ -84,6 +96,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
         // insert course
           createCourses(updatedList)
         }
+        closeModal(false);
     }
 
   // create courses
@@ -162,25 +175,22 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             <div className='flex-col w-1/2 space-y-2'>
             <div className='flex h-[12vh] flex-wrap mr-8 mt-2'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={updatedList.courseImg ? `http://localhost:5000/v1/api/images/getImg/${updatedList.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
-                {/* <input
-                className="block w-full text-sm text-slate-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-full file:border-0
-              file:text-sm file:font-semibold
-              file:bg-violet-50 file:text-violet-700
-              hover:file:bg-violet-100 mb-2"
+                <div className='flex-col w-2/5'>
+                <input
                 type="file"
                 name="file"
+                accept=".jpeg, .png"
                 onChange={(e) => handleFile(e)}
-              ></input> */}
-                <button className='btn h-[6vh] self-center m-auto' onClick={(e) => uploadImage(e)}>Upload image</button>
+              ></input>
+                <button className='btn h-[6vh] self-center' onClick={(e) => uploadImage(e)}>Upload image</button>
+                </div>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input type="text" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseOriginalPrice}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Discounted Price</label> <input type="text" name="courseDiscountedPrice" className='border-2 border-b1 w-1/2 text-center' onChange={editInput} value={updatedList.courseDiscountedPrice}/>
-                <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={updatedList.canBeDiscounted} onChange={()=>swapSelection()}/>
+                <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={checkBox} onChange={()=>swapSelection()}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Quantity</label> <input name="quantity" type="number" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.quantity}/>

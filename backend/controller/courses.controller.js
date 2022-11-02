@@ -48,7 +48,18 @@ const apiUpdateCourse = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Please input your updated values');
   }
-  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, req.body, {new: true,});
+  const updatedCourse = await Course.findByIdAndUpdate(req.params.id, {                      // Create new course
+    courseName: req.body.courseName,
+    courseImg: req.body.courseImg,
+    courseOriginalPrice: req.body.courseOriginalPrice,
+    courseDiscountedPrice: req.body.courseDiscountedPrice,
+    canBeDiscounted: req.body.canBeDiscounted,
+    courseType: req.body.courseType,
+    courseDescription: req.body.courseDescription,
+    courseTutor: req.body.courseTutor,
+    quantity: req.body.quantity,
+    company: req.body.company
+  }, {new: true,});
   res.status(200).json(updatedCourse);
 });
 

@@ -21,9 +21,8 @@ import Catalog from "./routes/Catalog";
 import CourseInfo from "./components/catalog/CourseInfo";
 import { PromotionModal } from "./modals/PromotionModal";
 import { NewsLetterModal } from "./modals/NewsLetterModal";
-import ReCAPTCHA from "react-google-recaptcha"
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { OTPModal } from "./modals/OTPModal";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ChangePass from "./routes/ChangePass";
@@ -49,63 +48,62 @@ function App() {
   return (
     <Provider store={store}>
       <NavProvider>
-        
-          <>
-            <Nav />
-            <Routes>
-              <Route
-                exact
-                path="/"
-                element={<Homepage setNewsModal={setNewsModal} />}
-              />
-              <Route exact path="donate" element={<Donations />} />
-              <Route exact path="tos" element={<Toc />} />
-              <Route exact path="privacy" element={<Privacy />} />
-              <Route exact path="cookies" element={<Cookie />} />
-              <Route element={<ProtectedRoute />}>
-                <Route exact path="settings" element={<Settings />} />
-                <Route exact path="admin" element={<Admin />} />
-                <Route exact path="cart" element={<Cart />} />
-              </Route>
-              <Route exact path="reset" element={<ResetPassword />} />
-              <Route exact path="reset/:userId/:jwt" element={<ChangePass />} />
-              <Route exact path="otp" element={<OTPModal />} />
-              <Route exact path="login" element={<Login />} />
-              <Route exact path="signup" element={<Signup />} />
-              <Route exact path="courses" element={<Catalog />} />
-              <Route exact path="courses/:courseID" element={<CourseInfo />} />
-              {/* <Route exact path="promo" element={<Promopage />} /> */}
+        <>
+          <Nav />
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={<Homepage setNewsModal={setNewsModal} />}
+            />
+            <Route exact path="donate" element={<Donations />} />
+            <Route exact path="tos" element={<Toc />} />
+            <Route exact path="privacy" element={<Privacy />} />
+            <Route exact path="cookies" element={<Cookie />} />
+            <Route element={<ProtectedRoute />}>
+              <Route exact path="settings" element={<Settings />} />
+              <Route exact path="admin" element={<Admin />} />
+              <Route exact path="cart" element={<Cart />} />
+            </Route>
+            <Route exact path="reset" element={<ResetPassword />} />
+            <Route exact path="reset/:userId/:jwt" element={<ChangePass />} />
+            <Route exact path="otp" element={<OTPModal />} />
+            <Route exact path="login" element={<Login />} />
+            <Route exact path="signup" element={<Signup/>} />
+            <Route exact path="courses" element={<Catalog />} />
+            <Route exact path="courses/:courseID" element={<CourseInfo />} />
+            {/* <Route exact path="promo" element={<Promopage />} /> */}
 
-              <Route
-                path="*"
-                element={
-                  <main className="p-8 bg-rose-200 h-screen">
-                    <div className="bg-rose-400 p-8">
-                      <p className="font-bold text-white">
-                        URL not found - 404 code
-                      </p>
-                      <p>
-                        Go back to{" "}
-                        <u>
-                          <Link to="/" className="font-bold">
-                            Main Page
-                          </Link>
-                        </u>
-                      </p>
-                      <p>
-                        If you suspect this is a bug, please contact us at{" "}
-                        <a
-                          href="mailto:learn4fund@gmail.com"
-                          className="font-bold"
-                        >
-                          learn4fund@gmail.com
-                        </a>
-                      </p>
-                    </div>
-                  </main>
-                }
-              />
-            </Routes>
+            <Route
+              path="*"
+              element={
+                <main className="p-8 bg-rose-200 h-screen">
+                  <div className="bg-rose-400 p-8">
+                    <p className="font-bold text-white">
+                      URL not found - 404 code
+                    </p>
+                    <p>
+                      Go back to{" "}
+                      <u>
+                        <Link to="/" className="font-bold">
+                          Main Page
+                        </Link>
+                      </u>
+                    </p>
+                    <p>
+                      If you suspect this is a bug, please contact us at{" "}
+                      <a
+                        href="mailto:learn4fund@gmail.com"
+                        className="font-bold"
+                      >
+                        learn4fund@gmail.com
+                      </a>
+                    </p>
+                  </div>
+                </main>
+              }
+            />
+          </Routes>
 
             {!bannerClose && (
               <Banner
@@ -116,17 +114,17 @@ function App() {
             {toggleModal && <PromotionModal closeModal={setToggleModal} />}
             {newsModal && <NewsLetterModal closeModal={setNewsModal} />}
             <ToastContainer
-position="bottom-right"
-autoClose={3000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-/>
+              position="bottom-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
             <Footer />
           </>
         

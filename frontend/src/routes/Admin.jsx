@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import adminAuthService from "../services/admin";
 import axios from "axios";
 import {toast} from "react-toastify";
+import { useNav } from "../hooks/useNav";
 
 function testPostLog() {
   const data = { email: "addme@gmail.com", reason: "Account lockout" };
@@ -18,7 +19,7 @@ const Admin = () => {
   const [accounts, setAccounts] = useState([]);
   const [logs, setLogs] = useState([]);
   const navigate = useNavigate();
-
+  const {setTab} = useNav();
 
   const fetchLogData = async () => {
     try {
@@ -75,6 +76,8 @@ const Admin = () => {
 
   // Fetch all accounts on initial load
   useEffect(() => {
+    window.scrollTo(0, 0);
+    setTab("admin");
     fetchData();
     fetchLogData();
   }, []);

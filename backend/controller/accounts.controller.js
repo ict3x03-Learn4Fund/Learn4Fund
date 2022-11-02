@@ -38,6 +38,7 @@ const apiRegister = asyncHandler(async (req, res) => {
       firstName,
       lastName,
       emailSubscription,
+      loggedTimestamp: Date.now(),
       password: hashedPassword,
       secret: secret,
     });
@@ -93,10 +94,10 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
         role: user.role,
       });
     } else {
-      return res.status(400).json({ verified: false });
+      return res.status(400).json({ verified: false, message:  "Invalid token." });
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Validation Failed" });
   }
 });
 
@@ -126,7 +127,7 @@ const apiLogin = asyncHandler(async (req, res) => {
       // IF SUCCEED RESET THE lockTimes
       Account.updateOne(
         { email: email },
-        { $set: { loginTimes: 0 } },
+        { $set: { loginTimes: 0, loggedTimestamp: new Date() } },
         function (err, result) {                                      // [Authentication] Reset the loginTimes
           if (err) {
             console.log("Set loginTimes failed. Error: " + err);
@@ -284,6 +285,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
+    loggedTimestamp,
     role,
   } = await Account.findById(req.account.id);
   res.status(200).json({
@@ -297,6 +299,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
+    loggedTimestamp
   });
 });
 
@@ -341,7 +344,7 @@ const apiResetPassword = asyncHandler(async (req, res) => {
 
 const apiVerifyReset = asyncHandler(async (req,res) => {
   try {
-    const userId = req.params.id;
+    // const userId = req.params.id;
     const jwtToken = req.params.jwt;
     if (!jwtToken) {
       return res.status(400).json({message: "No token, authorization denied"});
@@ -354,7 +357,7 @@ const apiVerifyReset = asyncHandler(async (req,res) => {
       return res.status(200).json({message: "Authentication Successful"})
     }
   } catch (error) {
-    return res.status(400).json({message: error.message})
+    return res.status(400).json({message: "Verification error"})
   }
 })
 
@@ -452,14 +455,19 @@ const apiUpdateDetails = asyncHandler(async (req,res) => {
     if (user.lastName != lastName){
       user.lastName = lastName;
     }
-    if (user.email != email){
-      user.email = email;
+    if (user.email != email) {
+      if (await Account.findOne({ email: email }) === null) {
+        user.email = email;
+      }
+      else {
+        return res.status(400).json({message: "Invalid email."})
+      }
     }
     user.save()
     return res.status(200).json(user)
 
   } catch (error) {
-    return res.status(400).json({message: error.message})
+    return res.status(400).json({ message: "Error updating profile"})
   }
 })
 

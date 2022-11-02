@@ -1,14 +1,7 @@
 import { React, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdArrowForwardIos } from "react-icons/md";
-
-// Mock datasets to render
-import crse from "../assets/datasets/courses.json";
 import courseService from "../services/courses";
-
-// temporary image
-import courseImg from "../assets/images/download.jpeg";
-import images from "../services/images";
 
 // retrieve banners
 import Banner1 from "../assets/images/top donators.png";
@@ -19,6 +12,7 @@ import Banner3 from "../assets/images/business partners.png";
 import { Navigation, Pagination, Autoplay } from "swiper";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useNav } from "../hooks/useNav";
 
 //Import Swiper styles
 import "swiper/css";
@@ -28,8 +22,12 @@ import { useEffect } from "react";
 
 function Homepage({ setNewsModal }) {
   const navigate = useNavigate();
+  const {setTab} = useNav();
   const [dataCourses, setDataCourses] = useState([]);
-  // const dataCourses = courseService.getAll();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setTab("");
+  }, []);
 
   function sortByDiscount(a, b) {
     if (
