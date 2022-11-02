@@ -232,9 +232,11 @@ const Signup = () => {
                       <input required
                         className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                         type="text"
-                        maxLength={20}
+                        minLength={2}
+                        maxLength={25}
                         {...register("firstName", {
-                          maxLength: 20,
+                          minLength:2,
+                          maxLength: 25,
                           pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/,
                         })}
                         placeholder="First Name"
@@ -258,9 +260,11 @@ const Signup = () => {
                       <input required
                         className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                         type="text"
-                        maxLength={20}
+                        minLength={2}
+                        maxLength={25}
                         {...register("lastName", {
-                          maxLength: 20,
+                          minLength:2,
+                          maxLength: 25,
                           pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/,
                         })}
                         placeholder="Last Name"

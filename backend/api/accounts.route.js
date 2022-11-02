@@ -278,7 +278,7 @@ router.route("/update").post(protect,
       .trim()                                                         // [Sanitization] remove whitespace
       .not().matches(emojiRegex)
       .withMessage("First name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 }).bail()                                         // [Validation] max length
+      .isLength({ min:2, max: 25 }).bail()                                         // [Validation] max length
       .escape(),                                                       // [Sanitization] Escape HTML characters
     check("lastName", "Invalid Last Name")
       .notEmpty()
@@ -286,7 +286,7 @@ router.route("/update").post(protect,
       .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
       .not().matches(emojiRegex)
       .withMessage("Last name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 })                                         // [Validation] max length
+      .isLength({ min:2, max: 25 })                                         // [Validation] max length
       .escape(),  
   ],
   (req, res) => {

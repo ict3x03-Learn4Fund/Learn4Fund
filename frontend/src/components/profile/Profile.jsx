@@ -8,6 +8,7 @@ import { getUserDetails } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import validator from "validator";
 
 function Profile() {
   const [file, setFile] = useState(null);
@@ -37,24 +38,45 @@ function Profile() {
 
   const updateProfile = () => {
     console.log(firstName, lastName, email);
-    authService
-      .updateDetails(userInfo.id, firstName, lastName, email)
-      .then((res) => {
-        if (res.status == 200) {
-          toast.success("Details Updated Successfully.");
-          dispatch(getUserDetails());
-        } else {
-          if (res.data.message && res.data.message === Array) {
-            res.data.message.map((err) => toast.error(err.msg));
+    var error = false;
+    if (firstName && lastName && email) {
+      if (!validator.isEmail(email)) {
+        toast.error("Invalid email format");
+        error = true;
+      }
+      if (!validator.isLength(firstName, {min: 2, max: 25}) || !validator.matches(firstName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
+        toast.error("Invalid first name");
+        error = true;
+      }
+      if (!validator.isLength(lastName, {min: 2, max: 25}) || !validator.matches(lastName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
+        toast.error("Invalid last name");
+        error = true;
+      }
+      if (!error) {
+        authService
+        .updateDetails(userInfo.id, firstName, lastName, email)
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success("Details Updated Successfully.");
+            dispatch(getUserDetails());
+          } else {
+            if (res.data.message && res.data.message === Array) {
+              res.data.message.map((err) => toast.error(err.msg));
+            }
+            else{ toast.error("Error updating profile. Try again later.");}
+            
           }
-          else{ toast.error("Error updating profile. Try again later.");}
-          
-        }
-      })
-      .catch((err) => {
-        toast.error("Error updating profile. Try again later.");
-        console.log(err.response.data.message);
-      });
+        })
+        .catch((err) => {
+          toast.error("Error updating profile. Try again later.");
+          console.log(err.response.data.message);
+        });
+      }
+    }
+    else {
+      toast.error("Please fill all the fields");
+    }
+    
   };
 
   const uploadImage = (e) => {
@@ -144,6 +166,8 @@ function Profile() {
                       <input
                         type="text"
                         className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                        minLength={2}
+                        maxLength={25}
                         onChange={(e) => setFirstName(e.target.value)}
                         defaultValue={userInfo.firstName}
                       />
@@ -155,6 +179,8 @@ function Profile() {
                       <input
                         type="text"
                         className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                        minLength={2}
+                        maxLength={25}
                         onChange={(e) => setLastName(e.target.value)}
                         defaultValue={userInfo.lastName}
                       />
