@@ -284,9 +284,9 @@ router.route("/update").post(protect,
     check("email", 'Invalid email')
       .notEmpty().bail()                             // [Validation] check if email is empty
       .trim()                                                         // [Sanitization] remove whitespace
-      .isLength({ max: 255 }).bail()                                // [Validation] max length
       .isEmail()                                                    // [Validation] check if email is valid
-      .normalizeEmail(),                                               // [Sanitization] Sanitize email
+      .normalizeEmail()                                            // [Sanitization] Sanitize email
+      .isLength({ max: 255 }).bail(),                              // [Validation] max length
     check("firstName", "Invalid First Name")
       .notEmpty()
       .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
