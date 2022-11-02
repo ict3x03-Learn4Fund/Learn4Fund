@@ -23,9 +23,7 @@ router.route("/:id").get(protect,
   ],  (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        const errArray = errors.array();
-        const errMessage = errArray.map((err) => err.msg).join("\n");
-        return res.status(400).json({ errors: errMessage });
+        return res.status(400).json({ errors: "Invalid request" });
     }
     apiGetCart(req, res)
 })

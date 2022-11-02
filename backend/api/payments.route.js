@@ -57,19 +57,13 @@ router.route("/pay").post(protect,
             return true;
         }),
         body('cardId', 'Missing card ID')
-            .notEmpty().bail()
+            .if(('cardId').notEmpty())
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
         body('billAddressId', 'Missing billing address ID')
-            .notEmpty().bail()
+            .if(body('billAddressId').notEmpty())
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
-        body('checkedOutCart').isArray().bail().custom(value => {
-            if (value.length === 0) {
-                throw new Error('Cart is empty')
-            }
-            return true;
-        }),
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
