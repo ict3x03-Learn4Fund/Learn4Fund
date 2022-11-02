@@ -209,7 +209,7 @@ function Profile() {
           </div>
 
           <div className="flex w-1/2 h-full justify-evenly">
-            <form enctype="multipart/form-data" >
+            <form encType="multipart/form-data" >
               <img
                 src={
                   avatar
