@@ -59,7 +59,12 @@ export const CreditCardModal = ({
         }
       })
       .catch((error) => {
-        toast.error(error.message);
+        if (error.response && error.response.data.message) {
+          return toast.error(error.response.data.message);
+        }
+        else {
+          return toast.error(error.message)
+        }
       });
   };
   const prepareCheckoutCart = () => {
@@ -114,7 +119,7 @@ export const CreditCardModal = ({
         }
       })
       .catch((e) => {
-        toast.error(e.message);
+        toast.error(e.response.data.message);
       });
   };
 

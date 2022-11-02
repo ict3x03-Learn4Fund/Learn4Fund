@@ -3,7 +3,7 @@ import SuspiciousActivityList from './SuspiciousActivityList'
 
 const SuspiciousActivities = ({logs, fetchLogData}) => {
   return (
-    <div className="flex flex-row flex-wrap w-full bg-w1 rounded m-8 p-8 content-start">
+    <div className="flex flex-row flex-wrap w-full bg-w1 rounded m-8 p-8 content-start overflow-y-auto">
       <span className="flex w-full font-type1 text-[20px] font-bold">
         Suspicious Activities
       </span>
@@ -20,8 +20,8 @@ const SuspiciousActivities = ({logs, fetchLogData}) => {
       <span className="h-[2px] bg-[black] w-full my-2" />
 
       
-      <div className="w-full table-responsive" style={{height: 700}}>
-        <table className="table w-full table-striped table-bordered table-hover overflow-y:auto">
+      <div className="w-full table-responsive">
+        <table className="table w-full table-striped table-bordered table-hover">
           <thead>
             <tr>
               <th className='border'>Time</th>          
