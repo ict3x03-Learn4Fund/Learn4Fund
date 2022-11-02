@@ -61,18 +61,6 @@ const Cart = () => {
     );
 
     setCheckedState(updatedCheckedState);
-
-    // const totalPrice = updatedCheckedState.reduce(
-    //   (sum, currentState, index) => {
-    //     if (currentState === true) {
-    //       return sum + toppings[index].price;
-    //     }
-    //     return sum;
-    //   },
-    //   0
-    // );
-
-    // setTotal(totalPrice);
   };
 
   function checkOutItems() {

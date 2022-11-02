@@ -31,12 +31,6 @@ function ChangePass() {
   });
   const { password, password2 } = accountForm;
 
-  const [fufillPassword, setFufillPassword] = useState([
-    false,
-    false,
-    false,
-    false,
-  ]);
 
   useEffect(() => {
     verifyReset();
@@ -80,9 +74,6 @@ function ChangePass() {
     }));
   };
 
-
-
-  
 
   return (
     <main>
