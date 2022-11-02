@@ -22,7 +22,7 @@ pipeline {
                 sh 'cp /home/.frontend.env frontend/.env'
                 sh 'docker compose down --rmi all'
                 sh 'docker system prune -a --force --volumes'
-                sh 'docker compose -f docker-compose.dev.yml build --no-cache'
+                sh 'docker compose -f docker-compose.dev.yml build --no-cache --pull'
             }
         }
 
@@ -78,7 +78,7 @@ pipeline {
                 sh 'cp /home/.frontend.env frontend/.env'                              
                 sh 'docker compose down --rmi all'
                 sh 'docker system prune -a --force --volumes'
-                sh 'docker compose -f docker-compose.yml build --no-cache'
+                sh 'docker compose -f docker-compose.yml build --no-cache --pull'
             }
         }
 
