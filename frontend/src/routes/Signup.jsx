@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userActions";
+import {clearSignupState} from "../features/user/userSlice";
+import {logout} from "../features/user/userSlice";
 import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -18,14 +20,19 @@ const Signup = () => {
   const captchaRef = useRef(null);
 
   useEffect(() => {
-    console.log(success);
     if (success) {
       setModalOpen(true);
     }
     if (error) {
+      dispatch(logout());
       toast.error(stateErrorMsg);
     }
   }, [dispatch, success, error]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    dispatch(clearSignupState());
+  }, [dispatch]);
 
   const {
     register,
@@ -144,7 +151,7 @@ const Signup = () => {
   };
 
   const confirmPasswordCheck = (e) => {
-    if (e.target.value == accountForm.password) {
+    if (e.target.value == accountForm.password || e.target.value == accountForm.password2) {
       setFufillPassword((prevState) => [
         prevState[0],
         prevState[1],
@@ -187,7 +194,6 @@ const Signup = () => {
       captchaRef.current.reset();
       }
     }
-
   };
 
   const onSubmit = (data) => {
@@ -464,7 +470,7 @@ const Signup = () => {
               </div>
               <div className="flex flex-row w-full justify-center">
                 <input type="checkbox" className="mr-2" />{" "}
-                <Link to="/policy" className="hover:text-orange-500">
+                <Link to="/privacy" className="hover:text-orange-500">
                   Accept our Terms and Conditions
                 </Link>
               </div>

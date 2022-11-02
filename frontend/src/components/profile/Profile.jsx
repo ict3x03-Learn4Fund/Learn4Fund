@@ -22,11 +22,6 @@ function Profile() {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (userId) {
-      dispatch(getUserDetails());
-    }
-  }, [userId]);
 
   useEffect(() => {
     setFirstName(userInfo.firstName);
@@ -43,7 +38,7 @@ function Profile() {
   const updateProfile = () => {
     console.log(firstName, lastName, email);
     authService
-      .updateDetails(userId, firstName, lastName, email)
+      .updateDetails(userInfo.id, firstName, lastName, email)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Details Updated Successfully.");
@@ -73,7 +68,7 @@ function Profile() {
           console.log(response.data);
           const imgId = response.data.id;
           authService
-            .uploadAvatar(userId, imgId)
+            .uploadAvatar(userInfo.id, imgId)
             .then(() => {
               toast.success("Successfully uploaded image to this user.");
               setAvatar(response.data.id);
@@ -93,7 +88,7 @@ function Profile() {
   };
 
   const deleteAccount = () => {
-    authService.deleteAcc(userId).then((res) => {
+    authService.deleteAcc(userInfo.id).then((res) => {
       if (res.status == 200){
         toast.success("Account Deleted Successfully.")
         dispatch(logout());
@@ -111,7 +106,7 @@ function Profile() {
     const emailSubscription = !userInfo?.emailSubscription
     console.log(emailSubscription)
     authService
-      .updateSubscription(userId, emailSubscription)
+      .updateSubscription(userInfo.id, emailSubscription)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Updated subscription status.");

@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import { BsDash, BsPlus } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import reviewsService from "../../services/reviews";
 import { useParams, useNavigate } from "react-router-dom";
 import cartsService from "../../services/carts";
-import {toast} from "react-toastify";
-import { getUserDetails, getCartNumber } from '../../features/user/userActions'
+import { toast } from "react-toastify";
+import { getCartNumber } from "../../features/user/userActions";
 
-function CourseInfo() {  
-  const { loading, userInfo, userId, error, success, cartNo } = useSelector(
+function CourseInfo() {
+  const { loading, userInfo, error, success, cartNo } = useSelector(
     (state) => state.user
-  )
+  );
   const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(0);
   const { courseID } = useParams();
@@ -25,14 +25,8 @@ function CourseInfo() {
   const [reviewDescription, setReviewDescription] = useState("");
   const [averageStars, setAverageStars] = useState(0);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const dispatch = useDispatch()
-
-  // get user info
-  useEffect(()=> {
-    if (userId){
-      dispatch(getUserDetails())
-    }
-  }, [])
+  const dispatch = useDispatch();
+  const [reviewAllowed, setReviewAllowed] = useState(false);
 
   // retrieve all reviews
   const retrieveReviews = () => {
@@ -59,11 +53,27 @@ function CourseInfo() {
       });
   };
 
+  //function to see if user can make review
+  const verifyReview = () => {
+    reviewsService
+      .verifyReview(userInfo.id, courseID)
+      .then((response) => {
+        if (response.status == 200) {
+          console.log("repsonse", response.data.authorize);
+          setReviewAllowed(response.data.authorize);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     retrieveCourses();
     retrieveReviews();
-    calculateAverageStars()
+    calculateAverageStars();
+    verifyReview();
   }, [courseID]);
 
   // Add quantity to const variable
@@ -73,9 +83,9 @@ function CourseInfo() {
 
   // Check if there is any cart items in session storage
   useEffect(() => {
-    setReviewSubmitted(false)
-    retrieveReviews()
-    calculateAverageStars()
+    setReviewSubmitted(false);
+    retrieveReviews();
+    calculateAverageStars();
   }, [reviewSubmitted]);
 
   // save quantity to cart
@@ -86,16 +96,20 @@ function CourseInfo() {
     }
     // sessionStorage.setItem("cartItems", quantitySelected);
     addCartItem();
-    dispatch(getCartNumber())
+    dispatch(getCartNumber());
   }
 
   // add cart item
   const addCartItem = () => {
+    if(quantitySelected == 0){
+      return;
+    }
     cartsService
       .addCart(userInfo.id, courseDetails._id, quantitySelected)
       .then((response) => {
         console.log(response.data);
         toast.success("Item added into cart.");
+        dispatch(getCartNumber(userInfo.id));
       })
       .catch((e) => {
         toast.error("Error adding item to cart");
@@ -109,35 +123,38 @@ function CourseInfo() {
   }
 
   const handleReviewDescription = (e) => {
-    setReviewDescription(e.target.value)
-  }
+    setReviewDescription(e.target.value);
+  };
 
   // calculate stars
   const calculateAverageStars = () => {
     let sum = 0;
     reviews.map((review, index) => {
-       sum += review.rating
-    },0)
-    sum = sum/ reviews.length
+      sum += review.rating;
+    }, 0);
+    sum = sum / reviews.length;
     setAverageStars(sum);
-  }
+  };
 
   const handleNewReview = () => {
     const newReview = {
       rating: stars,
       description: reviewDescription,
-      accountId: userId,
+      accountId: userInfo.id,
       courseId: courseID,
-    }
-    reviewsService.getCreateReview(newReview).then((response) => {
-      if (response.status == 200){
-        toast.success("A review has been added successfully.")
-        setReviewSubmitted(true)
-      }
-    }).catch((error) => {
-      toast.error(error.response.data.message)
-    })
-  }
+    };
+    reviewsService
+      .getCreateReview(newReview)
+      .then((response) => {
+        if (response.status == 200) {
+          toast.success("A review has been added successfully.");
+          setReviewSubmitted(true);
+        }
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
 
   return (
     <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 items-center">
@@ -153,7 +170,8 @@ function CourseInfo() {
                   Course ID: &nbsp;
                 </span>
                 <span className="font-type1 font-bold text-[1.5vw] lg:text-[1rem] leading-[20px]">
-                  {courseDetails._id && courseDetails._id.substring(courseDetails._id.length - 8)}
+                  {courseDetails._id &&
+                    courseDetails._id.substring(courseDetails._id.length - 8)}
                 </span>{" "}
               </div>
 
@@ -235,7 +253,7 @@ function CourseInfo() {
               <div
                 className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center bg-black"
                 onClick={() =>
-                  quantitySelected > 0 
+                  quantitySelected > 0
                     ? setQuantitySelected(parseInt(quantitySelected) - 1)
                     : null
                 }
@@ -253,8 +271,9 @@ function CourseInfo() {
               <div
                 className="cursor-pointer flex w-[31px] h-full border-[1px] justify-center bg-black"
                 onClick={() =>
-                  quantitySelected < courseDetails.quantity ?
-                  setQuantitySelected(parseInt(quantitySelected) + 1): toast.error('Quantity Exceeded')
+                  quantitySelected < courseDetails.quantity
+                    ? setQuantitySelected(parseInt(quantitySelected) + 1)
+                    : toast.error("Quantity Exceeded")
                 }
               >
                 <BsPlus className="text-w1 self-center" />
@@ -284,12 +303,18 @@ function CourseInfo() {
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
             <span className="font-type1 text-[1.4vw] text-b3 font-bold">
-              Customer Reviews - {averageStars ? averageStars: 0}/5
+              Customer Reviews - {averageStars ? averageStars : 0}/5
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />
           </div>
 
-          <div className={reviews.length >= 3 ? "flex flex-wrap h-[300px] overflow-y-scroll": "flex flex-wrap h-[300px] "}>
+          <div
+            className={
+              reviews.length >= 3
+                ? "flex flex-wrap h-[300px] overflow-y-scroll"
+                : "flex flex-wrap h-[300px] "
+            }
+          >
             {reviews.map((review, index) => {
               return (
                 <div className="flex-row flex-wrap w-full my-2 text-[1vw]">
@@ -305,7 +330,7 @@ function CourseInfo() {
               );
             })}
           </div>
-          {userInfo && (
+          {userInfo && reviewAllowed && (
             <div className="flex flex-row flex-wrap w-full h-auto my-4">
               <span className="font-type1 text-[20px] font-semibold">
                 My review
@@ -347,8 +372,10 @@ function CourseInfo() {
                   }}
                 />
               </div>
-              <textarea className="flex w-full h-[80px] border-2 border-b2 rounded text-start my-2" 
-                  onChange={(e) => handleReviewDescription(e)}/>
+              <textarea
+                className="flex w-full h-[80px] border-2 border-b2 rounded text-start my-2"
+                onChange={(e) => handleReviewDescription(e)}
+              />
               <button
                 className="bg-g2 text-w1 p-2 rounded"
                 onClick={() => handleNewReview()}

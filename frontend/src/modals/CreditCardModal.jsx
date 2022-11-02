@@ -5,7 +5,6 @@ import { BiErrorCircle } from "react-icons/bi";
 import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, getCartNumber } from "../features/user/userActions";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
@@ -21,14 +20,14 @@ export const CreditCardModal = ({
   checkout,
 }) => {
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     return () => {
-      // Anything in here is fired on component unmount.
-      document.body.style.overflow = "unset";
-    };
-  }, []);
+        // Anything in here is fired on component unmount.
+        document.body.style.overflow = 'unset';
+    }
+}, [])
   const [checkedState, setCheckedState] = useState([true, false]);
-  const { userInfo, userId } = useSelector((state) => state.user);
+  const { userInfo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -52,7 +51,7 @@ export const CreditCardModal = ({
 
   const getMethods = () => {
     paymentsService
-      .getMethods(userId)
+      .getMethods(userInfo.id)
       .then((response) => {
         if (response.status == 200) {
           setAddressList(response.data.billAddrs);
@@ -98,7 +97,7 @@ export const CreditCardModal = ({
     }
 
     const payload = {
-      accountId: userId,
+      accountId: userInfo.id,
       donationAmount: donation,
       showDonation: showDonation,
       totalAmount: totalAmount,
@@ -108,7 +107,6 @@ export const CreditCardModal = ({
       last4No: reqLast4No,
       cardType: reqCardType,
     };
-    console.log(payload);
     paymentsService
       .makePayment(payload)
       .then(async (response) => {
@@ -126,11 +124,8 @@ export const CreditCardModal = ({
   };
 
   useEffect(() => {
-    if (userId) {
-      dispatch(getUserDetails());
-      console.log(totalAmount, donation, checkout);
+    if (userInfo) {
       getMethods();
-      console.log(addressList);
     }
   }, []);
 
@@ -171,18 +166,15 @@ export const CreditCardModal = ({
 
   // for otp submit
   const submitOtpForm = () => {
-    const payload = { userId: userId, token: otp };
-    console.log(payload);
+    const payload = { userId: userInfo.id, token: otp };
     authService
       .verify2FA(payload)
       .then((response) => {
-        console.log("status", response.status);
         if (response.status == 200) {
           setLoading(true);
           makePayment();
           modalOpen(false);
         } else {
-          console.log("Error");
           toast.error(response.data.message);
         }
       })
@@ -217,8 +209,6 @@ export const CreditCardModal = ({
   const { firstName, lastName, address, unit, city, postalCode } = addressForm;
 
   const onChangeAddr = (e) => {
-    console.log(addressForm);
-    console.log(e.target.value);
     setAddressForm((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -230,9 +220,8 @@ export const CreditCardModal = ({
       toast.error("Enter valid Postal Code!");
       return;
     }
-    console.log(addressForm);
     paymentsService
-      .addAddr(userId, addressForm)
+      .addAddr(userInfo.id, addressForm)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Successfully save new address.");
@@ -256,7 +245,6 @@ export const CreditCardModal = ({
   const { name, cardNo, expiryDate } = cardForm;
 
   const onChangeCard = (e) => {
-    console.log(e.target.value);
     setCardForm((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -270,9 +258,8 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     const request = { name, cardNo, cardType, expiryDate };
-    console.log(userId, request);
     paymentsService
-      .addCard(userId, request)
+      .addCard(userInfo.id, request)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Successfully save new card.");
@@ -599,10 +586,11 @@ export const CreditCardModal = ({
                             name="cardNo"
                             required
                             maxLength={19}
-                            onChange={onChangeCard}
+                            // onChange={onChangeCard}
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
-                            {...getCardNumberProps()}
+                            defaultValue={cardNo}
+                            {...getCardNumberProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.cardNumber &&
@@ -619,9 +607,10 @@ export const CreditCardModal = ({
                             name="expiryDate"
                             required
                             placeholder="mm/yyyy"
+                            defaultValue={expiryDate}
                             onChange={onChangeCard}
                             className="p-2 border-2 border-black w-40"
-                            {...getExpiryDateProps()}
+                            {...getExpiryDateProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.expiryDate &&
