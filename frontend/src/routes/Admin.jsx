@@ -2,17 +2,11 @@ import BannedUsers from "../components/admin/BannedUsers";
 import CoursesCatalog from "../components/admin/CoursesCatalog";
 import SuspiciousActivities from "../components/admin/SuspiciousActivities";
 import { React, useState, useEffect } from "react";
-import http from "../http-common";
 import { useNavigate } from "react-router-dom";
 import adminAuthService from "../services/admin";
 import axios from "axios";
 import {toast} from "react-toastify";
 import { useNav } from "../hooks/useNav";
-
-function testPostLog() {
-  const data = { email: "addme@gmail.com", reason: "Account lockout" };
-  http.post("/accounts/addLog", data);
-}
 
 const Admin = () => {
   const [menu, setMenu] = useState(0);

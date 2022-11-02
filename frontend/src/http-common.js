@@ -4,7 +4,7 @@ import axios from "axios";
 export default axios.create({
 
   baseURL: "https://learn4fund.tk/v1/api", //modified,was http://localhost:5000
-  //baseURL: "http://localhost:5000/v1/api", //modified,was http://localhost:5000
+  // baseURL: "http://localhost:5000/v1/api", //modified,was http://localhost:5000
   headers: {
     "Content-type": "application/json",
   },

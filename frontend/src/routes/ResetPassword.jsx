@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useNav } from "../hooks/useNav";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { user2FA } from "../features/user/userActions";
+import { useSelector } from "react-redux";
 import { MdAlternateEmail } from "react-icons/md";
 import authService from "../services/accounts";
 import { toast } from "react-toastify";
@@ -13,15 +10,10 @@ import validator from "validator";
 
 function ResetPassword() {
   const {
-    register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { setTab } = useNav();
   const [otp, setOtp] = useState("");
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
   const { loading } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
@@ -80,23 +72,12 @@ function ResetPassword() {
                 autoComplete="off"
                 type="text"
                 maxLength={255}
-                // {...register("email", {
-                //   pattern:
-                //     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                // })}
                 placeholder="Enter Email"
                 value={email}
                 onChange={handleEmailChange}
               />
             </div>
             <div className="flex flex-nowrap w-full justify-center">
-              {/* {errors.email && (
-                <div>
-                  <p style={{ color: "red" }}>
-                    <b>Please enter a valid Email address</b>
-                  </p>
-                </div>
-              )} */}
             </div>
             <div className="flex flex-nowrap w-full justify-center mt-4">
               <span className="self-center w-1/4 h-[40px] bg-b1 rounded-l">
@@ -108,7 +89,6 @@ function ResetPassword() {
                 className="flex w-3/4 h-[40px] input"
                 maxLength={7} // Code is 7 digits
                 type="password"
-                // {...register("code", { pattern: /^[0-9]*$/ })} // [Validation] Number only
                 placeholder="Enter 2fa token"
                 value={otp}
                 onChange={handleOtp}
@@ -116,13 +96,6 @@ function ResetPassword() {
               <p id="errorMsg" name="errorMsg" value={errorMsg}></p>
             </div>
             <div className="flex flex-nowrap w-full justify-center">
-              {/* {errors.code && (
-                <div>
-                  <p style={{ color: "red" }}>
-                    <b>Invalid format, numbers only</b>
-                  </p>
-                </div>
-              )} */}
             </div>
             <div className="flex flex-col w-full space-y-2 mt-6">
               <button

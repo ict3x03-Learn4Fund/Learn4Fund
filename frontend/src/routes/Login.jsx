@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { MdAlternateEmail } from "react-icons/md";
 import { BsShieldLockFill } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
 import { OTPModal } from "../modals/OTPModal";
@@ -31,8 +31,11 @@ function Login() {
   useEffect(() => {
     setTab("login");
     window.scrollTo(0, 0);
-},[setTab])
+  }, [setTab]);
 
+  /***
+   * Calls the OTPModal component to open the modal
+   */
   const submitForm = (data) => {
     setUserCredentials(data);
     setModalOpen(true);
@@ -125,7 +128,11 @@ function Login() {
               <hr className="flex flex-wrap w-full border-1 border-[black] self-center ml-4" />
             </div>
             <a
-              href={window.location.hostname == 'localhost' ? "http://"+window.location.host + "/signup":"https://"+window.location.host + "/signup" }
+              href={
+                window.location.hostname == "localhost"
+                  ? "http://" + window.location.host + "/signup"
+                  : "https://" + window.location.host + "/signup"
+              }
               className="cursor-pointer p-2 w-full rounded bg-g2 text-w1 font-bold hover:text-w1 hover:bg-orange-500 text-center"
             >
               Sign up
@@ -133,7 +140,12 @@ function Login() {
           </div>
         </form>
       </div>
-      {modalOpen ? <OTPModal closeModal={setModalOpen} formData={userCredentials}></OTPModal> : null}
+      {modalOpen ? (
+        <OTPModal
+          closeModal={setModalOpen}
+          formData={userCredentials}
+        ></OTPModal>
+      ) : null}
     </main>
   );
 }
