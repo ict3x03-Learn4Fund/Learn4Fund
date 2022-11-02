@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userActions";
-import {clearSignupState} from "../features/user/userSlice";
-import {logout} from "../features/user/userSlice";
 import {toast} from "react-toastify";
 import { OTPModal } from "../modals/OTPModal";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -20,19 +18,14 @@ const Signup = () => {
   const captchaRef = useRef(null);
 
   useEffect(() => {
+    console.log(success);
     if (success) {
       setModalOpen(true);
     }
     if (error) {
-      dispatch(logout());
       toast.error(stateErrorMsg);
     }
   }, [dispatch, success, error]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    dispatch(clearSignupState());
-  }, [dispatch]);
 
   const {
     register,
@@ -151,7 +144,7 @@ const Signup = () => {
   };
 
   const confirmPasswordCheck = (e) => {
-    if (e.target.value == accountForm.password || e.target.value == accountForm.password2) {
+    if (e.target.value == accountForm.password) {
       setFufillPassword((prevState) => [
         prevState[0],
         prevState[1],
@@ -195,6 +188,7 @@ const Signup = () => {
       captchaRef.current.reset();
       }
     }
+
   };
 
   const onSubmit = (data) => {
@@ -230,13 +224,13 @@ const Signup = () => {
                       <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                         First Name
                       </span>
-                      <input required
+                      <input
                         className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                         type="text"
                         maxLength={20}
                         {...register("firstName", {
+                          required: true,
                           maxLength: 20,
-                          pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/,
                         })}
                         placeholder="First Name"
                         id="firstName"
@@ -248,7 +242,7 @@ const Signup = () => {
                     {errors.firstName && (
                       <div>
                         <p style={{ color: "red" }}>
-                          <b>No emojis allowed</b>
+                          <b>Please check the First Name</b>
                         </p>
                       </div>
                     )}
@@ -256,13 +250,13 @@ const Signup = () => {
                       <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                         Last Name
                       </span>
-                      <input required
+                      <input
                         className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                         type="text"
                         maxLength={20}
                         {...register("lastName", {
+                          required: true,
                           maxLength: 20,
-                          pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/,
                         })}
                         placeholder="Last Name"
                         id="lastName"
@@ -274,7 +268,7 @@ const Signup = () => {
                     {errors.lastName && (
                       <div>
                         <p style={{ color: "red" }}>
-                          <b>No emojis allowed</b>
+                          <b>Please check the Last Name</b>
                         </p>
                       </div>
                     )}
@@ -282,11 +276,12 @@ const Signup = () => {
                       <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                         Country Code
                       </span>
-                      <input required
+                      <input
                         className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                         type="text"
                         maxLength={4}
                         {...register("countryCode", {
+                          required: true,
                           pattern: /^(\+\d{2,3})$/,
                         })}
                         placeholder="+65"
@@ -308,11 +303,12 @@ const Signup = () => {
                       <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                         Phone
                       </span>
-                      <input required
+                      <input
                         className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                         type="tel"
                         maxLength={12}
                         {...register("phone", {
+                          required: true,
                           pattern: /^[0-9]*$/,
                           minLength: 6,
                           maxLength: 12,
@@ -339,11 +335,12 @@ const Signup = () => {
                     <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                       Email
                     </span>
-                    <input required
+                    <input
                       className="flex-row w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="text"
                       maxLength={255}
                       {...register("email", {
+                        required: true,
                         pattern:
                           /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                       })}
@@ -365,11 +362,12 @@ const Signup = () => {
                     <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                       Password
                     </span>
-                    <input required
+                    <input
                       className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="password"
                       {...register("password", {
-                        pattern: /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]))^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{12,}$)/,
+                        required: true,
+                        pattern: /.{12,}/,
                       })}
                       placeholder="*************"
                       id="password"
@@ -381,7 +379,7 @@ const Signup = () => {
                   {errors.password && (
                     <div>
                       <p style={{ color: "red" }}>
-                        <b>Emoji not allowed, minimum 12 characters</b>
+                        <b>Password too short</b>
                       </p>
                     </div>
                   )}
@@ -405,10 +403,11 @@ const Signup = () => {
                     <span className="flex-none font-type1 order-1 w-2/5 text-center text-sm bg-g1 h-full text-w1 rounded-l py-2">
                       Confirm Password
                     </span>
-                    <input required
+                    <input
                       className="flex-none w-3/5 h-full order-2 border-2 border-g3 rounded-r text-center"
                       type="password"
                       {...register("password2", {
+                        required: true,
                         validate: (val) => {
                           if (watch("password") != val) {
                             return "Passwords do not match";
@@ -471,7 +470,7 @@ const Signup = () => {
               </div>
               <div className="flex flex-row w-full justify-center">
                 <input type="checkbox" className="mr-2" />{" "}
-                <Link to="/privacy" className="hover:text-orange-500">
+                <Link to="/policy" className="hover:text-orange-500">
                   Accept our Terms and Conditions
                 </Link>
               </div>

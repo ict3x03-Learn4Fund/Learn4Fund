@@ -25,7 +25,6 @@ const { check, validationResult } = require("express-validator");     // [Valida
 const rateLimit = require("express-rate-limit");                      // [DoS] Prevent brute force attacks
 const Account = require("../models/accountModel"); // to access the DB
 const Logs = require("../models/logsModel");
-const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/
 
 const createAccountLimiter = rateLimit({                              // [DoS] Prevent mass account creation
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -46,8 +45,8 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
   }
 });
 const verify2FALimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
-  windowMs: 1 * 60 * 1000, // 1 mins
-  max: 5, // Limit each IP to 5 code verification requests per 1 mins
+  windowMs: 15 * 60 * 1000, // 15 mins
+  max: 5, // Limit each IP to 5 code verification requests per 15 mins
   message: "Too much tries, please try again in 15 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -67,12 +66,15 @@ const verify2FALimiter = rateLimit({                                  // [DoS] P
 router.route("/register").post(createAccountLimiter,
   
   [
-    check("email", 'Invalid email')
-      .notEmpty().bail()                             // [Validation] check if email is empty
-      .trim()                                                         // [Sanitization] remove whitespace
-      .isLength({ max: 255 }).bail()                                // [Validation] max length
-      .isEmail()                                                    // [Validation] check if email is valid
+    check("email")
+      .notEmpty()
+      .withMessage("Email is required").bail()                             // [Validation] check if email is empty
+      .isLength({ max: 255 })
+      .withMessage("Email is too long").bail()                                // [Validation] max length
+      .isEmail()
+      .withMessage("Email is invalid")                                // [Validation] check if email is valid
       .normalizeEmail()                                               // [Sanitization] Sanitize email
+      .trim()                                                         // [Sanitization] remove whitespace
       .custom(async (value) => {                                      // [Validation] Check if email already exists
         const accountExist = await Account.findOne({ email: value });
         if (accountExist) {
@@ -80,46 +82,44 @@ router.route("/register").post(createAccountLimiter,
         }
         return true;
       }),
-    check("password", "Invalid password")
+    check("password", "Password is too weak")
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
-      .not().matches(emojiRegex).bail()
-      .isStrongPassword({minLength: 12, minLowercase:1, minUppercase: 1, minNumbers:1, pointsForContainingLower: 10, pointsForContainingNumber:45, pointsForContainingUpper: 45})
-      .isLength({max: 128}),                                         // [Validation] check if password is at least 12 characters
-    check("firstName", "Invalid First Name")
+      .isLength({ min: 12 }),                                         // [Validation] check if password is at least 12 characters
+    check("firstName", "First name is too long")
       .notEmpty()
       .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
       .trim()                                                         // [Sanitization] remove whitespace
-      .not().matches(emojiRegex)
-      .withMessage("No emoji allowed").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 }).bail()                                         // [Validation] max length
-      .escape(),                                                       // [Sanitization] Escape HTML characters
-    check("lastName", "Invalid Last Name")
+      .escape()                                                       // [Sanitization] Escape HTML characters
+      .isLength({ max: 25 }),                                         // [Validation] max length
+    check("lastName", "Last name is too long")
       .notEmpty()
       .withMessage("Last name is required").bail()                           // [Validation] check if last name is empty
       .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
-      .not().matches(emojiRegex)
-      .withMessage("No emoji allowed").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 })                                         // [Validation] max length
-      .escape(),                                                       // [Sanitization] Escape HTML characters
+      .escape()                                                       // [Sanitization] Escape HTML characters
+      .isLength({ max: 25 }),                                         // [Validation] max length
     check("phone", "Phone number is invalid")
       .notEmpty()
       .withMessage("Phone number is required").bail()                        // [Validation] check if phone number is empty
       .isMobilePhone().bail()                                                // [Validation] check if phone number is valid
       .isNumeric().bail()                                                    // [Validation] check if phone number is number
-      .trim() // Remove whitespace from both sides of a string
-      .isLength({ min: 6, max: 12 }),                                  // [Validation] Check if phone number is between 6 and 12 digits
+      .isLength({ min: 6, max: 12 }).bail()                                  // [Validation] Check if phone number is between 6 and 12 digits
+      .trim(), // Remove whitespace from both sides of a string
     check("countryCode", "Country code is invalid")
       .notEmpty().bail()
       .withMessage("Country code is required")                        // [Validation] check if country code is empty
       .matches(/^(\+\d{2,3})$/)                                       // [Validation] check if country code starts with + and has 2 or 3 digits
       .trim(),                                                        // [Sanitization] Remove whitespace from both sides of a string
-  ],(req, res) => {
+  ],
+  (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
+      const errArray = errors.array();
+      const errMessage = errArray.map((err) => err.msg).join("\n");
+      res.status(400).json({ message: errMessage });
+    } else {
+      apiRegister(req, res);
     }
-    apiRegister(req, res);
   }
 );
 
@@ -137,192 +137,61 @@ router.route("/login").post(
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
+      const errArray = errors.array();
+      const errMessage = errArray.map((err) => err.msg).join("\n");
+      res.status(400).json({ message: errMessage });
+    } else {
+      apiLogin(req, res);
     }
-    apiLogin(req, res);
-  });
+  }
+);
 
 // TODO: Remember to test this route
 // @route   POST api/accounts/verify2FA
 router.route('/verify2FA').post(verify2FALimiter,
     [
-      check('token', 'Invalid code')
-        .isNumeric()                                               // [Validation] Check if token is a number
-        .isLength({ min: 6, max: 6 }),                             // [Validation] 6 digits
-      
+        check('token', 'Invalid code')
+            .isNumeric()                                               // [Validation] Check if token is a number
+            .isLength({ min: 6, max: 6 }),                             // [Validation] 6 digits
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: "Invalid code" });
+            const errArray = errors.array();
+            const errMessage = errArray.map((err) => err.msg).join("\n");
+            res.status(400).json({ message: errMessage });
         }
-        apiVerify2FA(req, res);
+        else {
+            apiVerify2FA(req, res);
+        }
 })
 
 // @route   GET api/getAccount
 router.route("/getAccount").get(protect, apiGetAccount);
 
-// @route POST api/accounts/reset (send link to email)
-router.route("/reset").post(
-  [
-    check("email", 'Email is invalid')
-      .notEmpty().bail()
-      .trim() 
-      .isLength({ max: 255 }).bail()                                                       
-      .isEmail().bail()
-      .normalizeEmail(),                                               // [Sanitization] Sanitize email
-    check('token', 'Invalid code')
-      .trim()
-      .isInt().isLength({ min: 6, max: 6 }),                             // [Validation] 6 digits
-    
-  ], (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
-    else {
-      apiResetPassword(req, res);
-    }
-})
+// @route POST api/accounts/resetPassword
+router.route("/reset").post(apiResetPassword);
 
-// @route GET api/accounts/reset/:id/:jwt (verify after click link in email)
-router.route("/reset/:id/:jwt").get(
-  [
-    check('id', 'Invalid account ID')
-      .notEmpty().bail()
-      .isAlphanumeric().bail()
-      .isLength({ min: 24, max: 24 }),
-    check('jwt', 'Invalid token')
-      .notEmpty().bail()
-      .isJWT(),
-    
-  ], (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
-    apiVerifyReset(req, res);
-})
+// @route GET api/accounts/changePassword
+router.route("/reset/:id/:jwt").get(apiVerifyReset);
+router.route("/reset/:id/:jwt").post(apiChangePassword);
 
-// @route POST api/accounts/reset/:id/:jwt (after verify link)
-router.route("/reset/:id/:jwt").post(
-  [
-    check('id', 'Invalid account ID')
-      .notEmpty().bail()
-      .isAlphanumeric().bail()
-      .isLength({ min: 24, max: 24 }),
-    check('jwt', 'Invalid token')
-      .notEmpty().bail()
-      .isJWT(),
-    check("password", "Password is too long")
-      .notEmpty()
-      .withMessage("Password is required").bail()                            // [Validation] check if password is empty
-      .not().matches(emojiRegex).bail()
-      .isStrongPassword({minLength: 12, minLowercase:1, minUppercase: 1, minNumbers:1, pointsForContainingLower: 10, pointsForContainingNumber:45, pointsForContainingUpper: 45})
-      .isLength({ min: 12, max: 128 }),
-    
-  ], (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
-    apiChangePassword(req, res);
-});
-  
-// @route POST api/accounts/changePass
-router.route("/changePass").post(protect,
-  [
-    check('userId', 'Invalid account')
-      .notEmpty().bail()
-      .isAlphanumeric().bail()
-      .isLength({ min: 24, max: 24 }),
-    check('password', 'Invalid Password')
-      .notEmpty().bail()
-      .not().matches(emojiRegex).bail()
-      .isLength({ min: 12, max: 128 }),
-    
-  ], (req, res) => { 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-    apiNormalChangePass(req, res);
-});
+// @route POST normal change password
+router.route("/changePass").post(apiNormalChangePass);
 
-// @route POST api/accounts/uploadAvatar
-router.route("/uploadAvatar").post(protect,
-  [
-    check('userId', 'Invalid account').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
-    check('imgId', 'Missing Image').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
-
-  ], (req, res) => { 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Error: Image not uploaded" });
-    }
-    apiUploadAvatar(req, res);
-});
+// @route POST api/accounts/uploadImg
+router.route("/uploadAvatar").post(apiUploadAvatar)
 
 // @route POST api/accounts/update
-router.route("/update").post(protect,
-  [
-    check('userId', 'Invalid account').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
-    check("email", 'Invalid email')
-      .notEmpty().bail()                             // [Validation] check if email is empty
-      .trim()                                                         // [Sanitization] remove whitespace
-      .isLength({ max: 255 }).bail()                                // [Validation] max length
-      .isEmail()                                                    // [Validation] check if email is valid
-      .normalizeEmail(),                                               // [Sanitization] Sanitize email
-    check("firstName", "Invalid First Name")
-      .notEmpty()
-      .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
-      .trim()                                                         // [Sanitization] remove whitespace
-      .not().matches(emojiRegex)
-      .withMessage("First name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 }).bail()                                         // [Validation] max length
-      .escape(),                                                       // [Sanitization] Escape HTML characters
-    check("lastName", "Invalid Last Name")
-      .notEmpty()
-      .withMessage("Last name is required").bail()                           // [Validation] check if last name is empty
-      .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
-      .not().matches(emojiRegex)
-      .withMessage("Last name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 })                                         // [Validation] max length
-      .escape(),  
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const errArray = errors.array();
-      return res.status(400).json({ message: errArray });
-    }
-    apiUpdateDetails(req, res);
-  })
+router.route("/update").post(apiUpdateDetails)
 
-// @route POST api/accounts/updateSubscription
-router.route("/updateSubscription").post(protect,
-  [
-    check('emailSubscription', 'Try again later').notEmpty().bail().isBoolean(),
-  ], (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Error updating subscription" });
-    }
-    apiUpdateSubscription(req, res);
-});
+// @route POST api/accounts/update
+router.route("/updateSubscription").post(apiUpdateSubscription)
 
-// @route POST api/accounts/delete/:id
-router.route("/delete/:id").post(protect,
-  [
-    check('id', 'Invalid account ID').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
+// @route POST api/accounts/delete
+router.route("/delete/:id").post(apiDelete)
 
-  ], (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Error deleting account. Try again later" });
-    }
-    apiDelete(req, res);
-});
 
+module.exports = router;
 //Check captcha
 router.post("/checkCaptcha", async (req, res) => {
     //Destructuring response token from request body

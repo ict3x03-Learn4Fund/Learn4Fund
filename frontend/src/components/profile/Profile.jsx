@@ -22,6 +22,11 @@ function Profile() {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (userId) {
+      dispatch(getUserDetails());
+    }
+  }, [userId]);
 
   useEffect(() => {
     setFirstName(userInfo.firstName);
@@ -38,32 +43,23 @@ function Profile() {
   const updateProfile = () => {
     console.log(firstName, lastName, email);
     authService
-      .updateDetails(userInfo.id, firstName, lastName, email)
+      .updateDetails(userId, firstName, lastName, email)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Details Updated Successfully.");
           dispatch(getUserDetails());
         } else {
-          if (res.data.message && res.data.message === Array) {
-            res.data.message.map((err) => toast.error(err.msg));
-          }
-          else{ toast.error("Error updating profile. Try again later.");}
-          
+          toast.error(res.data.message);
         }
       })
       .catch((err) => {
-        toast.error("Error updating profile. Try again later.");
-        console.log(err.response.data.message);
+        toast.error(err.response.data.message);
       });
   };
 
   const uploadImage = (e) => {
     e.preventDefault();
     console.log(file);
-    if (file.type != "image/jpeg" && file.type != "image/png"){
-      toast.error("Please choose only jpeg and png images")
-      return
-    }
     formData.append("image", file);
     imagesService
       .uploadImage(formData)
@@ -72,7 +68,7 @@ function Profile() {
           console.log(response.data);
           const imgId = response.data.id;
           authService
-            .uploadAvatar(userInfo.id, imgId)
+            .uploadAvatar(userId, imgId)
             .then(() => {
               toast.success("Successfully uploaded image to this user.");
               setAvatar(response.data.id);
@@ -83,9 +79,6 @@ function Profile() {
         }
       })
       .catch((error) => {
-        if (error.response.data.message){
-          return toast.error(error.response.data.message)
-        }
         toast.error(error.message);
       });
   };
@@ -95,7 +88,7 @@ function Profile() {
   };
 
   const deleteAccount = () => {
-    authService.deleteAcc(userInfo.id).then((res) => {
+    authService.deleteAcc(userId).then((res) => {
       if (res.status == 200){
         toast.success("Account Deleted Successfully.")
         dispatch(logout());
@@ -113,7 +106,7 @@ function Profile() {
     const emailSubscription = !userInfo?.emailSubscription
     console.log(emailSubscription)
     authService
-      .updateSubscription(userInfo.id, emailSubscription)
+      .updateSubscription(userId, emailSubscription)
       .then((res) => {
         if (res.status == 200) {
           toast.success("Updated subscription status.");
@@ -190,7 +183,7 @@ function Profile() {
           </div>
 
           <div className="flex w-1/2 h-full justify-evenly">
-            <form enctype="multipart/form-data" >
+            <form>
               <img
                 src={
                   avatar
@@ -209,9 +202,7 @@ function Profile() {
               file:bg-violet-50 file:text-violet-700
               hover:file:bg-violet-100 mb-2"
                 type="file"
-                accept="image/jpeg,image/png"
                 name="file"
-                accept=".jpeg, .png"
                 onChange={(e) => handleFile(e)}
               ></input>
               <div className="flex-row justify-center self-center">

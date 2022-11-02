@@ -1,34 +1,25 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import {
-  userLogin,
-  getUserDetails,
-  getCartNumber,
-  user2FA,
-} from "../features/user/userActions";
-import { clearSignupState, logout } from "../features/user/userSlice";
+import { getCartNumber, user2FA, getUserDetails } from "../features/user/userActions";
 import QRCode from "react-qr-code";
-import { toast } from "react-toastify";
+import {toast} from "react-toastify";
 
-export const OTPModal = ({ closeModal, formData }) => {
+export const OTPModal = ({ closeModal }) => {
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     return () => {
-      // Anything in here is fired on component unmount.
-      document.body.style.overflow = "unset";
-    };
-  }, []);
-  const {
-    loading,
-    success,
-    error,
-    qrUrl,
-    stateErrorMsg,
-  } = useSelector((state) => state.user);
+        // Anything in here is fired on component unmount.
+        document.body.style.overflow = 'unset';
+    }
+}, [])
+  const { loading, userInfo, userId, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
+    (state) => state.user
+  );
 
   const {
     register,
@@ -45,48 +36,24 @@ export const OTPModal = ({ closeModal, formData }) => {
     setOtp(event.target.value);
   }
 
-  function handleCloseModal(){
-    dispatch(clearSignupState());
-    closeModal(false);
-  }
-
-  const submitForm = async () => {
-    if (qrUrl) {
-      await dispatch(user2FA({ token: otp }))
-        .then((res) => {
-          navigate("/");
-          toast.success("OTP Verified!");
-          dispatch(getUserDetails());
-          dispatch(getCartNumber(localStorage.getItem("userId")));
-        })
-        .catch((e) => {
-          toast.error("Wrong Code!");
-          console.log(e);
-          return;
-        });
-    } else {
-      if (formData) {
-        formData.token = otp;
-        dispatch(userLogin(formData));
-      }
-    }
+  const submitForm = (data) => {
+    const payload = {userId: userId, token: otp}
+    console.log(payload)
+    dispatch(user2FA(payload));
+    dispatch(getCartNumber())
   };
 
   useEffect(() => {
-    if (!qrUrl) {
-      if (success) {
-        toast.success('Logged in')
-        dispatch(getUserDetails(localStorage.getItem("userId")));
-        dispatch(getCartNumber());
-        navigate("/");
-      }
-      if (error) {
-        dispatch(logout());
-        closeModal(false)
-        toast.error(stateErrorMsg);
-      }
+    if (otpSuccess){
+      console.log("Authenticated!")
+      navigate("/")
+      dispatch(getUserDetails())
+      toast.success("Login Successful!")
     }
-  }, [dispatch, success, error, stateErrorMsg, qrUrl]);
+    if (otpError){
+      toast.error(stateErrorMsg)
+    }
+  },[dispatch, otpError, otpSuccess, stateErrorMsg])
 
   return (
     <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300">
@@ -99,7 +66,7 @@ export const OTPModal = ({ closeModal, formData }) => {
 
             <button
               className="text-[black] bg-transparent text-[24px]"
-              onClick={() => {handleCloseModal()}}
+              onClick={() => closeModal(false)}
             >
               <AiOutlineCloseSquare />
             </button>
@@ -111,7 +78,11 @@ export const OTPModal = ({ closeModal, formData }) => {
             <div className="flex flex-col items-center  rounded-lg">
               {qrUrl ? (
                 <Fragment className="flex items-center">
-                  <QRCode className="" value={qrUrl} size={256}></QRCode>
+                  <QRCode
+                    className=""
+                    value={qrUrl}
+                    size={256}
+                  ></QRCode>
                   <h2>
                     Scan this QR code on your preferred authentication
                     application.

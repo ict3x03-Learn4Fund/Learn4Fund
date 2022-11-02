@@ -4,9 +4,6 @@
   "description": "run npm install on first pull.",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "client": "cd frontend && npm run start",
-    "server": "cd backend && nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,7 +18,6 @@
   },
   "homepage": "https://github.com/ict3x03-Learn4Fund/Learn4Fund#readme",
   "dependencies": {
-    "concurrently": "^7.5.0",
     "dotenv": "^16.0.3"
   }
 }

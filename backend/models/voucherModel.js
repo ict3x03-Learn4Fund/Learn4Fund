@@ -21,10 +21,6 @@ const voucherSchema = mongoose.Schema(
         type: mongoose.SchemaTypes.ObjectId,
         ref: "Transaction"
     },
-    salt: {
-      type: String,
-      required: true
-    }
   },
   {
     timestamps: true
