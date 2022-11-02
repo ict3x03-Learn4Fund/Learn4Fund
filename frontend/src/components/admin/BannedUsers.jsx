@@ -13,7 +13,7 @@ const BannedUsers = ({accounts, fetchData}) => {
 
       
       <div className="w-full table-responsive">
-        <table className="table w-full table-striped table-bordered table-hover table">
+        <table className="table w-full table-striped table-bordered table-hover overflow: auto">
           <thead>
             <tr className="align-middle">
               <th>ID</th>

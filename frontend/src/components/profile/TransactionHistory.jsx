@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import paymentsService from "../../services/payment";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../../features/user/userActions";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 
 function TransactionHistory() {
   const [transactions, setTransaction] = useState([]);
@@ -10,7 +10,7 @@ function TransactionHistory() {
   const dispatch = useDispatch();
 
   const retrieveTransactions = () => {
-    paymentsService.getTransactions(userId).then((response) => {
+    paymentsService.getTransactions(userInfo.id).then((response) => {
       if (response.status == 200) {
         console.log(response.data);
         setTransaction(response.data.reverse());
@@ -30,14 +30,14 @@ function TransactionHistory() {
   }, setTransaction);
 
   return (
-    <div className="flex flex-row flex-wrap w-full bg-w1 rounded m-8 p-8 content-start">
+    <div className="flex flex-row flex-wrap w-full bg-w1 rounded m-8 p-8 content-start overflow-y-auto">
       <span className="flex w-full font-type1 text-[20px] font-bold">
         Transaction History
       </span>
       <p className="flex w-full">View previous purchases and payments</p>
       <span className="h-[2px] bg-[black] w-full my-2" />
 
-      <div className="flex overflow-x-auto w-full">
+      <div className="flex overflow-x-auto w-full ">
         <table className="table w-full">
           {/* <!-- head --> */}
           <thead>
@@ -65,8 +65,8 @@ function TransactionHistory() {
                       </td>
                       <td>${transaction.totalAmount}</td>
                       <td>
-                        {transaction.cardId.cardType} ****{" "}
-                        {transaction.cardId.last4No}
+                        {transaction.cardType} ****{" "}
+                        {transaction.last4No}
                       </td>
                     </tr>
                     {transaction.checkedOutCart.map((cart, index) => {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
-import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { getUserDetails, getCartNumber } from "../features/user/userActions";
+import {toast} from "react-toastify";
+import { useSelector } from "react-redux";
 import { CreditCardModal } from "../modals/CreditCardModal";
+import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
+import { useNav } from "../hooks/useNav";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -12,30 +13,30 @@ const Cart = () => {
   const [donation, setDonation] = useState(0);
   const [showDonation, setShowDonation] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
-  const { userInfo, userId } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-
+  const { userInfo } = useSelector((state) => state.user);
+  const {setTab} = useNav();
   const [checkedState, setCheckedState] = useState();
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    if (userId) {
-      console.log(userId);
-      getUserDetails();
+    setTab("cart")
+    if (userInfo) {
       getCart();
     } else {
       toast.error("Please login to view cart");
     }
   }, []);
 
+
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));
   }, cartList);
 
+  useEffect(() => {}, [cartList]);
+
   // retrieve cart
   const getCart = () => {
     cartsService
-      .getCart(userId)
+      .getCart(userInfo.id)
       .then((response) => {
         console.log(response.data);
         setCartList(response.data.coursesAdded);
@@ -72,13 +73,15 @@ const Cart = () => {
       // save card and return id
       // save address and return address
       // create transaction
-      setTotalAmount((
-        checkout.reduce(
-          (partialSum, a) => partialSum + parseFloat(a.currentPriceTotal),
-          0.0
-        ) + parseFloat(donation)
-      ).toFixed(2));
-      console.log(totalAmount, "\n", donation, "\n", checkout)
+      setTotalAmount(
+        (
+          checkout.reduce(
+            (partialSum, a) => partialSum + parseFloat(a.currentPriceTotal),
+            0.0
+          ) + parseFloat(donation)
+        ).toFixed(2)
+      );
+      console.log(totalAmount, "\n", donation, "\n", checkout);
       setShowModal(true);
     } else {
       toast.error("Select items to checkout");
@@ -88,7 +91,7 @@ const Cart = () => {
   // retrieve cart
   const deleteCart = (courseId) => {
     cartsService
-      .deleteCart(userId, courseId)
+      .deleteCart(userInfo.id, courseId)
       .then((response) => {
         setCartList(response.data.coursesAdded);
         toast.success("Items successfully deleted from cart.");
@@ -101,19 +104,7 @@ const Cart = () => {
 
   function removeItem(item, position) {
     deleteCart(item.courseId);
-    dispatch(getCartNumber(userId));
-    const updatedCheckedState = checkedState.map((item, index) =>
-      index === position ? !item : item
-    );
-
-    setCheckedState(updatedCheckedState);
-    if (checkout.includes(item)) {
-      setCheckout([
-        ...checkout.filter((element) => {
-          return element !== item;
-        }),
-      ]);
-    }
+    setCheckout([])
   }
 
   function addToCheckout(item) {
@@ -128,6 +119,20 @@ const Cart = () => {
     }
     console.log("checkout: ", checkout);
   }
+
+  const removeDonations = () => {
+    cartsService
+      .clearDonationsInCart(userInfo.id)
+      .then((res) => {
+        if (res.status == 200) {
+          toast.success("Donations cleared");
+          getCart();
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
+  };
 
   return (
     <main className="flex w-full h-full min-h-[600px] px-[40px] lg:px-[120px] pb-[24px] bg-b1 ">
@@ -259,9 +264,19 @@ const Cart = () => {
               <span className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
                 Donations made
               </span>
-              <span className="font-type1 text-[1vw] text-b1 font-bold">
-                ${donation}.00
-              </span>
+              <div>
+                {donation != 0 ? (
+                  <RemoveCircleOutlinedIcon
+                    fontSize="small"
+                    className="hover:text-red-500 justify-center"
+                    onClick={() => removeDonations()}
+                  ></RemoveCircleOutlinedIcon>
+                ) : null}
+
+                <span className="font-type1 text-[1vw] text-b1 font-bold">
+                  ${donation}.00
+                </span>
+              </div>
             </div>
             <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2" />
             <div className="flex flex-row justify-between w-full h-fit my-2">
@@ -291,7 +306,15 @@ const Cart = () => {
           </button>
         </div>
       </div>
-      {showModal && <CreditCardModal closeModal={setShowModal} totalAmount={totalAmount} donation={donation} showDonation={showDonation} checkout={checkout} />}
+      {showModal && (
+        <CreditCardModal
+          closeModal={setShowModal}
+          totalAmount={totalAmount}
+          donation={donation}
+          showDonation={showDonation}
+          checkout={checkout}
+        />
+      )}
     </main>
   );
 };

@@ -1,7 +1,8 @@
 const express = require('express')
 const {
     apiMakePayment,
-    apiAddMethod,
+    apiAddAddr,
+    apiAddCard,
     apiDeleteCard,
     apiDeleteAddr,
     apiGetMethods,
@@ -11,7 +12,8 @@ const router = express.Router()
 
 router.route("/:id").get(apiGetMethods)
 router.route("/pay").post(apiMakePayment)
-router.route("/addMethod").post(apiAddMethod)
+router.route("/addAddr").post(apiAddAddr)
+router.route("/addCard").post(apiAddCard)
 router.route("/deleteCard/:id").get(apiDeleteCard)
 router.route("/deleteAddr/:id").get(apiDeleteAddr)
 router.route("/getTransactions/:id").get(apiGetTransactions)

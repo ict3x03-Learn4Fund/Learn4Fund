@@ -9,13 +9,8 @@ const Donation = require("../models/donationModel");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
-
-//set up of encryption and decryption
-const algorithm = "aes-256-cbc";
-const initVector = crypto.randomBytes(16);
-const Securitykey = crypto.randomBytes(32);
-const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
-const decipher = crypto.createDecipheriv(algorithm, Securitykey, initVector);
+const { sendEmail } = require("../middleware/mailer.js");
+const Account = require("../models/accountModel");
 
 //// encryption code
 // let decryptedData = decipher.update(encryptedCode, "hex", "utf-8")
@@ -64,9 +59,15 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       checkedOutCart,
       billAddressId,
       cardId,
+      cardType,
+      last4No,
     } = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "AccountId cannot be null." });
+    }
+    const user = await Account.findById(accountId);
+    if (!user) {
+      return res.status(400).json({ message: "User not found." });
     }
 
     // reduce quantity from courses from checkedout cart
@@ -102,9 +103,10 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     let newCartList = existingCart.coursesAdded.filter(
       (cart) => !idArray.includes(cart.cartItem.courseId)
     );
-    existingCart.donationAmount = 0;
+    existingCart.donationAmt = 0;
     existingCart.coursesAdded = newCartList;
     existingCart.markModified("coursesAdded");
+    existingCart.markModified("donationAmount");
     existingCart.save();
 
     // create transaction document
@@ -115,42 +117,84 @@ const apiMakePayment = asyncHandler(async (req, res) => {
       accountId: accountId,
       billAddressId: billAddressId,
       cardId: cardId,
+      last4No: last4No,
+      cardType: cardType,
     });
 
     // create donation document
-    let donor = await Donation.findOne({accountId: accountId});
+    let donor = await Donation.findOne({ accountId: accountId });
     if (!donor) {
-      donor = await Donation.create({accountId: accountId});
+      donor = await Donation.create({ accountId: accountId });
     }
-    const newDonation = {amount: donationAmount, showDonation: showDonation};
-    donor.donationList.push(newDonation);
-    donor.save();
-
+    if (donationAmount != 0) {
+      const newDonation = {
+        amount: donationAmount,
+        showDonation: showDonation,
+        date: new Date()
+      };
+      donor.donationList.push(newDonation);
+      donor.markModified("donationList")
+      donor.save();
+    }
 
     // create vouchers using uuid
     // encrypt vouchers and save to voucher document
+    const emailList = [];
     const voucherList = [];
+    const expiryDate = new Date(+new Date() + 365 * 24 * 60 * 60 * 1000);
     for (const purchased in checkedOutCart) {
+      const courseInfo = await Course.findById(
+        checkedOutCart[purchased].cartItem.courseId
+      );
       for (
         let quantity = 0;
         quantity < checkedOutCart[purchased].cartItem.quantity;
         quantity++
       ) {
-        const code = uuidv4()
+        const code = uuidv4();
+        
         const salt = await bcrypt.genSalt(10);
         const hashedCode = await bcrypt.hash(code, salt);
         const voucher = await Voucher.create({
           courseId: checkedOutCart[purchased].cartItem.courseId,
           voucherCode: hashedCode,
+          salt: salt,
           accountId: accountId,
           transactionId: transaction._id,
         });
+        const emailVoucher = {
+          courseName: courseInfo.courseName,
+          voucherCode: code,
+          expiryDate: expiryDate,
+          voucherId: voucher._id,
+        };
+        emailList.push(emailVoucher);
         voucherList.push(voucher);
       }
     }
-    console.log(voucherList);
+    console.log(emailList);
 
-    return res.json({ transaction, voucherList });
+    let message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`;
+    let list = "";
+    emailList.map((value) => {
+      list = `${value.courseName}: [ID] ${value.voucherId} [CODE] ${value.voucherCode} \n`;
+      message += list;
+    });
+    message += `The expiry dates for all the vouchers are: ${emailList[0].expiryDate}. \nThanks for purchasing!`;
+    message += `\n\nRegards,\nTitans Division`;
+    message += `\n\nThis is an auto-generated email. Please do not reply.`;
+    message += `\nRef Id: ${transaction._id}`;
+    // send vouchers to user's email
+    const success = await sendEmail(
+      user.email,
+      "New Transaction Made",
+      message
+    );
+    if (success) {
+      return res.status(200).json({ transaction, voucherList });
+    } else {
+      return res.status(400).json({ message: "failed to send email" });
+    }
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
@@ -158,18 +202,17 @@ const apiMakePayment = asyncHandler(async (req, res) => {
 
 /***
  * @desc Add payment method
- * @route POST /v1/api/courses/company
+ * @route POST /v1/api/payments/addCard
  * @access Private
  */
-const apiAddMethod = asyncHandler(async (req, res) => {
+const apiAddCard = asyncHandler(async (req, res) => {
   try {
-    const { accountId, creditCard, billAddress } = req.body;
+    const { accountId, creditCard } = req.body;
     if (!accountId) {
       return res.status(400).json({ message: "Account Id not found" });
     }
 
     const existingCards = await CreditCard.find({ accountId: accountId });
-    const existingBills = await BillAddress.find({ accountId: accountId });
 
     const last4No = creditCard.cardNo.slice(-4);
 
@@ -177,9 +220,7 @@ const apiAddMethod = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedCardNo = await bcrypt.hash(creditCard.cardNo, salt);
     let newCreditCard;
-    let newAddr;
     let cardFlag = false;
-    let billFlag = false;
 
     for (const card in existingCards) {
       console.log(existingCards[card]);
@@ -188,11 +229,6 @@ const apiAddMethod = asyncHandler(async (req, res) => {
       }
     }
 
-    for (const bill in existingBills) {
-      if (existingBills[bill].postalCode == billAddress.postalCode) {
-        billFlag = true;
-      }
-    }
     if (!cardFlag) {
       newCreditCard = await CreditCard.create({
         accountId: accountId,
@@ -202,6 +238,35 @@ const apiAddMethod = asyncHandler(async (req, res) => {
         cardType: creditCard.cardType,
         expiryDate: creditCard.expiryDate,
       });
+      return res.status(200).json({ id: newCreditCard._id });
+    }
+    return res.status(400).json({ message: "Card already exists." });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/***
+ * @desc Add payment method
+ * @route POST /v1/api/payments/addAddr
+ * @access Private
+ */
+const apiAddAddr = asyncHandler(async (req, res) => {
+  try {
+    const { accountId, billAddress } = req.body;
+    if (!accountId) {
+      return res.status(400).json({ message: "Account Id not found" });
+    }
+
+    const existingBills = await BillAddress.find({ accountId: accountId });
+
+    let newAddr;
+    let billFlag = false;
+
+    for (const bill in existingBills) {
+      if (existingBills[bill].postalCode == billAddress.postalCode) {
+        billFlag = true;
+      }
     }
     if (!billFlag) {
       newAddr = await BillAddress.create({
@@ -213,11 +278,11 @@ const apiAddMethod = asyncHandler(async (req, res) => {
         city: billAddress.city,
         postalCode: billAddress.postalCode,
       });
+      return res.status(200).json({ id: newAddr._id });
     }
-
-    res.status(200).json({ newCreditCard, newAddr });
+    return res.status(400).json({ message: "Address already exists." });
   } catch (e) {
-    res.status(500).json(e.message);
+    res.status(500).json({ message: e.message });
   }
 });
 
@@ -271,7 +336,7 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
     })
       .populate("billAddressId")
       .populate({ path: "cardId", select: ["cardType", "last4No"] });
-    
+
     const filteredTrans = transactions;
     console.log(transactions[0].checkedOutCart[0]);
     for (const transaction in transactions) {
@@ -283,12 +348,15 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
         const newCartItem = {
           courseId: courseId,
           courseName: course.courseName,
-          quantity: transactions[transaction].checkedOutCart[cart].cartItem.quantity,
-          totalPrice: (course.courseDiscountedPrice * transactions[transaction].checkedOutCart[cart].cartItem.quantity).toFixed(2)
-        }
-        transactions[transaction].checkedOutCart[cart].cartItem = newCartItem
+          quantity:
+            transactions[transaction].checkedOutCart[cart].cartItem.quantity,
+          totalPrice: (
+            course.courseDiscountedPrice *
+            transactions[transaction].checkedOutCart[cart].cartItem.quantity
+          ).toFixed(2),
+        };
+        transactions[transaction].checkedOutCart[cart].cartItem = newCartItem;
         // transactions[transaction].checkedOutCart[cart].cartItem.courseName = course.CourseName;
-        
       }
     }
 
@@ -300,7 +368,8 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
 
 module.exports = {
   apiMakePayment,
-  apiAddMethod,
+  apiAddAddr,
+  apiAddCard,
   apiDeleteCard,
   apiDeleteAddr,
   apiGetMethods,

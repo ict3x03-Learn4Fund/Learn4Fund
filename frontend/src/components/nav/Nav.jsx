@@ -14,33 +14,32 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useNav } from "../../hooks/useNav";
-import cartsService from "../../services/carts";
-import toast from "react-hot-toast";
 
 function Nav() {
   const { tab, setTab } = useNav();
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState(0);
-  const { userInfo, userId, cartNo } = useSelector((state) => state.user);
+  const { userInfo, cartNo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [adminStatus, setAdmin] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  
+  const [avatar, setAvatar] = useState();
+
+  // get user info
+  useEffect(()=> {
+    if (localStorage.getItem("userId")){
+      dispatch(getUserDetails())
+    }
+  }, [])
 
   useEffect(() => {
     if (userInfo) {
-      dispatch(getUserDetails());
-      dispatch(getCartNumber())
+      dispatch(getCartNumber(userInfo.id));
+      setAvatar(userInfo.avatarImg)
+      console.log(new Date(userInfo.loggedTimestamp).getTime())
+      if(new Date().getTime() > new Date(userInfo.loggedTimestamp).getTime()+1000*60*30){
+        dispatch(logout())
+      }
     }
-  }, userInfo);
-
-  useEffect(() => {
-    if (userInfo != null && userInfo.role == "admin") {
-      setAdmin(true);
-    } else {
-      setAdmin(false);
-    }
-  }, userInfo);
+  }, [userInfo]);
 
   const handleLogout = () => {
     // logout();
@@ -49,13 +48,8 @@ function Nav() {
     navigate("/");
   };
 
-  const selectedTab = (tab) => {
-    setTab(tab);
-    navigate("/" + tab);
-  };
-
   useEffect(() => {
-    console.log("cart no: ",cartNo )
+    console.log("cart no: ", cartNo);
   }, cartNo);
   return (
     <section
@@ -68,7 +62,11 @@ function Nav() {
           {userInfo ? (
             <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
               <img
-                src={picture}
+                src={
+                  avatar
+                    ? `http://localhost:5000/v1/api/images/getImg/${userInfo?.avatarImg}`
+                    : picture
+                }
                 alt={"user profile"}
                 className="w-[32px] h-[32px] mr-[8px] bg-w1 self-center"
                 style={{ borderRadius: "100%" }}
@@ -89,10 +87,10 @@ function Nav() {
           )}
 
           <div className="flex w-full lg:w-1/2 justify-center lg:justify-end self-center">
-            {adminStatus && (
+            {userInfo && userInfo.role == "admin" && (
               <div
                 onClick={() => {
-                  selectedTab("admin");
+                  navigate("/admin");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -107,7 +105,7 @@ function Nav() {
             )}
             <div
               onClick={() => {
-                selectedTab("");
+                navigate("/");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -121,7 +119,7 @@ function Nav() {
             </div>
             <div
               onClick={() => {
-                selectedTab("donate");
+                navigate("/donate");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -136,7 +134,7 @@ function Nav() {
             {userInfo && (
               <div
                 onClick={() => {
-                  selectedTab("settings");
+                  navigate("/settings");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -151,7 +149,7 @@ function Nav() {
             )}
             <div
               onClick={() => {
-                selectedTab("cart");
+                navigate("/cart");
               }}
               className={
                 "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
@@ -180,7 +178,7 @@ function Nav() {
             ) : (
               <div
                 onClick={() => {
-                  selectedTab("login");
+                  navigate("/login");
                 }}
                 className={
                   "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +

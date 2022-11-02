@@ -3,6 +3,7 @@ import {AddCourseModal} from '../../components/admin/AddCourseModal'
 import courseService from '../../services/courses';
 import {ConfirmationModal} from '../../modals/ConfirmationModal'
 import {AiOutlineEdit, AiOutlineDelete} from 'react-icons/ai'
+import coursesService from '../../services/courses';
 
 const CoursesCatalog = () => {
   const [dataCourses, setDataCourses] = useState([]);
@@ -89,10 +90,10 @@ const CoursesCatalog = () => {
             </tr>
           </thead>
           <tbody className="table-group-divider">
-            {dataCourses.sort(sortObjectArrayByProperty(dataCourses, sortTable)).map((course) => (
+            {dataCourses.sort(sortObjectArrayByProperty(dataCourses, sortTable)).filter(course=>!course.deleteIndicator).map((course) => (
               <tr key={course._id}>
                 <td className='w-1/6'>{course._id.substring(course._id.length-5)}</td>
-                <td className='w-1/6'><b>{course.company }</b><br/> {  course.courseName}</td>
+                <td className='w-1/6'><p className="truncate ... w-full max-w-[200px]"><b>{course.company }</b><br/> {  course.courseName}</p></td>
                 <td className='w-1/6'>
                   {course.courseType}
                 </td>
@@ -100,7 +101,7 @@ const CoursesCatalog = () => {
                 <img
                     src={`http://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
-                    alt={"exmaple"}
+                    alt={"example"}
                   /></td>
                 <td className='w-1/6'>{course.quantity}</td>
               <td>

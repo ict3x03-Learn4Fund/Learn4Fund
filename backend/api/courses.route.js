@@ -36,10 +36,14 @@ router.route("/create").post(protect,               //TODO: Check if admin
         body('courseTutor', 'Tutor name is invalid')
             .notEmpty().bail()
             .isString().bail()
-            .isAlpha().trim(),
+            .trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
             .isInt({min: 1}),
+        body('company', 'Company is invalid')
+            .if(body('company').notEmpty())
+            .notEmpty().bail()
+            .isString().bail().trim(),
 
     ], (req, res) => {
         const errors = validationResult(req);
@@ -87,7 +91,11 @@ router.route("/update/:id").put(protect,
             .if(body('courseTutor').notEmpty())
             .notEmpty().bail()
             .isString().bail()
-            .isAlpha().trim(),
+            .trim(),
+        body('company', 'Company is invalid')
+            .if(body('company').notEmpty())
+            .notEmpty().bail()
+            .isString().bail().trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
             .isInt({min: 1}),
@@ -111,6 +119,7 @@ router.route("/delete/:id").post(protect,
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
     ],(req, res) => {
+        console.log(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const errArray = errors.array();

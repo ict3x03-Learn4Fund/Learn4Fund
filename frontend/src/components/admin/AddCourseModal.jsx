@@ -1,9 +1,15 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
+import courseService from "../../services/courses";
+import { toast } from 'react-toastify';
+import coursesService from '../../services/courses';
+import imagesService from "../../services/images";
 
 export const AddCourseModal = ({closeModal, courseInfo}) => {
-    
+  const [file, setFile] = useState(null);
+  const [checkBox, setCheckBox] = useState(false);
+  const formData = new FormData();
     const { loading, userInfo, error, success } = useSelector(state => state.user)
     const [updatedList,setUpdatedList] = React.useState({
       canBeDiscounted: false,
@@ -14,14 +20,21 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       courseName: "",
       courseOriginalPrice: 0.00,
       courseTutor: "",
-      courseType: "",
+      courseType: "IT",
       quantity: 0,
       _id: ""
     });
-    
+    useEffect(() => {
+      document.body.style.overflow = 'hidden';
+      return () => {
+          // Anything in here is fired on component unmount.
+          document.body.style.overflow = 'unset';
+      }
+  }, [])
 
     useEffect(() => {
       if (courseInfo._id){
+        setCheckBox(courseInfo.canBeDiscounted);
         setUpdatedList(courseInfo)
       }
     }, [courseInfo, setUpdatedList])
@@ -33,24 +46,85 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
         }));
       };
 
+      useEffect(() => {
+        console.log('changed!')
+      },[updatedList])
+
+      const uploadImage = (e) => {
+        e.preventDefault();
+        formData.append("image", file);
+        imagesService
+          .uploadImage(formData)
+          .then((response) => {
+            if (response.status == 200) {
+              updatedList.courseImg = response.data.id;
+              const imgId = response.data.id;
+              coursesService
+                .uploadCourseImage(imgId)
+                .then(() => {
+                  toast.success("Successfully uploaded image of course");
+                })
+                .catch((error) => {
+                  toast.error(error.response.data.message);
+                });
+            }
+          })
+          .catch((error) => {
+            toast.error(error.message);
+          });
+      };
+
     const swapSelection = () =>{
-        updatedList.canBeDiscounted = !updatedList.canBeDiscounted
-        setUpdatedList(updatedList);
-         console.log(updatedList)
+        setCheckBox(!checkBox)
+        updatedList.canBeDiscounted = checkBox;
+        setUpdatedList(updatedList)
     }
 
     const addOrUpdateCourse = () => {
         // update course
         if(updatedList._id){
-
+          updateCourses(updatedList._id, updatedList)
         }else{
         // insert course
-
+          createCourses(updatedList)
         }
+        closeModal(false);
     }
 
+  // create courses
+  const createCourses = (data) => {
+    courseService
+      .createCourse(data)
+      .then((response) => {
+        console.log(response)
+        toast.success('Course Created');
+      })
+      .catch((e) => {
+        toast.error('Error creating course');
+        console.log(e);
+      });
+  };
+
+  // update courses
+  const updateCourses = (id, data) => {
+    courseService
+      .updateCourse(id, data)
+      .then((response) => {
+        console.log(response)
+        toast.success('Course Updated');
+      })
+      .catch((e) => {
+        toast.error('Error updating course');
+        console.log(e);
+      });
+  };
+
+  const handleFile = (e) => {
+    setFile(e.target.files[0]);
+  };
+
   return (
-    <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300">
+    <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto transition ease-in-out delay-300" style={{zIndex: 999}}>
       <div className="flex justify-center items-center h-full w-full">
         <div className="flex-column w-3/4 py-4 bg-white rounded-lg shadow-lg m-[16px] space-y-4">
           <div className="flex w-full rounded-lg h-1/5 px-[16px]">
@@ -68,22 +142,22 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
           <div className='flex flex-wrap w-full px-4 justify-center'>
             <div className='flex-col w-1/2 space-y-2'>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Id</label> <input name="_id" type="text" className='border-2 border-b1 w-2/3 text-center' readOnly value={updatedList._id?updatedList._id: 'New Entry'} disabled/>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Company Name</label> <input name="company" type="text" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.company}/>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Name</label> <input type="text" name="courseName" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseName}/>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Tutor</label> <input type="text" name="courseTutor" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseTutor}/>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Type</label>
                 <select name="courseType" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseType}>
-                    <option value="IT">IT</option>
+                    <option selected value="IT">IT</option>
                     <option value="Business">Business</option>
                 </select>
                 </div>
@@ -91,18 +165,25 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 
             </div>
             <div className='flex-col w-1/2 space-y-2'>
-            <div className='flex h-[80px] flex-wrap mr-8 mt-2'>
+            <div className='flex h-[12vh] flex-wrap mr-8 mt-2'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={updatedList.courseImg ? `http://localhost:5000/v1/api/images/getImg/${updatedList.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
-                <button className='btn h-[40px] self-center m-auto'>Upload image</button>
+                <div className='flex-col w-2/5'>
+                <input
+                type="file"
+                name="file"
+                onChange={(e) => handleFile(e)}
+              ></input>
+                <button className='btn h-[6vh] self-center' onClick={(e) => uploadImage(e)}>Upload image</button>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                </div>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input type="text" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseOriginalPrice}/>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Discounted Price</label> <input type="text" name="courseDiscountedPrice" className='border-2 border-b1 w-1/2 text-center' onChange={editInput} value={updatedList.courseDiscountedPrice}/>
-                <input type="checkbox" className='border-2 border-b1 w-[50px] text-center' checked={updatedList.canBeDiscounted} onChange={()=>swapSelection()}/>
+                <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={checkBox} onChange={()=>swapSelection()}/>
                 </div>
-                <div className='flex h-[40px] flex-wrap mr-8'>
+                <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Quantity</label> <input name="quantity" type="number" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.quantity}/>
                 </div>
             </div>

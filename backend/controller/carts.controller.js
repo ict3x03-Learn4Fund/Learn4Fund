@@ -99,8 +99,8 @@ const apiGetCart = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiGetNo = asyncHandler(async (req, res) => {
-  const accountId = mongoose.Types.ObjectId(req.params.id);
   try {
+    const accountId = req.params.id
     let cart = await Cart.findOne({ accountId: accountId });
 
     if (!cart) cart = await Cart.create({ accountId: accountId });
@@ -186,10 +186,26 @@ const apiAddDonationToCart = asyncHandler(async (req, res) => {
   }
 });
 
+const apiClearDonation = asyncHandler(async (req, res) => {
+  try {
+    const accountId = req.params.id
+    const cart = await Cart.findOne({accountId: accountId})
+    if (!cart){
+      return res.status(400).json({message: "User not found."})
+    }
+    cart.donationAmt = 0
+    cart.save()
+    return res.status(200).json({cart})
+  } catch (e) {
+    return res.status(400).json({message: e.message})
+  }
+});
+
 module.exports = {
   apiAddCart,
   apiGetCart,
   apiDeleteCart,
   apiGetNo,
   apiAddDonationToCart,
+  apiClearDonation
 };
