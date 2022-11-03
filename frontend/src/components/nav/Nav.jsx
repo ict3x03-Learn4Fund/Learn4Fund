@@ -24,12 +24,14 @@ function Nav() {
   const dispatch = useDispatch();
   const [modalOpen, setModalOpen] = useState(false);
   const [avatar, setAvatar] = useState();
+
   // get user info
   useEffect(()=> {
+    dispatch(getUserDetails())
     setInterval(() => {
-      //checks user every 2 mins
+      //checks user every 1 mins
       dispatch(getUserDetails())
-    }, 120000);
+    }, 60000);
   }, [])
 
   useEffect(() => {

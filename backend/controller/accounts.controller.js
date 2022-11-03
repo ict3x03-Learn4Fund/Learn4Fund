@@ -284,6 +284,9 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     loggedTimestamp,
     role,
   } = await Account.findById(req.account.id);
+
+  const sessionTimeout = (new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000 ? true : false
+
   res.status(200).json({
     id: _id,
     firstName,
@@ -295,7 +298,8 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     emailSubscription,
     lockedOut,
     loginTimes,
-    loggedTimestamp
+    loggedTimestamp,
+    sessionTimeout
   });
 });
 
