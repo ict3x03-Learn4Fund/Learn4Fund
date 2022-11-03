@@ -1,6 +1,7 @@
 import authService from "../../services/accounts";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import cartsService from "../../services/carts";
+import {toast} from "react-toastify";
 
 // userAction.js
 export const registerUser = createAsyncThunk(
@@ -45,12 +46,20 @@ export const userLogin = createAsyncThunk(
 
 export const getUserDetails = createAsyncThunk(
     'user/getUserDetails',
-    async (arg, {getState, rejectWithValue}) => {
+    async (arg, { rejectWithValue}) => {
         try {
-            let {user} = getState()
             // send user's id to retrieve account information
+            if(localStorage.getItem('userId')) {
             const data = await authService.getAccount(localStorage.getItem('userId'));
+            console.log(data)
+
+            if(data.sessionTimeout){
+      toast.warning('Your sessions has expired, please login again')
+                localStorage.removeItem('userId');
+            }
             return data
+        }
+        return rejectWithValue('Session expired');
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
@@ -92,9 +101,8 @@ export const getCartNumber = createAsyncThunk(
             if (response.status == 200){
                 return response.data.totalNo
             } else {
-                return rejectWithValue(response.message)
+                return 0
             }
-            return
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)

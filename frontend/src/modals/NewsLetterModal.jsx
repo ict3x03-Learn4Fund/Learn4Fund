@@ -1,6 +1,6 @@
 import { AiOutlineCloseSquare } from "react-icons/ai"
 import {toast} from "react-toastify";
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useEffect } from "react";
 
 export const NewsLetterModal = ({closeModal}) => {
@@ -11,7 +11,7 @@ export const NewsLetterModal = ({closeModal}) => {
         document.body.style.overflow = 'unset';
     }
 }, [])
-  const { loading, userInfo, error, success } = useSelector(
+  const { userInfo } = useSelector(
     (state) => state.user
   )
 
@@ -21,7 +21,7 @@ export const NewsLetterModal = ({closeModal}) => {
             return;
         }
 
-        // do sanitisation and check if email is valid
+        closeModal(false);
 
     }
 
@@ -32,7 +32,7 @@ export const NewsLetterModal = ({closeModal}) => {
           <div className="flex-column w-1/2 h-fit bg-white rounded-lg shadow-lg m-[16px]">
             <div className="flex w-full rounded-lg h-1/5 px-[16px] my-4">
             <div className="text-yellow-500 font-bold text-center w-full self-center font-type3 text-[24px]">
-            Thank You For Subscribing!
+            Subscribe To Our Newsletter
             </div>
   
               <button
@@ -46,9 +46,9 @@ export const NewsLetterModal = ({closeModal}) => {
             <div className="flex w-full text-[1vw] flex-wrap px-8">
               <p>Confirm that you have understood the information below: </p>
               <p>Due to the rise of phishing scams (fake emails), we will only send news information to your email.</p>
-              <p>Learn4Fund will never ask for your email, password or OTP.</p>
-              <p>Unsubscribe to the newsletter under profile settings.</p>
-              <p>Please contact us at <a href="mailto:contact@learn4fund.com">contact@learn4fund.com</a>, for further queries.</p>
+              <p className="mb-2">Learn4Fund will never ask for your email, password or OTP.</p>
+              <p><b>Subscribe or Unsubscribe</b> to the newsletter under profile settings.</p>
+              <p>Please contact us at <a href="mailto:contact@learn4fund.com"><b><u>contact@learn4fund.com</u></b></a>, for further queries.</p>
             </div>
             
             <div className="flex w-full justify-evenly text-[1vw] m-4">

@@ -15,6 +15,7 @@ services:
              # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
              # container service name and port on which it is running
             - CHOKIDAR_USEPOLLING=true #for hot reloading
+            - CURRENT_ENV=testing
         restart: always
         #added    
         ports:
@@ -34,6 +35,7 @@ services:
             #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
+            - REACT_APP_CURRENT_ENV=testing
         ports:
             - 3000:3000
 # volumes are defined here
