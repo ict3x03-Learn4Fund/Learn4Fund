@@ -181,3 +181,4 @@ frontend/yarn.lock
 package-lock.json
 *.pem
 *.key
+frontend/src/http-common.js

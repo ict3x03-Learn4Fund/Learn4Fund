@@ -100,7 +100,7 @@ router.route("/addAddr").post(protect,
             .isString().isLength({ min: 2, max: 35 })
             .escape().trim(),
         body('billAddress.unit', 'Invalid unit')
-            .notEmpty().bail().isString().trim(),
+            .notEmpty().bail().isString().isLength({ max: 10 }).trim(),
         body('billAddress.postalCode', 'Invalid postal code')
             .notEmpty().bail()
             .isInt().isLength({ min: 6, max: 6 }),
