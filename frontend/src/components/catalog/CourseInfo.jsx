@@ -73,8 +73,13 @@ function CourseInfo() {
     retrieveCourses();
     retrieveReviews();
     calculateAverageStars();
-    verifyReview();
   }, [courseID]);
+
+  useEffect(() => {
+    if (userInfo) {
+      verifyReview();
+    }
+  },[]);
 
   // Add quantity to const variable
   function handleChange(event) {
@@ -101,7 +106,7 @@ function CourseInfo() {
 
   // add cart item
   const addCartItem = () => {
-    if(quantitySelected == 0){
+    if (quantitySelected == 0) {
       return;
     }
     cartsService

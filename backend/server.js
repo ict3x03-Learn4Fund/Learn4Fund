@@ -19,6 +19,8 @@ connectDB();
 
 const app = express();
 
+module.exports = {app}
+
 // TODO: Uncomment this line in production
 // app.set('trust proxy', 2);                                 // [DoS] trust 2 , cloudflare and nginx
 
