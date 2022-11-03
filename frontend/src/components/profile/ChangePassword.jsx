@@ -9,18 +9,17 @@ import authService from "../../services/accounts";
 import validator from "validator";
 
 function ChangePassword() {
-  const { loading, userInfo, userId, otpError, qrUrl, stateErrorMsg } = useSelector(
+  const { userId } = useSelector(
     (state) => state.user
   );
   
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg] = useState("");
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const [passwordStrength, setPasswordStrength] = useState(0);
   const [fufillPassword, setFufillPassword] = useState([
     false,
     false,
@@ -30,30 +29,16 @@ function ChangePassword() {
 
   const [accountForm, setAccountForm] = useState({
     password: "",
-    passwrod2: "",
+    password2: "",
   });
 
   const { password, password2 } = accountForm;
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const onChange = (e) => {
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
 
   const checkPassword = (e) => {
-    if (
-      /(?=^.{12,}$)(?=.*\d)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
-        e.target.value
-      )
-    ) {
-      setPasswordStrength(100);
-    } else {
-      setPasswordStrength(0);
-    }
+    
 
     if (e.target.value.length >= 12) {
       setFufillPassword((prevState) => [
@@ -147,13 +132,7 @@ function ChangePassword() {
     setModalOpen(true);
   };
 
-  const setColor = (strength) => {
-    if (strength < 50) {
-      return "red";
-    } else {
-      return "green";
-    }
-  };
+  
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -266,19 +245,6 @@ function ChangePassword() {
               </p>
             </div>
           )}
-
-          <div className="flex flex-col flex-wrap ml-2 my-2 w-1/3">
-            <div className="flex w-full">password strength</div>
-            <input
-              className="flex-none border-2 border-g3 rounded-r text-center text-white"
-              style={{ backgroundColor: setColor(passwordStrength) }}
-              type="text"
-              readOnly
-              id="passwordstrength"
-              name="passwordstrength"
-              value={passwordStrength < 50 ? "Unacceptable" : "Acceptable"}
-            />
-          </div>
 
           <div className="flex flex-row flex-wrap w-full bg-white rounded p-2 my-2">
             <div className="flex-none w-full">

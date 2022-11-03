@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {useEffect} from 'react';
 
 export const PromotionModal = ({closeModal}) => {
-  const { loading, userInfo, error, success } = useSelector(
+  const { userInfo } = useSelector(
     (state) => state.user
   )
 

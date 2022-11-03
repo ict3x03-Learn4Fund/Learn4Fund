@@ -1,20 +1,24 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {toast} from "react-toastify";
+import {logout} from "../features/user/userSlice";
 
 const ProtectedRoute = () => {
   const { userInfo } = useSelector((state) => state.user)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
   useEffect(()=>{
     if (!localStorage.getItem('userId')) {
       toast.warning('You are not authorised to access this page')
+      dispatch(logout())
     setTimeout(() => {
       navigate('/login')
     },5000)
       
     }
-  },[navigate])
+  },[])
 
   // show unauthorized screen if no user is found in redux store
   if (!userInfo) {

@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import React, {useEffect} from 'react'
 import courseService from '../services/courses';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
@@ -12,7 +12,7 @@ export const ConfirmationModal = ({closeModal, courseInfo}) => {
         document.body.style.overflow = 'unset';
     }
 }, [])
-    const { loading, userInfo, error, success } = useSelector(state => state.user)
+    const { userInfo } = useSelector(state => state.user)
     const deleteCourse = () => {
         courseService
           .deleteCourse(courseInfo._id)

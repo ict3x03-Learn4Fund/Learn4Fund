@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useNav } from "../hooks/useNav";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { user2FA } from "../features/user/userActions";
 import {toast} from "react-toastify";
 import authService from "../services/accounts";
 import validator from "validator";
 
 function ChangePass() {
-  const { setTab } = useNav();
-  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const dispatch = useDispatch();
-  const [errorMsg, setErrorMsg] = useState("");
   const { loading } = useSelector((state) => state.user);
-  const [email, setEmail] = useState("");
   const {
     register,
     handleSubmit,
@@ -32,13 +25,6 @@ function ChangePass() {
   });
   const { password, password2 } = accountForm;
 
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [fufillPassword, setFufillPassword] = useState([
-    false,
-    false,
-    false,
-    false,
-  ]);
 
   useEffect(() => {
     verifyReset();
@@ -70,13 +56,14 @@ function ChangePass() {
       }
     }
     authService.changePass(userId, jwt, password).then((response) => {
+      console.log(response)
       if (response.status == 200){
         toast.success(response.data.message)
         navigate("/login")
       } 
       else { toast.error(response.data.message) }
     }).catch((error) => {
-      toast.error(error.message.data.message)
+      toast.error(error.response.data.message)
     })
   }
 
@@ -87,100 +74,6 @@ function ChangePass() {
     }));
   };
 
-  const checkPassword = (e) => {
-    if (
-      /(?=^.{12,}$)(?=.*\d)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
-        e.target.value
-      )
-    ) {
-      setPasswordStrength(100);
-    } else {
-      setPasswordStrength(0);
-    }
-
-    if (e.target.value.length >= 12) {
-      setFufillPassword((prevState) => [
-        true,
-        prevState[1],
-        prevState[2],
-        prevState[3],
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        false,
-        prevState[1],
-        prevState[2],
-        prevState[3],
-      ]);
-    }
-
-    if (/(?=.*[A-Z])(?=.*[a-z])/.test(e.target.value)) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        true,
-        prevState[2],
-        prevState[3],
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        false,
-        prevState[2],
-        prevState[3],
-      ]);
-    }
-
-    if (/(?=.*\d)(?=.*[A-Z])/.test(e.target.value)) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        true,
-        prevState[3],
-      ]);
-    } else if (/(?=.*\d)(?=.*[a-z])/.test(e.target.value)) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        true,
-        prevState[3],
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        false,
-        prevState[3],
-      ]);
-    }
-
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const confirmPasswordCheck = (e) => {
-    if (e.target.value == accountForm.password) {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        prevState[2],
-        true,
-      ]);
-    } else {
-      setFufillPassword((prevState) => [
-        prevState[0],
-        prevState[1],
-        prevState[2],
-        false,
-      ]);
-    }
-
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
 
   return (
     <main>
@@ -208,7 +101,7 @@ function ChangePass() {
                 id="password"
                 name="password"
                 value={password}
-                onChange={checkPassword}
+                onChange={onChange}
               />
             </div>
             {errors.password && (
@@ -239,7 +132,7 @@ function ChangePass() {
                 id="password2"
                 name="password2"
                 value={password2}
-                onChange={confirmPasswordCheck}
+                onChange={onChange}
               />
             </div>
             <div className="flex flex-nowrap flex-col items-center	 w-full justify-center">

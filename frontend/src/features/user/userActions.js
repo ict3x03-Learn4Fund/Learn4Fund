@@ -45,12 +45,18 @@ export const userLogin = createAsyncThunk(
 
 export const getUserDetails = createAsyncThunk(
     'user/getUserDetails',
-    async (arg, {getState, rejectWithValue}) => {
+    async (arg, { rejectWithValue}) => {
         try {
-            let {user} = getState()
             // send user's id to retrieve account information
+            if(localStorage.getItem('userId')) {
             const data = await authService.getAccount(localStorage.getItem('userId'));
+            if(new Date().getTime() > new Date(data.loggedTimestamp).getTime() + 1800000){
+                localStorage.removeItem('userId');
+                return rejectWithValue('Session expired');
+            }
             return data
+        }
+        return null
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
@@ -92,9 +98,8 @@ export const getCartNumber = createAsyncThunk(
             if (response.status == 200){
                 return response.data.totalNo
             } else {
-                return rejectWithValue(response.message)
+                return 0
             }
-            return
         } catch (error) {
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
