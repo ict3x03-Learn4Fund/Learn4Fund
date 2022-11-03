@@ -21,7 +21,7 @@ const Cart = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setTab("cart")
-    if (userInfo) {
+    if (localStorage.getItem("userId")) {
       getCart();
     } else {
       toast.error("Please login to view cart");
