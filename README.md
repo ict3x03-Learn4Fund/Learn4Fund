@@ -1,5 +1,13 @@
 # Learn4Fund Web Application
 
+Learn4Fund is a fictitious E-commerce portal that allows users to purchase and redeem digital vouchers for online courses in various industry certifications.
+
+With a mission to empower the less privileged with education, a percentage of its profit would be donated to the charity. The website entails features that allow users (individuals or corporate members) to register, access, and manage their accounts, search for courses to purchase and enroll, make digital transactions, provide reviews, and store users' information. Users may opt to donate anonymously or be featured on the Donors Appreciation page. Attractive deals are offered to all donors, as a gesture of appreciation for their support of the Learn4Fund cause. Special offers are regularly sent to users via newsletter subscription service. 
+
+The company behind Learn4Fund, Titans, shall ensure that its website, users' personal identifiable information(PII) and donations are safeguarded from adversaries and cyberattacks. 
+
+
+
 ## Installation
 
 run npm install on first pull.
