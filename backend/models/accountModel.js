@@ -57,6 +57,9 @@ const accountSchema = mongoose.Schema(
         type: Date,
         default: Date.now
     },
+    ipAddress: {
+      type: String,
+    },
     role: {
         type: String,
         default: "user",

@@ -77,6 +77,10 @@ function Donations() {
   };
 
   function addToCart() {
+    if(offerAmtRef.current.value <= 0){
+      toast.error("Please enter a valid amount");
+      return;
+    }
     if(offerAmtRef.current.value >9999999){
       toast.info('Please enter a valid amount less than 10 million') 
       return
@@ -151,7 +155,7 @@ function Donations() {
         </div>
         <div className="flex flex-col w-full h-[240px] lg:h-[320px] my-[16px]">
           <div className="flex w-full h-full justify-center">
-            <img src={Banner} alt={""} />
+            <img src={Banner} alt={""} className="bg-black"/>
           </div>
         </div>
         <hr className="flex flex-wrap w-full border-1 border-[black] self-center m-2" />
