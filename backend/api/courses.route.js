@@ -32,7 +32,7 @@ router.route("/create").post(protect,               //TODO: Check if admin
             .notEmpty().bail()
             .isString(),
         body('courseDescription', 'Invalid course description')
-            .isAlphanumeric().bail()
+            .isString().bail()
             .isLength({ max: 500 })
             .escape().trim(),
         body('courseTutor', 'Tutor name is invalid')
@@ -130,6 +130,5 @@ router.route("/delete/:id").post(protect,
             return res.status(400).json({ errors: errMessage });
         }
         apiDeleteCourse(req, res)
-    }) //TODO: Check if admin
-
+    }) 
 module.exports = router
