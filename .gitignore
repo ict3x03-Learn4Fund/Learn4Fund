@@ -1,8 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,react,yarn
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,react,yarn
 
-##
-frontend/src/http-common.js
 ### Node ###
 # Logs
 logs
@@ -174,10 +172,3 @@ sketch
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/node,react,yarn
-
-frontend/package-lock.json
-backend/package-lock.json
-frontend/yarn.lock
-package-lock.json
-*.pem
-*.key
