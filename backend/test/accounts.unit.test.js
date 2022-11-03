@@ -1,89 +1,159 @@
-const expect = require("chai").expect;
-const request = require("supertest");
-const mongoose = require("mongoose");
-const {app} = require("../server");
-const conn = require("./db.test");
-let chai = require("chai")
+process.env.NODE_ENV = "test";
+const { app } = require("../server");
+let chai = require("chai");
 let chaiHttp = require("chai-http");
-chai.should()
-chai.use(chaiHttp)
-const bodyParser = require('body-parser');
+chai.should();
+chai.use(chaiHttp);
 
-
-const Mockgoose = require("mockgoose").Mockgoose;
-const mockgoose = new Mockgoose(mongoose);
-
-describe("Register account", () => {
-  it("Successful creation", (done) => {
-    console.log("hi");
-    req = {
+describe("Testing Accounts.js", () => {
+  it("Email Input validation error for Register", (done) => {
+    const req = {
       firstName: "Lucas",
       lastName: "Chua",
-      email: "shengyu98@hotmail.com",
+      email: "shengyu98123",
       emailSubscription: true,
       password: "Password123456",
       phone: "92282700",
       countryCode: "+65",
-    }
-    chai.request(app)
+    };
+    chai
+      .request(app)
       .post("/v1/api/accounts/register")
-      .type('json')
+      .type("json")
       .send(req)
       .end((err, res) => {
-        console.log("Hhii");
         const body = res.body;
-        console.log("hi", body);
-        res.body.should.have.status(200);
+        res.should.have.status(400);
         done();
-      })
-    
-  })
+      });
+  });
+  it("Password Input validation error for Register", (done) => {
+    const req = {
+      firstName: "Lucas",
+      lastName: "Chua",
+      email: "test@hotmail.com",
+      emailSubscription: true,
+      password: "",
+      phone: "92282700",
+      countryCode: "+65",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/register")
+      .type("json")
+      .send(req)
+      .end((err, res) => {
+        const body = res.body;
+        res.should.have.status(400);
+        done();
+      });
+  });
+  it("Invalid credentials for Login", (done) => {
+    const req = {
+      email: "test@test.com",
+      password: "",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/login")
+      .type("json")
+      .send(req)
+      .end((err, res) => {
+        const body = res.body;
+        res.should.have.status(400);
+        done();
+      });
+  });
+  it("Invalid user for 2fa verification", (done) => {
+    const req = {
+      userId: "",
+      token: "",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/verify2FA")
+      .type("json")
+      .send(req)
+      .end((err, res) => {
+        const body = res.body;
+        res.should.have.status(400);
+        done();
+      });
+  });
+  it("Successful Register", (done) => {
+    const req = {
+      firstName: "Lucas",
+      lastName: "Chua",
+      email: "test@test.com",
+      emailSubscription: true,
+      password: "Password123456",
+      phone: "92282700",
+      countryCode: "+65",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/register")
+      .type("json")
+      .send(req)
+      .end((err, res) => {
+        const body = res.body;
+        res.body.should.have.property("_id");
+        res.body.should.have.property("secret");
+        done();
+      });
+  });
+  it("Successful Login", (done) => {
+    const req = {
+      email: "test@test.com",
+      password: "Password123456",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/login")
+      .type("json")
+      .send(req)
+      .end((err, res) => {
+        const body = res.body;
+        res.should.have.status(200);
+        res.body.should.have.property("_id");
+        done();
+      });
+  });
+  it("Email Validation for password reset", (done) => {
+    const req = {
+      email: "testcom",
+      token: "",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/reset")
+      .send(req)
+      .end((err, res) => {
+        res.should.have.status(400);
+        done();
+      });
+  });
+  it("Token validation for password reset", (done) => {
+    const req = {
+      email: "testcom",
+      token: "1234567",
+    };
+    chai
+      .request(app)
+      .post("/v1/api/accounts/reset")
+      .send(req)
+      .end((err, res) => {
+        res.should.have.status(400);
+        done();
+      });
+  });
+  it("Authentication to retrieve user", (done) => {
+    chai
+      .request(app)
+      .get("/v1/api/accounts/getAccount")
+      .end((err, res) => {
+        res.should.have.status(401);
+        done();
+      });
+  });
 });
-
-// describe("Register account", () => {
-//   before(function (done) {
-//     mockgoose.prepareStorage().then(function () {
-//       mongoose.connect(process.env.COURSES_DB_URI, function (err) {
-//         done(err);
-//       });
-//     });
-//     // before(async (done) => {
-//     //   await conn
-//     //     .connect()
-//     //     .then(() => done())
-//     //     .catch((err) => done(err));
-//   });
-
-//   after((done) => {
-//     conn
-//       .close()
-//       .then(() => done())
-//       .catch((err) => done(err));
-//   });
-//   it("Successful creation", (done) => {
-//     console.log("hi");
-//     request(server)
-//       .post("/register")
-//       .send({
-//         firstName: "Lucas",
-//         lastName: "Chua",
-//         email: "shengyu98@hotmail.com",
-//         emailSubscription: true,
-//         password: "Password123456",
-//         phone: "92282700",
-//         countryCode: "+65",
-//       })
-//       .then((res) => {
-//         console.log("Hhii");
-//         const body = res.body;
-//         console.log("hi", body);
-//         expect(body).to.contain.property("_id");
-//         done();
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         done();
-//       });
-    
-//   })
-// });

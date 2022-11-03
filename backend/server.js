@@ -13,8 +13,17 @@ const Grid = require("gridfs-stream");
 const methodOverride = require("method-override");
 const multer = require('multer')
 const bodyParser = require('body-parser');
+const e = require("express");
+const Mockgoose = require("mockgoose").Mockgoose;
+const mockgoose = new Mockgoose(mongoose);
 
-connectDB();
+if (process.env.NODE_ENV === 'test'){
+  mockgoose.prepareStorage().then(function() {
+    mongoose.connect(process.env.COURSES_DB_URI)
+  })
+} else {
+  connectDB();
+}
 // recaptcha();
 
 const app = express();
