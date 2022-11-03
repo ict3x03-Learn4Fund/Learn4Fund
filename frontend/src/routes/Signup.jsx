@@ -202,7 +202,7 @@ const Signup = () => {
       <div className="flex flex-col items-center justify-center h-fit py-20 bg-[url('assets/images/background.jpg')] bg-cover bg-no-repeat backdrop-blur-sm">
         <div className="flex flex-col items-center w-1/2 h-fit p-2 bg-w2 rounded-lg border-2 border-black">
           <span className="font-type2 text-2xl">
-            Register an account with us
+            Register an account with us.
           </span>
 
           <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
