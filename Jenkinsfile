@@ -1,12 +1,6 @@
 pipeline {
     agent any
     stages {       
-        // stage("Git Fetch") {
-        //     steps {
-                // load '/var/jenkins_home/env/learn4fund.groovy'
-        //         git branch: "dev", url: "https://${env.gitAccessToken}@github.com/ict3x03-Learn4Fund/Learn4Fund.git"
-        //     }
-        // }
 
         stage("Test Build") {
             steps {                
@@ -38,6 +32,15 @@ pipeline {
                 sh 'echo "Waiting testing website to be up..."'
                 sh 'sleep 60'
                 sh 'python3 /home/test_linux.py'
+            }
+        }
+
+        stage("Unit Testing"){
+            steps{
+                sh 'docker compose down --rmi all' // Kill containers to run unit test
+                dir('backend'){
+                    sh 'npm run test'
+                }
             }
         }
 
