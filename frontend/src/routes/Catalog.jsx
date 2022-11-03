@@ -167,7 +167,7 @@ function Catalog() {
                   >
                     <img
                       src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
-                      className="flex  h-[120px] w-full object-stretch"
+                      className="flex  h-[160px] w-full object-stretch"
                       alt={""}
                     />
                     <div className="flex-row flex-wrap w-full space-y-2">
@@ -180,12 +180,22 @@ function Catalog() {
                       </div>
 
                       <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
+                      {!course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
+                          NOW ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
                         <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
-                          U.P. ${course.courseOriginalPrice}
+                          U.P. ${course.courseOriginalPrice.toFixed(2)}
                         </span>
+                      )}
+                      {course.canBeDiscounted && (
                         <span className="bg-success h-[24px] text-w1 lg:p-1">
-                          NOW ${course.courseDiscountedPrice}
+                          NOW ${course.courseDiscountedPrice.toFixed(2)}
                         </span>
+                      )}
+                      {course.canBeDiscounted && (
                         <span className="bg-g2 h-[24px] text-w1 lg:p-1">
                           {(
                             ((course.courseOriginalPrice -
@@ -195,6 +205,7 @@ function Catalog() {
                           ).toFixed(0)}
                           % OFF
                         </span>
+                      )}
                       </div>
                       <div className="flex w-full h-[40px] justify-between text-[12px] leading-[20px] font-bold font-type1">
                         <button className="font-type1 font-bold uppercase btn w-full h-[40px]">

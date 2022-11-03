@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
 import courseService from "../../services/courses";
 import { toast } from 'react-toastify';
@@ -10,10 +10,10 @@ import validator from 'validator';
 export const AddCourseModal = ({closeModal, courseInfo}) => {
   const [file, setFile] = useState(null);
   const [checkBox, setCheckBox] = useState(false);
-  const discountAmtRef = useRef(0.0);
-  const originalAmtRef = useRef(0.0);
+  const discountAmtRef = useRef(null);
+  const originalAmtRef = useRef(null);
   const formData = new FormData();
-    const { loading, userInfo, error, success } = useSelector(state => state.user)
+    const { userInfo } = useSelector(state => state.user)
     const [updatedList,setUpdatedList] = React.useState({
       canBeDiscounted: false,
       company: "",
@@ -23,7 +23,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       courseName: "",
       courseOriginalPrice: 0.00,
       courseTutor: "",
-      courseType: "IT",
+      courseType: "",
       quantity: 0,
       _id: ""
     });
@@ -39,8 +39,8 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       if (courseInfo._id){
         setCheckBox(courseInfo.canBeDiscounted);
         setUpdatedList(courseInfo)
-        originalAmtRef.current(courseInfo.courseOriginalPrice);
-        discountAmtRef.current(courseInfo.courseDiscountedPrice);
+        originalAmtRef.current.value = courseInfo.courseOriginalPrice
+        discountAmtRef.current.value = courseInfo.courseDiscountedPrice
       }
     }, [courseInfo, setUpdatedList])
 
@@ -49,7 +49,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) { 
       if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true;}
       if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); error = true; }
-      if (!validator.isLength(updatedList.courseTutor, { max: 50 }) || !validator.isAlphanumeric(updatedList.courseTutor)) { toast.error("Course Tutor: Alphanumeric within 50 characters"); error = true;}
+      if (!validator.isLength(updatedList.courseTutor, { max: 50 })) { toast.error("Course Tutor: Within 50 characters"); error = true;}
       if (!validator.isInt(updatedList.quantity) || !validator.isLength(updatedList.quantity, { min: 1 })) { toast.error("Invalid Quantity"); error = true; }
       if (!validator.isFloat(updatedList.courseOriginalPrice)) { toast.error("Invalid: Original Price"); error = true; }
       if (!error){
@@ -143,20 +143,30 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
         setUpdatedList(updatedList)
     }
 
-  const addOrUpdateCourse = () => {
-    if (!validation())
-    {
-      return
+    const addOrUpdateCourse = () => {
+    //   if (!validation())
+    // {
+    //   return
+    // }
+      // check if price amounts are more than a certain value
+      if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000){
+        toast.error("Price amounts cannot be more than $50,000", {autoClose: false, limit: 1})
+        return;
+      }
+
+      // set original amount to the ref value
+      updatedList.courseOriginalPrice = originalAmtRef.current.value;
+      updatedList.courseDiscountedPrice = discountAmtRef.current.value;
+
+        // update course
+        if(updatedList._id){
+          updateCourses(updatedList._id, updatedList)
+        }else{
+        // insert course
+          createCourses(updatedList)
+        }
+        closeModal(false);
     }
-    // update course
-    if(updatedList._id){
-      updateCourses(updatedList._id, updatedList)
-    }else{
-    // insert course
-      createCourses(updatedList)
-    }
-    closeModal(false);
-}
 
   // create courses
   const createCourses = (data) => {
@@ -226,9 +236,11 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Type</label>
-                <select name="courseType" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseType}>
-                    <option selected value="IT">IT</option>
+                <select name="courseType" className='border-2 border-b1 w-2/3 text-center' defaultValue={'IT'} onChange={editInput} value={updatedList.courseType}>
+                    <option value="IT">IT</option>
                     <option value="Business">Business</option>
+                    <option value="Health">Health</option>
+                    <option value="Lifestyle">Lifestyle</option>
                 </select>
                 </div>
                 
