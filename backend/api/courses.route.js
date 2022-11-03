@@ -53,7 +53,7 @@ router.route("/create").post(protect,
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: errMessage });
         }
         apiCreateCourse(req, res)
     }
@@ -107,7 +107,7 @@ router.route("/update/:id").put(protect,
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: errMessage });
         }
         apiUpdateCourse(req, res)
 }) 
@@ -126,7 +126,7 @@ router.route("/delete/:id").post(protect,
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: errMessage });
         }
         apiDeleteCourse(req, res)
     }) 

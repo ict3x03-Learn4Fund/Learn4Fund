@@ -16,9 +16,9 @@ router.route("/").get(apiGetDonations);
 
 router.route("/total").get(apiGetTotal);
 
-router.route("/add").post(protect,
+router.route("/add").post(
   [
-    body("donationAmt", "Enter amount below 10 million").isLength({min:0, max:8}).isFloat({ min: 0.01, max: 10000000 }),
+    body("donationAmt", "Enter amount between 0.01 to 10 million").isLength({min:0, max:8}).isFloat({ min: 0.01, max: 10000000 }),
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
