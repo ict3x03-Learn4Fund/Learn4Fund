@@ -16,7 +16,8 @@ router.route("/create").post(protect,               //TODO: Check if admin
     [
         body('courseName', 'Invalid course name')
             .notEmpty().bail()
-            .isAscii().bail()
+            .isAlphanumeric().bail()
+            .isLength({ max:100 })
             .escape().trim(),
         //body('courseImg').isMIMEType('image/jpeg', 'image/png').bail(),
         body('courseOriginalPrice', 'Invalid price')
@@ -31,11 +32,13 @@ router.route("/create").post(protect,               //TODO: Check if admin
             .notEmpty().bail()
             .isString(),
         body('courseDescription', 'Invalid course description')
-            .isString().bail()
+            .isAlphanumeric().bail()
+            .isLength({ max: 500 })
             .escape().trim(),
         body('courseTutor', 'Tutor name is invalid')
             .notEmpty().bail()
             .isString().bail()
+            .isLength({ max: 50 })
             .escape().trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()

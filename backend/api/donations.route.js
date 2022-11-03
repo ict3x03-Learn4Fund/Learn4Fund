@@ -1,4 +1,6 @@
 const express = require("express");
+const { protect } = require('../middleware/authMiddleware')
+const { body, validationResult } = require('express-validator')
 
 const {
   apiAddDonations,
@@ -14,7 +16,18 @@ router.route("/").get(apiGetDonations);
 
 router.route("/total").get(apiGetTotal);
 
-router.route("/add").post(apiAddDonations);
+router.route("/add").post(protect,
+  [
+    body("donationAmt", "Enter amount below 10 million").isLength({min:0, max:8}).isFloat({ min: 0.01, max: 10000000 }),
+  ], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errArray = errors.array();
+      const errMessage = errArray.map((err) => err.msg).join("\n");
+      return res.status(400).json({ message: errMessage });
+  }
+    apiAddDonations(req, res);
+  });
 
 router.route("/getTop5").get(apiGetTop5Donors);
 
