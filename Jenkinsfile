@@ -39,6 +39,7 @@ pipeline {
             steps{
                 sh 'docker compose down --rmi all' // Kill containers to run unit test
                 dir('backend'){
+                    sh 'npm i'
                     sh 'npm run test'
                 }
             }
