@@ -40,21 +40,24 @@ function Profile() {
     console.log(firstName, lastName, email);
     var error = false;
     if (firstName && lastName && email) {
-      if (!validator.isEmail(email)) {
+      const normalizedEmail = validator.normalizeEmail(email);
+      const escapedFirstName = validator.escape(firstName);
+      const escapedLastName = validator.escape(lastName);
+      if (!validator.isEmail(normalizedEmail)) {
         toast.error("Invalid email format");
         error = true;
       }
-      if (!validator.isLength(firstName, {min: 2, max: 25}) || !validator.matches(firstName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
+      if (!validator.isLength(escapedFirstName, {min: 2, max: 25}) || !validator.matches(firstName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
         toast.error("Invalid first name");
         error = true;
       }
-      if (!validator.isLength(lastName, {min: 2, max: 25}) || !validator.matches(lastName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
+      if (!validator.isLength(escapedLastName, {min: 2, max: 25}) || !validator.matches(lastName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
         toast.error("Invalid last name");
         error = true;
       }
       if (!error) {
         authService
-        .updateDetails(userInfo.id, firstName, lastName, email)
+        .updateDetails(userInfo.id, escapedFirstName, escapedLastName, normalizedEmail)
         .then((res) => {
           if (res.status == 200) {
             toast.success("Details Updated Successfully.");
