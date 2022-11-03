@@ -124,7 +124,7 @@ export const OTPModal = ({ closeModal, formData }) => {
                 </span>
                 <input
                   className="flex w-3/4 h-[40px] input"
-                  maxLength={7} // Code is 7 digits
+                  maxLength={6} // Code is 7 digits
                   type="password"
                   {...register("code", { required: true, pattern: /^[0-9]*$/ })} // [Validation] Number only
                   placeholder="Token"
