@@ -55,7 +55,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       if (!error){
         updatedList.courseName = validator.escape(updatedList.courseName)
         updatedList.courseDescription = validator.escape(updatedList.courseDescription)
-        updatedList.courseTutor = validator.trim(updatedList.courseTutor)
+        updatedList.courseTutor = validator.escape(updatedList.courseTutor)
         return true;
         
       }
