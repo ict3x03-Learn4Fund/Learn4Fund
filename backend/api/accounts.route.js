@@ -146,7 +146,6 @@ router.route("/login").post(
     apiLogin(req, res);
   });
 
-// TODO: Remember to test this route
 // @route   POST api/accounts/verify2FA
 router.route('/verify2FA').post(verify2FALimiter,
     [
