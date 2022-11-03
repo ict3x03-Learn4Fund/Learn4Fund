@@ -22,7 +22,7 @@ import { useEffect } from "react";
 
 function Homepage({ setNewsModal }) {
   const navigate = useNavigate();
-  const {setTab} = useNav();
+  const { setTab } = useNav();
   const [dataCourses, setDataCourses] = useState([]);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,7 +47,7 @@ function Homepage({ setNewsModal }) {
 
   useEffect(() => {
     retrieveCourses();
-  },[]);
+  }, []);
 
   // retrieve all courses
   const retrieveCourses = () => {
@@ -76,21 +76,21 @@ function Homepage({ setNewsModal }) {
           loop
           pagination={{ clickable: true }}
         >
-          <SwiperSlide>
+          <SwiperSlide className="bg-black">
             <img
               src={Banner1}
               className="w-full h-full object-fill"
               alt="top donations"
             />
           </SwiperSlide>
-          <SwiperSlide>
+          <SwiperSlide className="bg-black">
             <img
               src={Banner2}
               className="w-full h-full object-fill"
               alt="promotions"
             />
           </SwiperSlide>
-          <SwiperSlide>
+          <SwiperSlide className="bg-black">
             <img
               src={Banner3}
               className="w-full h-full object-fill"
@@ -110,7 +110,7 @@ function Homepage({ setNewsModal }) {
             Browse the list of courses that are about to be sold out!
           </p>
           <span
-            className="flex font-type1 font-normal text-[14px] text-w2 leading-[22px]"
+            className="flex font-type1 font-normal text-2xl text-w2 leading-[22px]"
             onClick={() => navigate("courses", { state: { filter: 1 } })}
           >
             View More
@@ -135,29 +135,43 @@ function Homepage({ setNewsModal }) {
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
-                      <span className="truncate ... w-2/3 overflow-hidden self-center">{course.courseName}</span> 
-                      (<span className="text-red-500">
+                      <span className="truncate ... w-2/3 overflow-hidden self-center">
+                        {course.courseName}
+                      </span>
+                      (
+                      <span className="text-red-500">
                         {course.quantity} left
-                      </span>)
-                      
+                      </span>
+                      )
                     </div>
 
                     <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
-                      <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
-                        U.P. ${course.courseOriginalPrice}
-                      </span>
-                      <span className="bg-success h-[24px] text-w1 lg:p-1">
-                        NOW ${course.courseDiscountedPrice}
-                      </span>
-                      <span className="bg-g2 h-[24px] text-w1 lg:p-1">
-                        {(
-                          ((course.courseOriginalPrice -
-                            course.courseDiscountedPrice) /
-                            course.courseOriginalPrice) *
-                          100
-                        ).toFixed(0)}
-                        % OFF
-                      </span>
+                      {!course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
+                          NOW ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
+                          U.P. ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] text-w1 lg:p-1">
+                          NOW ${course.courseDiscountedPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-g2 h-[24px] text-w1 lg:p-1">
+                          {(
+                            ((course.courseOriginalPrice -
+                              course.courseDiscountedPrice) /
+                              course.courseOriginalPrice) *
+                            100
+                          ).toFixed(0)}
+                          % OFF
+                        </span>
+                      )}
                     </div>
                     <div className="flex w-full h-[40px] justify-between text-[12px] leading-[20px] font-bold font-type1">
                       <button className="font-type1 font-bold uppercase btn w-full h-[40px]">
@@ -180,7 +194,7 @@ function Homepage({ setNewsModal }) {
             Browse the list of courses with the best value!
           </p>
           <span
-            className="flex font-type1 font-normal text-[14px] text-w2 leading-[22px]"
+            className="flex font-type1 font-normal text-2xl text-w2 leading-[22px]"
             onClick={() => navigate("courses", { state: { filter: 2 } })}
           >
             View More
@@ -205,7 +219,10 @@ function Homepage({ setNewsModal }) {
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
-                      <span className="truncate ... w-2/3 overflow-hidden self-center">{course.courseName}</span> (
+                      <span className="truncate ... w-2/3 overflow-hidden self-center">
+                        {course.courseName}
+                      </span>{" "}
+                      (
                       <span className="text-red-500">
                         {course.quantity} left
                       </span>
@@ -213,21 +230,32 @@ function Homepage({ setNewsModal }) {
                     </div>
 
                     <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
-                      <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
-                        U.P. ${course.courseOriginalPrice}
-                      </span>
-                      <span className="bg-success h-[24px] text-w1 lg:p-1">
-                        NOW ${course.courseDiscountedPrice}
-                      </span>
-                      <span className="bg-g2 h-[24px] text-w1 lg:p-1">
-                        {(
-                          ((course.courseOriginalPrice -
-                            course.courseDiscountedPrice) /
-                            course.courseOriginalPrice) *
-                          100
-                        ).toFixed(0)}
-                        % OFF
-                      </span>
+                    {!course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
+                          NOW ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
+                          U.P. ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] text-w1 lg:p-1">
+                          NOW ${course.courseDiscountedPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-g2 h-[24px] text-w1 lg:p-1">
+                          {(
+                            ((course.courseOriginalPrice -
+                              course.courseDiscountedPrice) /
+                              course.courseOriginalPrice) *
+                            100
+                          ).toFixed(0)}
+                          % OFF
+                        </span>
+                      )}
                     </div>
                     <div className="flex w-full h-[40px] justify-between text-[12px] leading-[20px] font-bold font-type1">
                       <button className="font-type1 font-bold uppercase btn w-full h-[40px]">
@@ -250,7 +278,7 @@ function Homepage({ setNewsModal }) {
             All courses are handpicked by our team!
           </p>
           <span
-            className="flex font-type1 font-normal text-[14px] text-w2 leading-[22px]"
+            className="flex font-type1 font-normal text-2xl text-w2 leading-[22px]"
             onClick={() => navigate("courses", { state: { filter: 0 } })}
           >
             View More
@@ -275,7 +303,10 @@ function Homepage({ setNewsModal }) {
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
-                    <span className="truncate ... w-2/3 overflow-hidden self-center">{course.courseName}</span> (
+                      <span className="truncate ... w-2/3 overflow-hidden self-center">
+                        {course.courseName}
+                      </span>{" "}
+                      (
                       <span className="text-red-500">
                         {course.quantity} left
                       </span>
@@ -283,21 +314,32 @@ function Homepage({ setNewsModal }) {
                     </div>
 
                     <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
-                      <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
-                        U.P. ${course.courseOriginalPrice}
-                      </span>
-                      <span className="bg-success h-[24px] text-w1 lg:p-1">
-                        NOW ${course.courseDiscountedPrice}
-                      </span>
-                      <span className="bg-g2 h-[24px] text-w1 lg:p-1">
-                        {(
-                          ((course.courseOriginalPrice -
-                            course.courseDiscountedPrice) /
-                            course.courseOriginalPrice) *
-                          100
-                        ).toFixed(0)}
-                        % OFF
-                      </span>
+                    {!course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
+                          NOW ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
+                          U.P. ${course.courseOriginalPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-success h-[24px] text-w1 lg:p-1">
+                          NOW ${course.courseDiscountedPrice.toFixed(2)}
+                        </span>
+                      )}
+                      {course.canBeDiscounted && (
+                        <span className="bg-g2 h-[24px] text-w1 lg:p-1">
+                          {(
+                            ((course.courseOriginalPrice -
+                              course.courseDiscountedPrice) /
+                              course.courseOriginalPrice) *
+                            100
+                          ).toFixed(0)}
+                          % OFF
+                        </span>
+                      )}
                     </div>
                     <div className="flex w-full h-[40px] justify-between text-[12px] leading-[20px] font-bold font-type1">
                       <button className="font-type1 font-bold uppercase btn w-full h-[40px]">

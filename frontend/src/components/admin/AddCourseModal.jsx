@@ -9,10 +9,10 @@ import imagesService from "../../services/images";
 export const AddCourseModal = ({closeModal, courseInfo}) => {
   const [file, setFile] = useState(null);
   const [checkBox, setCheckBox] = useState(false);
-  const discountAmtRef = useRef(0.0);
-  const originalAmtRef = useRef(0.0);
+  const discountAmtRef = useRef(null);
+  const originalAmtRef = useRef(null);
   const formData = new FormData();
-    const { loading, userInfo, error, success } = useSelector(state => state.user)
+    const { userInfo } = useSelector(state => state.user)
     const [updatedList,setUpdatedList] = React.useState({
       canBeDiscounted: false,
       company: "",
@@ -38,8 +38,8 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       if (courseInfo._id){
         setCheckBox(courseInfo.canBeDiscounted);
         setUpdatedList(courseInfo)
-        originalAmtRef.current(courseInfo.courseOriginalPrice);
-        discountAmtRef.current(courseInfo.courseDiscountedPrice);
+        originalAmtRef.current.value = courseInfo.courseOriginalPrice
+        discountAmtRef.current.value = courseInfo.courseDiscountedPrice
       }
     }, [courseInfo, setUpdatedList])
 
@@ -119,6 +119,16 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     }
 
     const addOrUpdateCourse = () => {
+      // check if price amounts are more than a certain value
+      if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000){
+        toast.error("Price amounts cannot be more than $50,000", {autoClose: false, limit: 1})
+        return;
+      }
+
+      // set original amount to the ref value
+      updatedList.courseOriginalPrice = originalAmtRef.current.value;
+      updatedList.courseDiscountedPrice = discountAmtRef.current.value;
+
         // update course
         if(updatedList._id){
           updateCourses(updatedList._id, updatedList)
@@ -194,8 +204,8 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Type</label>
-                <select name="courseType" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseType}>
-                    <option selected value="IT">IT</option>
+                <select name="courseType" className='border-2 border-b1 w-2/3 text-center' defaultValue={'IT'} onChange={editInput} value={updatedList.courseType}>
+                    <option value="IT">IT</option>
                     <option value="Business">Business</option>
                 </select>
                 </div>
