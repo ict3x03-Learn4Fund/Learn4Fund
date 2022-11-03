@@ -269,7 +269,7 @@ const Cart = () => {
                 ) : null}
 
                 <span className="font-type1 text-[1vw] text-b1 font-bold">
-                  ${donation}.00
+                  ${parseFloat(donation).toFixed(2)}
                 </span>
               </div>
             </div>

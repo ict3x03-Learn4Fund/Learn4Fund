@@ -77,6 +77,10 @@ function Donations() {
   };
 
   function addToCart() {
+    if(offerAmtRef.current.value <= 0){
+      toast.error("Please enter a valid amount");
+      return;
+    }
     if(offerAmtRef.current.value >9999999){
       toast.info('Please enter a valid amount less than 10 million') 
       return

@@ -148,6 +148,11 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     // {
     //   return
     // }
+    // check if price amounts are more than a certain value
+    if (originalAmtRef.current.value <= 0 || discountAmtRef.current.value <= 0){
+      toast.error("Price amounts must be more than 0", {autoClose: false, limit: 1})
+      return;
+    }
       // check if price amounts are more than a certain value
       if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000){
         toast.error("Price amounts cannot be more than $50,000", {autoClose: false, limit: 1})
