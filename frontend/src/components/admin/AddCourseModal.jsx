@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
 import courseService from "../../services/courses";
 import { toast } from 'react-toastify';
@@ -23,7 +23,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       courseName: "",
       courseOriginalPrice: 0.00,
       courseTutor: "",
-      courseType: "IT",
+      courseType: "",
       quantity: 0,
       _id: ""
     });
@@ -49,7 +49,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) { 
       if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true;}
       if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); error = true; }
-      if (!validator.isLength(updatedList.courseTutor, { max: 50 }) || !validator.isAlphanumeric(updatedList.courseTutor)) { toast.error("Course Tutor: Alphanumeric within 50 characters"); error = true;}
+      if (!validator.isLength(updatedList.courseTutor, { max: 50 })) { toast.error("Course Tutor: Within 50 characters"); error = true;}
       if (!validator.isInt(updatedList.quantity) || !validator.isLength(updatedList.quantity, { min: 1 })) { toast.error("Invalid Quantity"); error = true; }
       if (!validator.isFloat(updatedList.courseOriginalPrice)) { toast.error("Invalid: Original Price"); error = true; }
       if (!error){
@@ -144,10 +144,10 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     }
 
     const addOrUpdateCourse = () => {
-      if (!validation())
-    {
-      return
-    }
+    //   if (!validation())
+    // {
+    //   return
+    // }
       // check if price amounts are more than a certain value
       if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000){
         toast.error("Price amounts cannot be more than $50,000", {autoClose: false, limit: 1})
@@ -239,6 +239,8 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 <select name="courseType" className='border-2 border-b1 w-2/3 text-center' defaultValue={'IT'} onChange={editInput} value={updatedList.courseType}>
                     <option value="IT">IT</option>
                     <option value="Business">Business</option>
+                    <option value="Health">Health</option>
+                    <option value="Lifestyle">Lifestyle</option>
                 </select>
                 </div>
                 

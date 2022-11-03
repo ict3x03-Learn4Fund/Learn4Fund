@@ -19,6 +19,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import Subscribe from "../components/banner/Subscribe";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 function Homepage({ setNewsModal }) {
   const navigate = useNavigate();
@@ -126,7 +127,8 @@ function Homepage({ setNewsModal }) {
                 <div
                   key={index}
                   className="cursor-pointer flex flex-col flex-wrap w-1/4 bg-w1 border-[1px] border-w1 p-2 rounded"
-                  onClick={() => navigate("courses/" + course._id)}
+                  style={course.quantity <= 0 ? { opacity: 0.8 } : {}}
+                  onClick={() => {course.quantity > 0? navigate("courses/" + course._id): toast.warning('Courses sold out!')}}
                 >
                   <img
                     src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
