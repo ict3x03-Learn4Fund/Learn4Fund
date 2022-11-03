@@ -5,6 +5,7 @@ import courseService from "../../services/courses";
 import { toast } from 'react-toastify';
 import coursesService from '../../services/courses';
 import imagesService from "../../services/images";
+import validator from 'validator';
 
 export const AddCourseModal = ({closeModal, courseInfo}) => {
   const [file, setFile] = useState(null);
@@ -43,6 +44,30 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       }
     }, [courseInfo, setUpdatedList])
 
+  function validation() {
+    const error = false;
+    if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) { 
+      if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true;}
+      if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); error = true; }
+      if (!validator.isLength(updatedList.courseTutor, { max: 50 }) || !validator.isAlphanumeric(updatedList.courseTutor)) { toast.error("Course Tutor: Alphanumeric within 50 characters"); error = true;}
+      if (!validator.isInt(updatedList.quantity) || !validator.isLength(updatedList.quantity, { min: 1 })) { toast.error("Invalid Quantity"); error = true; }
+      if (!validator.isFloat(updatedList.courseOriginalPrice)) { toast.error("Invalid: Original Price"); error = true; }
+      if (!error){
+        updatedList.courseName = validator.escape(updatedList.courseName)
+        updatedList.courseDescription = validator.escape(updatedList.courseDescription)
+        updatedList.courseTutor = validator.trim(updatedList.courseTutor)
+        return true;
+        
+      }
+      else { return false; }
+      
+    }
+    else {
+      toast.error("Please fill up all the fields");
+      return false;
+    }
+
+  }
     function handleOriginalPrice(e) {
       if (e.key !== "Backspace") {
         if (originalAmtRef.current.value.includes(".")) {
@@ -119,6 +144,10 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     }
 
     const addOrUpdateCourse = () => {
+      if (!validation())
+    {
+      return
+    }
       // check if price amounts are more than a certain value
       if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000){
         toast.error("Price amounts cannot be more than $50,000", {autoClose: false, limit: 1})
@@ -142,29 +171,32 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
   // create courses
   const createCourses = (data) => {
     courseService
-      .createCourse(data)
-      .then((response) => {
-        console.log(response)
-        toast.success('Course Created');
-      })
-      .catch((e) => {
-        toast.error('Error creating course');
-        console.log(e);
-      });
+    .createCourse(data)
+    .then((response) => {
+      console.log(response)
+      toast.success('Course Created');
+    })
+    .catch((e) => {
+      toast.error('Error creating course');
+      console.log(e);
+    });
+    
   };
 
   // update courses
   const updateCourses = (id, data) => {
+
     courseService
-      .updateCourse(id, data)
-      .then((response) => {
-        console.log(response)
-        toast.success('Course Updated');
-      })
-      .catch((e) => {
-        toast.error('Error updating course');
-        console.log(e);
-      });
+    .updateCourse(id, data)
+    .then((response) => {
+      console.log(response)
+      toast.success('Course Updated');
+    })
+    .catch((e) => {
+      toast.error('Error updating course');
+      console.log(e);
+    });
+    
   };
 
   const handleFile = (e) => {
@@ -194,13 +226,13 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Id</label> <input name="_id" type="text" className='border-2 border-b1 w-2/3 text-center' readOnly value={updatedList._id?updatedList._id: 'New Entry'} disabled/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Company Name</label> <input name="company" type="text" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.company}/>
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Company Name</label> <input required name="company" type="text" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.company}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Name</label> <input type="text" name="courseName" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseName}/>
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Name</label> <input required type="text" name="courseName" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseName}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Tutor</label> <input type="text" name="courseTutor" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseTutor}/>
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Tutor</label> <input required type="text" name="courseTutor" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseTutor}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/3'>Course Type</label>
@@ -226,7 +258,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 </div>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input type="number" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' 
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input required type="number" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' 
                 step=".01"
                 ref={originalAmtRef}
                 defaultValue={originalAmtRef.current}
@@ -245,12 +277,12 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={checkBox} onChange={()=>swapSelection()}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Quantity</label> <input name="quantity" type="number" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.quantity}/>
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Quantity</label> <input required name="quantity" type="number" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.quantity}/>
                 </div>
             </div>
             <div className='flex flex-wrap w-full mt-2 justify-between pr-8'>
                 <label className='self-center font-type3 text-lg font-bold w-1/6'>Course Description</label> 
-                <textarea name="courseDescription" className='border-2 border-b1 w-full h-[100px]' onChange={editInput} value={updatedList.courseDescription}></textarea>
+                <textarea name="courseDescription" className='border-2 border-b1 w-full h-[100px]' onChange={editInput} value={updatedList.courseDescription} required></textarea>
                 </div>
           </div>
           

@@ -12,16 +12,16 @@ const router = express.Router()
 router.route("/").get(apiGetCourses)
 
 // POST /api/courses private
-router.route("/create").post(protect,               //TODO: Check if admin
+router.route("/create").post(protect,
     [
         body('courseName', 'Invalid course name')
             .notEmpty().bail()
-            .isAscii().bail()
+            .isAlphanumeric().bail()
+            .isLength({ max:100 })
             .escape().trim(),
-        //body('courseImg').isMIMEType('image/jpeg', 'image/png').bail(),
         body('courseOriginalPrice', 'Invalid price')
             .notEmpty().bail()
-            .isNumeric(), // Checks if string is of a number format, can be int/float
+            .isNumeric(),
         body('courseDiscountedPrice', 'Invalid discounted price')
             .notEmpty().bail()
             .isNumeric(),
@@ -32,10 +32,12 @@ router.route("/create").post(protect,               //TODO: Check if admin
             .isString(),
         body('courseDescription', 'Invalid course description')
             .isString().bail()
+            .isLength({ max: 500 })
             .escape().trim(),
         body('courseTutor', 'Tutor name is invalid')
             .notEmpty().bail()
             .isString().bail()
+            .isLength({ max: 50 })
             .escape().trim(),
         body('quantity', 'Invalid quantity')
             .notEmpty().bail()
@@ -68,10 +70,9 @@ router.route("/update/:id").put(protect,
             .if(body('courseName').notEmpty())
             .isAscii().bail()
             .escape().trim(),
-        //body('courseImg').isMIMEType('image/jpeg', 'image/png').bail(),
         body('courseOriginalPrice', 'Invalid price')
             .if(body('courseOriginalPrice').notEmpty())
-            .isNumeric(), // Checks if string is of a number format, can be int/float
+            .isNumeric(),
         body('courseDiscountedPrice', 'Invalid discounted price')
             .if(body('courseDiscountedPrice').notEmpty())
             .notEmpty().bail()
@@ -127,6 +128,5 @@ router.route("/delete/:id").post(protect,
             return res.status(400).json({ errors: errMessage });
         }
         apiDeleteCourse(req, res)
-    }) //TODO: Check if admin
-
+    }) 
 module.exports = router
