@@ -267,27 +267,34 @@ export const CreditCardModal = ({
     } else {
       cardType = "MasterCard";
     }
-    if (name && cardNo && cardType && expiryDate) {
-      if ((!validator.isString(name) && !validator.isLength(name, { max: 50 }))) {
+    if (name && cardNumber && expiryDate) {
+      if ( !validator.isLength(name, { max: 50 })) {
         toast.error("Name is invalid!");
         return
       }
+      if (!validator.isCreditCard(cardNumber)) {
+        toast.error("Card number is invalid!");
+        return
+      }
+      else { 
+        const request = { name, cardNo: cardNumber, cardType, expiryDate };
+        paymentsService
+        .addCard(userInfo.id, request)
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success("Successfully save new card.");
+            setCardId(res.data.id);
+          } else {
+            toast.error(res.data.message);
+          }
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
+      }
     }
-    else { 
-      const request = { name, cardNo, cardType, expiryDate };
-      paymentsService
-      .addCard(userInfo.id, request)
-      .then((res) => {
-        if (res.status == 200) {
-          toast.success("Successfully save new card.");
-          setCardId(res.data.id);
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+    else {
+      toast.error("Please fill up all the fields!");
     }
     
   };

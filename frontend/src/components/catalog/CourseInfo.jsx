@@ -178,7 +178,7 @@ function CourseInfo() {
     <main className="flex w-full h-full px-[40px] lg:px-[120px] pb-[24px] bg-b1 items-center">
       <div className="flex flex-row flex-wrap w-2/3 h-auto mt-[24px] p-[16px] bg-white rounded self-start">
         <div className="flex flex-col w-full">
-          <span className="font-type1 font-medium text-[2vw] text-b3 leading-[32px]">
+          <span className="font-type1 font-medium text-[1vw] text-b3 leading-[30xpx]">
             {courseDetails.courseName}
           </span>
           <div className="flex flex-row flex-nowrap w-full m-[2px]">
@@ -249,22 +249,22 @@ function CourseInfo() {
       <div className="flex flex-row flex-wrap w-1/3 h-auto space-y-8 self-start">
         <div className="flexcontent-start w-full h-fit bg-white mt-[24px] py-[16px] mx-[16px] px-[24px] border-[1px] border-[#E4E5E7] rounded self-start">
           <div className="flex justify-between">
-            <div className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
+            <div className="font-type5 font-bold text-[1vw] text-[#55585D] leading-[24px] self-center">
               U.P Price:{" "}
               <span className="line-through">
                 ${courseDetails.courseOriginalPrice}
               </span>
             </div>
-            <div className="font-type1 font-bold text-[1vw] text-success leading-[22px] self-center">
+            <div className="font-type5 font-bold text-[1vw] text-success leading-[25px] self-center">
               Current Price: ${courseDetails.courseDiscountedPrice}
             </div>
           </div>
-          <div className="font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
+          <div className="font-type5 font-bold text-[1vw] text-[#55585D] leading-[25px] self-center">
             Available: {courseDetails.quantity}
           </div>
 
           <div className="flex flex-nowrap w-full justify-between">
-            <div className="flex font-type1 font-bold text-[1vw] text-[#55585D] leading-[22px] self-center">
+            <div className="flex font-type5 font-bold text-[1vw] text-[#55585D] leading-[25px] self-center">
               Selected Quantity:
             </div>
             <div className="flex">
@@ -301,7 +301,7 @@ function CourseInfo() {
           <hr className="flex flex-wrap w-full border-1 border-[#55585D] self-center my-2" />
 
           <div className="flex justify-between">
-            <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center">
+            <div className="font-type1 font-bold text-[0.8vw] leading-[22px] self-center">
               Total Cost ($):
             </div>
             <div className="font-type1 font-bold text-[1vw] leading-[22px] self-center my-2">
@@ -320,7 +320,7 @@ function CourseInfo() {
 
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
-            <span className="font-type1 text-[1.4vw] text-b3 font-bold">
+            <span className="font-type5 text-[1vw] text-b3 font-bold">
               Customer Reviews - {averageStars ? averageStars : 0}/5
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />

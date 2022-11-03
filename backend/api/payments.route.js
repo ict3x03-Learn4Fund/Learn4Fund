@@ -119,7 +119,7 @@ router.route("/addCard").post(
             .notEmpty().bail()
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
-        body('creditCard.cardNumber', 'Card No. is required')
+        body('creditCard.cardNo', 'Card No. is required')
             .notEmpty().bail()
             .customSanitizer(value => value.replace(/\s*/g, ""))
             .isInt().isLength({ min: 16, max: 16 }).bail()
