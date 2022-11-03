@@ -129,18 +129,17 @@ function Homepage({ setNewsModal }) {
                   onClick={() => navigate("courses/" + course._id)}
                 >
                   <img
-                    // src={`/api/image/${images.getImg(course.courseImg)}`}
                     src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
-                    className="flex h-[120px] w-full object-stretch"
+                    className="flex h-[160px] w-full object-stretch"
                     alt={"example"}
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
-                      {course.courseName} (
-                      <span className="text-red-500">
+                      <span className="truncate ... w-2/3 overflow-hidden self-center">{course.courseName}</span> 
+                      (<span className="text-red-500">
                         {course.quantity} left
-                      </span>
-                      )
+                      </span>)
+                      
                     </div>
 
                     <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
@@ -201,12 +200,12 @@ function Homepage({ setNewsModal }) {
                 >
                   <img
                     src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
-                    className="flex h-[120px] w-full object-stretch"
+                    className="flex h-[160px] w-full object-stretch"
                     alt={""}
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
-                      {course.courseName} (
+                      <span className="truncate ... w-2/3 overflow-hidden self-center">{course.courseName}</span> (
                       <span className="text-red-500">
                         {course.quantity} left
                       </span>
@@ -271,12 +270,12 @@ function Homepage({ setNewsModal }) {
                 >
                   <img
                     src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
-                    className="flex h-[120px] w-full object-stretch"
+                    className="flex h-[160px] w-full object-stretch"
                     alt={""}
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
                     <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
-                      {course.courseName} (
+                    <span className="truncate ... w-2/3 overflow-hidden self-center">{course.courseName}</span> (
                       <span className="text-red-500">
                         {course.quantity} left
                       </span>

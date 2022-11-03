@@ -1,12 +1,10 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { AiOutlineQuestionCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import validator from "validator";
-import { BiErrorCircle } from "react-icons/bi";
 import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BsShieldLockFill } from "react-icons/bs";
@@ -19,24 +17,12 @@ export const CreditCardModal = ({
   showDonation,
   checkout,
 }) => {
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => {
-        // Anything in here is fired on component unmount.
-        document.body.style.overflow = 'unset';
-    }
-}, [])
   const [checkedState, setCheckedState] = useState([true, false]);
   const { userInfo } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   //for otp modal
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardName, setCardName] = useState("");
   const [payMethod, selectPayMethod] = useState("previous");
   const [billMethod, selectBillMethod] = useState("previous");
   const [cardList, setCardList] = useState([]);
@@ -48,6 +34,16 @@ export const CreditCardModal = ({
   const [cvv, setCvv] = useState("");
   const [loading, setLoading] = useState(false);
   let cardType = "";
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    getMethods();
+
+    return () => {
+      // Anything in here is fired on component unmount.
+      document.body.style.overflow = "unset";
+    };
+  }, []);
 
   const getMethods = () => {
     paymentsService
@@ -61,9 +57,8 @@ export const CreditCardModal = ({
       .catch((error) => {
         if (error.response && error.response.data.message) {
           return toast.error(error.response.data.message);
-        }
-        else {
-          return toast.error(error.message)
+        } else {
+          return toast.error(error.message);
         }
       });
   };
@@ -93,7 +88,7 @@ export const CreditCardModal = ({
     if (existLast4No) {
       reqLast4No = existLast4No;
     } else {
-      reqLast4No = cardNo.slice(-4);
+      reqLast4No = cardNumber.slice(-4);
     }
 
     const payload = {
@@ -107,27 +102,23 @@ export const CreditCardModal = ({
       last4No: reqLast4No,
       cardType: reqCardType,
     };
-    paymentsService
+    await paymentsService
       .makePayment(payload)
-      .then(async (response) => {
+      .then((response) => {
         if (response.status == 200) {
+          setModalOpen(false);
+          closeModal(false);
           toast.success("Payment has been made successfully!");
-          await timeout(100);
-          window.location.reload(false);
+          // await timeout(100);
+          // window.location.reload(false);
         } else {
-          toast.error(response.data.message);
+          toast.error("Payment failed!");
         }
       })
       .catch((e) => {
         toast.error(e.response.data.message);
       });
   };
-
-  useEffect(() => {
-    if (userInfo) {
-      getMethods();
-    }
-  }, []);
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -173,7 +164,6 @@ export const CreditCardModal = ({
         if (response.status == 200) {
           setLoading(true);
           makePayment();
-          modalOpen(false);
         } else {
           toast.error(response.data.message);
         }
@@ -181,9 +171,7 @@ export const CreditCardModal = ({
       .catch((error) => {
         if (error.response && error.response.data.message) {
           return toast.error(error.response.data.message);
-        } else if (error.response.data) {
-          return toast.error(error.response.data);
-        } else {
+        }  else {
           return toast.error(error.message);
         }
       });
@@ -216,33 +204,55 @@ export const CreditCardModal = ({
   };
 
   const onAddrSubmit = (data) => {
+    const error = false;
     if (billMethod == "new" && !validator.isPostalCode(postalCode, "SG")) {
       toast.error("Enter valid Postal Code!");
       return;
     }
-    paymentsService
-      .addAddr(userInfo.id, addressForm)
-      .then((res) => {
-        if (res.status == 200) {
-          toast.success("Successfully save new address.");
-          setAddrId(res.data.id);
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+    if (firstName && lastName && address && unit && city && postalCode)
+    {
+      if (!validator.isLength(firstName, { min: 2, max: 25 }) || !validator.isLength(lastName, { min: 2, max: 25 })){
+        toast.error("Names should be between 2 to 25 characters!");
+        error = true;
+      }
+      if (!validator.isLength(address, { min: 2, max: 100 })
+        || !validator.isLength(city, { min: 2, max: 35 })
+        || !validator.isLength(unit, { max: 10 }))
+      {
+          toast.error("Invalid address details");
+          error = true;
+      }
+      if (!error) {
+        paymentsService
+        .addAddr(userInfo.id, addressForm)
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success("Successfully save new address.");
+            setAddrId(res.data.id);
+          } else {
+            toast.error(res.data.message);
+          }
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
+      }
+
+    }
+    else {
+      toast.error("Please fill up all the fields!");
+    }
+    
   };
 
   //Handle form for card
   const [cardForm, setCardForm] = useState({
     name: "",
-    cardNo: "",
+    cardNumber: "",
     expiryDate: "",
   });
   const [saveCardStatus, setSaveCardStatus] = useState();
-  const { name, cardNo, expiryDate } = cardForm;
+  const { name, cardNumber, expiryDate } = cardForm;
 
   const onChangeCard = (e) => {
     setCardForm((prevState) => ({
@@ -257,20 +267,36 @@ export const CreditCardModal = ({
     } else {
       cardType = "MasterCard";
     }
-    const request = { name, cardNo, cardType, expiryDate };
-    paymentsService
-      .addCard(userInfo.id, request)
-      .then((res) => {
-        if (res.status == 200) {
-          toast.success("Successfully save new card.");
-          setCardId(res.data.id);
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+    if (name && cardNumber && expiryDate) {
+      if ( !validator.isLength(name, { max: 50 })) {
+        toast.error("Name is invalid!");
+        return
+      }
+      if (!validator.isCreditCard(cardNumber)) {
+        toast.error("Card number is invalid!");
+        return
+      }
+      else { 
+        const request = { name, cardNo: cardNumber, cardType, expiryDate };
+        paymentsService
+        .addCard(userInfo.id, request)
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success("Successfully save new card.");
+            setCardId(res.data.id);
+          } else {
+            toast.error(res.data.message);
+          }
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
+      }
+    }
+    else {
+      toast.error("Please fill up all the fields!");
+    }
+    
   };
 
   const selectAddr = (addrId) => {
@@ -369,23 +395,21 @@ export const CreditCardModal = ({
                         </span>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">First Name</div>
-                          <input
+                          <input required
                             type="text"
                             id="firstName"
                             name="firstName"
-                            value={firstName}
-                            required
+                            value={firstName}                          
                             placeholder="First Name"
                             className="p-2 border-2 border-black w-40"
                             onChange={onChangeAddr}
                           />
                           <div className="self-center">Last Name</div>
-                          <input
+                          <input required
                             type="text"
                             id="lastName"
                             name="lastName"
                             value={lastName}
-                            required
                             placeholder="Last Name"
                             className="p-2 border-2 border-black w-40"
                             onChange={onChangeAddr}
@@ -393,11 +417,11 @@ export const CreditCardModal = ({
                         </div>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">Street Address</div>
-                          <input
+                          <input required
                             type="text"
                             id="address"
                             name="address"
-                            required
+                            maxLength={100}
                             value={address}
                             placeholder="Drive 3 Street 4"
                             className="p-2 border-2 border-black w-80"
@@ -407,12 +431,11 @@ export const CreditCardModal = ({
 
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">House Number</div>
-                          <input
+                          <input required
                             type="text"
                             id="unit"
                             name="unit"
-                            required
-                            max="20"
+                            maxLength={10}
                             placeholder="Unit No"
                             className="p-2 border-2 border-black w-80"
                             onChange={onChangeAddr}
@@ -422,12 +445,11 @@ export const CreditCardModal = ({
 
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">City</div>
-                          <input
+                          <input required
                             type="text"
                             id="city"
                             name="city"
-                            required
-                            max="20"
+                            maxLength={20}
                             value={city}
                             placeholder="Singapore"
                             className="p-2 border-2 border-black w-80"
@@ -437,14 +459,13 @@ export const CreditCardModal = ({
 
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">Postal Code</div>
-                          <input
+                          <input required
                             type="text"
                             id="postalCode"
                             name="postalCode"
                             value={postalCode}
-                            required
-                            min="6"
-                            max="6"
+                            minLength={6}
+                            maxLength={6}
                             placeholder="postal code"
                             className="p-2 border-2 border-black w-80"
                             onChange={onChangeAddr}
@@ -566,13 +587,13 @@ export const CreditCardModal = ({
                         </div>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">Holder's Name</div>
-                          <input
+                          <input required
                             type="text"
                             id="name"
                             name="name"
+                            maxLength={50}
                             value={name}
                             onChange={onChangeCard}
-                            required
                             placeholder="Card Holder Name"
                             className="p-2 border-2 border-black w-80"
                           />
@@ -580,16 +601,15 @@ export const CreditCardModal = ({
 
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">Card Number</div>
-                          <input
+                          <input required
                             type="number"
-                            id="cardNo"
-                            name="cardNo"
-                            required
+                            id="cardNumber"
+                            name="cardNumber"
                             maxLength={19}
                             // onChange={onChangeCard}
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
-                            defaultValue={cardNo}
+                            defaultValue={cardNumber}
                             {...getCardNumberProps({onChange: (e) => onChangeCard(e)})}
                           />
                           <span className="text-red-500 self-center">
@@ -601,16 +621,17 @@ export const CreditCardModal = ({
                           <div className="self-center w-32">
                             Expiration date
                           </div>
-                          <input
+                          <input required
                             type="text"
                             id="expiryDate"
                             name="expiryDate"
-                            required
                             placeholder="mm/yyyy"
                             defaultValue={expiryDate}
                             onChange={onChangeCard}
                             className="p-2 border-2 border-black w-40"
-                            {...getExpiryDateProps({onChange: (e) => onChangeCard(e)})}
+                            {...getExpiryDateProps({
+                              onChange: (e) => onChangeCard(e),
+                            })}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.expiryDate &&
@@ -619,10 +640,9 @@ export const CreditCardModal = ({
                         </div>
                         <div className="flex flex-wrap w-full h-full mx-4 font-bold space-x-4">
                           <div className="self-center w-32">CVV</div>
-                          <input
+                          <input required
                             type="password"
                             name="holder name"
-                            required
                             maxLength={3}
                             placeholder="***"
                             className="p-2 border-2 border-black w-14"
@@ -697,12 +717,11 @@ export const CreditCardModal = ({
                         <BsShieldLockFill className="self-center text-w1" />
                       </div>
                     </span>
-                    <input
+                    <input required
                       className="flex w-3/4 h-[40px] input"
-                      maxLength={7} // Code is 7 digits
+                      maxLength={6} // Code is 7 digits
                       type="password"
                       {...register("code", {
-                        required: true,
                         pattern: /^[0-9]*$/,
                       })} // [Validation] Number only
                       placeholder="Token"
@@ -715,7 +734,7 @@ export const CreditCardModal = ({
                     {errors.code && (
                       <div>
                         <p style={{ color: "red" }}>
-                          <b>Invalid format, numbers only</b>
+                          <b>Invalid format</b>
                         </p>
                       </div>
                     )}

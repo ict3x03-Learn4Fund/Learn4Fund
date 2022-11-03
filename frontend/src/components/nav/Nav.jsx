@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails, getCartNumber } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
 import { useNav } from "../../hooks/useNav";
+import { toast } from "react-toastify";
+import { useRef } from "react";
 
 function Nav() {
   const { tab, setTab } = useNav();
@@ -25,32 +27,26 @@ function Nav() {
 
   // get user info
   useEffect(()=> {
-    if (localStorage.getItem("userId")){
+    dispatch(getUserDetails())
+    setInterval(() => {
+      //checks user every 1 mins
       dispatch(getUserDetails())
-    }
+    }, 60000);
   }, [])
 
   useEffect(() => {
     if (userInfo) {
-      dispatch(getCartNumber(userInfo.id));
       setAvatar(userInfo.avatarImg)
-      console.log(new Date(userInfo.loggedTimestamp).getTime())
-      if(new Date().getTime() > new Date(userInfo.loggedTimestamp).getTime()+1000*60*30){
-        dispatch(logout())
-      }
+      dispatch(getCartNumber(localStorage.getItem('userId')));
     }
   }, [userInfo]);
 
   const handleLogout = () => {
-    // logout();
     dispatch(logout());
     setTab("");
     navigate("/");
   };
 
-  useEffect(() => {
-    console.log("cart no: ", cartNo);
-  }, cartNo);
   return (
     <section
       id="Nav"

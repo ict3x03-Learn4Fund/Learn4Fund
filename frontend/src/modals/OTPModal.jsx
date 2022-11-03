@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from "react";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import {
@@ -37,7 +37,6 @@ export const OTPModal = ({ closeModal, formData }) => {
   } = useForm();
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  const { state } = useLocation();
   const dispatch = useDispatch();
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -56,8 +55,6 @@ export const OTPModal = ({ closeModal, formData }) => {
         .then((res) => {
           navigate("/");
           toast.success("OTP Verified!");
-          dispatch(getUserDetails());
-          dispatch(getCartNumber(localStorage.getItem("userId")));
         })
         .catch((e) => {
           toast.error("Wrong Code!");

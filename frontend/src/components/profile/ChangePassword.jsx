@@ -6,20 +6,20 @@ import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { getCartNumber, user2FA, getUserDetails } from "../../features/user/userActions";
 import authService from "../../services/accounts";
+import validator from "validator";
 
 function ChangePassword() {
-  const { loading, userInfo, userId, otpError, qrUrl, stateErrorMsg } = useSelector(
+  const { userId } = useSelector(
     (state) => state.user
   );
   
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg] = useState("");
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm();
-  const [passwordStrength, setPasswordStrength] = useState(0);
   const [fufillPassword, setFufillPassword] = useState([
     false,
     false,
@@ -29,30 +29,16 @@ function ChangePassword() {
 
   const [accountForm, setAccountForm] = useState({
     password: "",
-    passwrod2: "",
+    password2: "",
   });
 
   const { password, password2 } = accountForm;
   const [otp, setOtp] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
-  const onChange = (e) => {
-    setAccountForm((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-  };
 
   const checkPassword = (e) => {
-    if (
-      /(?=^.{12,}$)(?=.*\d)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(
-        e.target.value
-      )
-    ) {
-      setPasswordStrength(100);
-    } else {
-      setPasswordStrength(0);
-    }
+    
 
     if (e.target.value.length >= 12) {
       setFufillPassword((prevState) => [
@@ -146,13 +132,7 @@ function ChangePassword() {
     setModalOpen(true);
   };
 
-  const setColor = (strength) => {
-    if (strength < 50) {
-      return "red";
-    } else {
-      return "green";
-    }
-  };
+  
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -160,31 +140,48 @@ function ChangePassword() {
 
   // for otp submit
   const submitForm = (data) => {
-    const payload = {userId: userId, token: otp}
-    console.log(payload)
-    authService.verify2FA(payload).then((response) => {
-      console.log("status", response.status)
-      if (response.status == 200){
-        console.log(userId, password)
-        authService.normalChangePass(userId, password).then((res) => {
-          if (res.status == 200){
-            toast.success("Password changed successfully!")
-            setModalOpen(false)
-          }
-          else {
-            toast.error(res.data.message);
+    if (userId && otp && password) {
+      if (!validator.isAlphanumeric(userId) && !validator.isLength(userId, { min: 24, max: 24 })) {
+        toast.error("Request denied");
+        return;
+      }
+      else {
+        const payload = {userId: userId, token: otp}
+        console.log(payload)
+        authService.verify2FA(payload).then((response) => {
+          console.log("status", response.status)
+          if (response.status == 200){
+            console.log(userId, password)
+            authService.normalChangePass(userId, password).then((res) => {
+              if (res.status == 200){
+                toast.success("Password changed successfully!")
+                setModalOpen(false)
+              }
+              else {
+                toast.error(res.data.message);
+              }
+            }).catch((err) => {
+              toast.error(err.response.data.message);
+              // console.log(err.response.data.message)
+            })
+  
+          } else {
+            toast.error(response.data.message);
           }
         }).catch((err) => {
-          toast.error(err.response.data.message);
-          // console.log(err.response.data.message)
+          toast.error(err.response.data.message)
         })
-
-      } else {
-         toast.error(response.data.message);
       }
-    }).catch((err) => {
-      toast.error(err.response.data.message)
-    })
+    }
+    else {
+      if (password) {
+        toast.error("Request denied");
+      }
+      else {
+        toast.error("Enter all fields");
+      }
+    }
+    
   };
 
   return (
@@ -248,19 +245,6 @@ function ChangePassword() {
               </p>
             </div>
           )}
-
-          <div className="flex flex-col flex-wrap ml-2 my-2 w-1/3">
-            <div className="flex w-full">password strength</div>
-            <input
-              className="flex-none border-2 border-g3 rounded-r text-center text-white"
-              style={{ backgroundColor: setColor(passwordStrength) }}
-              type="text"
-              readOnly
-              id="passwordstrength"
-              name="passwordstrength"
-              value={passwordStrength < 50 ? "Unacceptable" : "Acceptable"}
-            />
-          </div>
 
           <div className="flex flex-row flex-wrap w-full bg-white rounded p-2 my-2">
             <div className="flex-none w-full">
@@ -334,7 +318,7 @@ function ChangePassword() {
                     </span>
                     <input
                       className="flex w-3/4 h-[40px] input"
-                      maxLength={7} // Code is 7 digits
+                      maxLength={6} // Code is 6 digits
                       type="password"
                       {...register("code", {
                         required: true,

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { AiOutlineCloseSquare } from 'react-icons/ai';
 import courseService from "../../services/courses";
@@ -9,6 +9,8 @@ import imagesService from "../../services/images";
 export const AddCourseModal = ({closeModal, courseInfo}) => {
   const [file, setFile] = useState(null);
   const [checkBox, setCheckBox] = useState(false);
+  const discountAmtRef = useRef(0.0);
+  const originalAmtRef = useRef(0.0);
   const formData = new FormData();
     const { loading, userInfo, error, success } = useSelector(state => state.user)
     const [updatedList,setUpdatedList] = React.useState({
@@ -36,8 +38,36 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       if (courseInfo._id){
         setCheckBox(courseInfo.canBeDiscounted);
         setUpdatedList(courseInfo)
+        originalAmtRef.current(courseInfo.courseOriginalPrice);
+        discountAmtRef.current(courseInfo.courseDiscountedPrice);
       }
     }, [courseInfo, setUpdatedList])
+
+    function handleOriginalPrice(e) {
+      if (e.key !== "Backspace") {
+        if (originalAmtRef.current.value.includes(".")) {
+          if (originalAmtRef.current.value.split(".")[1].length >= 2) {
+            var num = parseFloat(originalAmtRef.current.value);
+            var cleanNum = num.toFixed(2);
+            originalAmtRef.current.value = cleanNum;
+            e.preventDefault();
+          }
+        }
+      }
+    }
+
+    function handleDiscountedPrice(e) {
+      if (e.key !== "Backspace") {
+        if (discountAmtRef.current.value.includes(".")) {
+          if (discountAmtRef.current.value.split(".")[1].length >= 2) {
+            var num = parseFloat(discountAmtRef.current.value);
+            var cleanNum = num.toFixed(2);
+            discountAmtRef.current.value = cleanNum;
+            e.preventDefault();
+          }
+        }
+      }
+    }
 
     const editInput = (e) => {
         setUpdatedList((prevState) => ({
@@ -52,7 +82,12 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
       const uploadImage = (e) => {
         e.preventDefault();
+        if (file.type != "image/jpeg" && file.type != "image/png"){
+          toast.error("Please choose only jpeg and png images")
+          return
+        }
         formData.append("image", file);
+        
         imagesService
           .uploadImage(formData)
           .then((response) => {
@@ -70,6 +105,9 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             }
           })
           .catch((error) => {
+            if (error.response.data.message){
+              return toast.error(error.response.data.message)
+            }
             toast.error(error.message);
           });
       };
@@ -171,16 +209,29 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
                 <input
                 type="file"
                 name="file"
+                accept=".jpeg, .png"
                 onChange={(e) => handleFile(e)}
               ></input>
                 <button className='btn h-[6vh] self-center' onClick={(e) => uploadImage(e)}>Upload image</button>
                 </div>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input type="text" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' onChange={editInput} value={updatedList.courseOriginalPrice}/>
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Original Price</label> <input type="number" name="courseOriginalPrice" className='border-2 border-b1 w-2/3 text-center' 
+                step=".01"
+                ref={originalAmtRef}
+                defaultValue={originalAmtRef.current}
+                onKeyDown={(e) => {
+                  handleOriginalPrice(e);
+                }}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Discounted Price</label> <input type="text" name="courseDiscountedPrice" className='border-2 border-b1 w-1/2 text-center' onChange={editInput} value={updatedList.courseDiscountedPrice}/>
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Discounted Price</label> <input type="number" name="courseDiscountedPrice" className='border-2 border-b1 w-1/2 text-center'
+                step=".01"
+                ref={discountAmtRef}
+                defaultValue={discountAmtRef.current}
+                onKeyDown={(e) => {
+                  handleDiscountedPrice(e);
+                }}/>
                 <input type="checkbox" className='border-2 border-b1 w-[20px] h-[20px] text-center m-auto' checked={checkBox} onChange={()=>swapSelection()}/>
                 </div>
                 <div className='flex h-[6vh] flex-wrap mr-8'>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
 import {toast} from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CreditCardModal } from "../modals/CreditCardModal";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
 import { useNav } from "../hooks/useNav";
+import { getCartNumber } from "../features/user/userActions";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -16,15 +17,21 @@ const Cart = () => {
   const { userInfo } = useSelector((state) => state.user);
   const {setTab} = useNav();
   const [checkedState, setCheckedState] = useState();
+  const dispatch = useDispatch();
   useEffect(() => {
     window.scrollTo(0, 0);
     setTab("cart")
-    if (userInfo) {
+    if (localStorage.getItem("userId")) {
       getCart();
     } else {
       toast.error("Please login to view cart");
     }
   }, []);
+
+  useEffect(() => {
+    getCart();
+    dispatch(getCartNumber(localStorage.getItem("userId")));
+  },[showModal]);
 
 
   useEffect(() => {
@@ -54,18 +61,6 @@ const Cart = () => {
     );
 
     setCheckedState(updatedCheckedState);
-
-    // const totalPrice = updatedCheckedState.reduce(
-    //   (sum, currentState, index) => {
-    //     if (currentState === true) {
-    //       return sum + toppings[index].price;
-    //     }
-    //     return sum;
-    //   },
-    //   0
-    // );
-
-    // setTotal(totalPrice);
   };
 
   function checkOutItems() {
