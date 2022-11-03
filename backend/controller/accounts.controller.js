@@ -123,13 +123,12 @@ const apiLogin = asyncHandler(async (req, res) => {
       // IF SUCCEED RESET THE lockTimes
       Account.updateOne(
         { email: email },
-        { $set: { loginTimes: 0, loggedTimestamp: new Date() } },
+        { $set: { loginTimes: 0, loggedTimestamp: new Date(), ipAddress: req.socket.remoteAddress } },
         function (err, result) {                                      // [Authentication] Reset the loginTimes
           if (err) {
             console.log("Set loginTimes failed. Error: " + err);
           } else {
             console.log("Success! loginTimes reset to 0: " + email);
-            console.log(result);
           }
         }
       );
@@ -282,10 +281,11 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     lockedOut,
     loginTimes,
     loggedTimestamp,
+    ipAddress,
     role,
   } = await Account.findById(req.account.id);
 
-  const sessionTimeout = (new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000 ? true : false
+  const sessionTimeout = ((new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000) && (req.socket.remoteAddress === ipAddress) ? true : false
 
   res.status(200).json({
     id: _id,
