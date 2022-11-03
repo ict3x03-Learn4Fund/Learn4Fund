@@ -45,15 +45,22 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     }, [courseInfo, setUpdatedList])
 
   function validation() {
-    if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity) { 
-      if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); return false;}
-      if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); return false; }
-      if (!validator.isLength(updatedList.courseTutor, { max: 50 }) || !validator.isAlphanumeric(updatedList.courseTutor)) { toast.error("Course Tutor: Alphanumeric within 50 characters");  return false;}
-      if (!validator.isInt(updatedList.quantity) || !validator.isLength(updatedList.quantity, { min: 1 })) { toast.error("Invalid Quantity"); return false;}
-      updatedList.courseName = validator.escape(updatedList.courseName)
-      updatedList.courseDescription = validator.escape(updatedList.courseDescription)
-      updatedList.courseTutor = validator.trim(updatedList.courseTutor)
-      return true;
+    const error = false;
+    if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) { 
+      if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true;}
+      if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); error = true; }
+      if (!validator.isLength(updatedList.courseTutor, { max: 50 }) || !validator.isAlphanumeric(updatedList.courseTutor)) { toast.error("Course Tutor: Alphanumeric within 50 characters"); error = true;}
+      if (!validator.isInt(updatedList.quantity) || !validator.isLength(updatedList.quantity, { min: 1 })) { toast.error("Invalid Quantity"); error = true; }
+      if (!validator.isFloat(updatedList.courseOriginalPrice)) { toast.error("Invalid: Original Price"); error = true; }
+      if (!error){
+        updatedList.courseName = validator.escape(updatedList.courseName)
+        updatedList.courseDescription = validator.escape(updatedList.courseDescription)
+        updatedList.courseTutor = validator.trim(updatedList.courseTutor)
+        return true;
+        
+      }
+      else { return false; }
+      
     }
     else {
       toast.error("Please fill up all the fields");
