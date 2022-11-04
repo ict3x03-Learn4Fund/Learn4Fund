@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { CreditCardModal } from "../modals/CreditCardModal";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
@@ -15,7 +15,7 @@ const Cart = () => {
   const [showDonation, setShowDonation] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
   const { userInfo } = useSelector((state) => state.user);
-  const {setTab} = useNav();
+  const { setTab } = useNav();
   const [checkedState, setCheckedState] = useState();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -31,14 +31,14 @@ const Cart = () => {
   useEffect(() => {
     getCart();
     dispatch(getCartNumber(localStorage.getItem("userId")));
-  },[showModal]);
+  }, [showModal]);
 
 
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));
   }, cartList);
 
-  useEffect(() => {}, [cartList]);
+  useEffect(() => { }, [cartList]);
 
   // retrieve cart
   const getCart = () => {
