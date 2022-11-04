@@ -120,14 +120,15 @@ router.route("/register").post(createAccountLimiter,
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
-      .isLength({ max: 128 }),                                         // [Validation] check if password is at least 12 characters
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{12,}$/).bail()        // [Validation] check if password is valid
+      .isLength({ min: 12, max: 128 }),                                         // [Validation] check if password is at least 12 characters
     check("firstName", "Invalid First Name")
       .notEmpty()
       .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
       .trim()                                                         // [Sanitization] remove whitespace
       .not().matches(emojiRegex)
       .withMessage("No emoji allowed").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 }).bail()                                         // [Validation] max length
+      .isLength({ min: 2, max: 25 }).bail()                                         // [Validation] max length
       .escape(),                                                       // [Sanitization] Escape HTML characters
     check("lastName", "Invalid Last Name")
       .notEmpty()
@@ -135,7 +136,7 @@ router.route("/register").post(createAccountLimiter,
       .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
       .not().matches(emojiRegex)
       .withMessage("No emoji allowed").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ max: 25 })                                         // [Validation] max length
+      .isLength({ min:2, max: 25 })                                         // [Validation] max length
       .escape(),                                                       // [Sanitization] Escape HTML characters                                         // [Validation] max length
   ], (req, res) => {
     const errors = validationResult(req);
@@ -154,7 +155,9 @@ router.route("/login").post(loginRateLimiter,
       .withMessage("Email is required")                               // [Validation] check if email is empty
       .normalizeEmail()                                               // [Sanitization] Sanitize email
       .trim(),                                                        // [Sanitization] remove whitespace
-    check("password").notEmpty().withMessage("Password is required"),
+    check("password")
+      .notEmpty().withMessage("Password is required")
+      .isLength({ min: 12, max: 128 }),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -238,6 +241,7 @@ router.route("/reset/:id/:jwt").post(resetPasswordLimiter,
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{12,}$/).bail()
       .isLength({ min: 12, max: 128 }),
 
   ], (req, res) => {
@@ -259,6 +263,7 @@ router.route("/changePass").post(protect,
     check('password', 'Invalid Password')
       .notEmpty().bail()
       .not().matches(emojiRegex).bail()
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{12,}$/).bail()
       .isLength({ min: 12, max: 128 }),
 
   ], (req, res) => {
@@ -289,25 +294,25 @@ router.route("/update").post(protect,
     check('userId', 'Invalid account').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
     check("email", 'Invalid email')
       .notEmpty().bail()                             // [Validation] check if email is empty
-      .trim()                                                         // [Sanitization] remove whitespace
-      .isEmail()                                                    // [Validation] check if email is valid
-      .normalizeEmail()                                            // [Sanitization] Sanitize email
-      .isLength({ max: 255 }).bail(),                              // [Validation] max length
+      .trim()                                         // [Sanitization] remove whitespace
+      .isEmail()                                      // [Validation] check if email is valid
+      .normalizeEmail()                               // [Sanitization] Sanitize email
+      .isLength({ max: 255 }).bail(),                 // [Validation] max length
     check("firstName", "Invalid First Name")
       .notEmpty()
-      .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
-      .trim()                                                         // [Sanitization] remove whitespace
+      .withMessage("First name is required").bail()   // [Validation] check if first name is empty
+      .trim()                                          // [Sanitization] remove whitespace
       .not().matches(emojiRegex)
-      .withMessage("First name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ min: 2, max: 25 }).bail()                                         // [Validation] max length
-      .escape(),                                                       // [Sanitization] Escape HTML characters
+      .withMessage("First name: Emoji detected").bail() // [Validation] check if first name contains emoji
+      .isLength({ min: 2, max: 25 }).bail()               // [Validation] max length
+      .escape(),                                          // [Sanitization] Escape HTML characters
     check("lastName", "Invalid Last Name")
       .notEmpty()
-      .withMessage("Last name is required").bail()                           // [Validation] check if last name is empty
-      .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
+      .withMessage("Last name is required").bail()          // [Validation] check if last name is empty
+      .trim()                                             // [Sanitization] Remove whitespace from both sides of a string
       .not().matches(emojiRegex)
-      .withMessage("Last name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ min: 2, max: 25 })                                         // [Validation] max length
+      .withMessage("Last name: Emoji detected").bail()    // [Validation] check if first name contains emoji
+      .isLength({ min: 2, max: 25 })                      // [Validation] max length
       .escape(),
   ],
   (req, res) => {

@@ -10,7 +10,7 @@ pipeline {
                         sh 'rm dependency-check-report.html'
                         sh 'rm dependency-check-report.xml'
                     }catch (err){
-                        echo 'Skipping, ODC reports pre-generated.'
+                        echo 'Skipping, no existing ODC reports present.'
                     }
                 }
                 sh 'cp /home/.backend.env backend/.env'

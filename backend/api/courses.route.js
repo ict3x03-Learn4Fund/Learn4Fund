@@ -31,6 +31,7 @@ router.route("/create").post(protect,
             .notEmpty().bail()
             .isString(),
         body('courseDescription', 'Invalid course description')
+            .notEmpty().bail()
             .isString().bail()
             .isLength({ max: 500 })
             .escape().trim(),
