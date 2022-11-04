@@ -61,7 +61,7 @@ const protect = asyncHandler((req, res, next) => {
     if (!token) {
         // Send to logs db
         Logs.create({
-            email: req.ip,
+            ip: req.headers['x-forwarded-for'],
             type: "auth",
             reason: "Attempted to access " + req.url + " without authorization",
             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
