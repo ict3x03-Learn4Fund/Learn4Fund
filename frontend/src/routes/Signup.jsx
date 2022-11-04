@@ -415,7 +415,7 @@ const Signup = () => {
                 <label>Subscribe to Newsletter</label>
               </div>
             </div>
-            
+
             <ReCAPTCHA
               sitekey={reCaptchaKey}
               className="flex justify-center w-full mt-2"
