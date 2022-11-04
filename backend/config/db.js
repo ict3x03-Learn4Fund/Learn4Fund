@@ -62,20 +62,20 @@ const uploadMiddleware = (req, res, next) => {
       return res.status(400).send('File too large');
     } else if (err) {
       // check if our filetype error occurred
-      if (err === 'wrong file type') return res.status(400).send({message: 'Image files of type jpeg and png only'});
+      if (err === 'wrong file type') return res.status(400).send({ message: 'Image files of type jpeg and png only' });
       // An unknown error occurred when uploading.
-      return res.status(500).json({err: err});
+      return res.status(500).json({ err: err });
     }
     // all good, proceed
     next();
   });
 }
 
-const apiUpload = asyncHandler(async (req,res) => {
-  const {file} = req;
-  const {id} = file;
+const apiUpload = asyncHandler(async (req, res) => {
+  const { file } = req;
+  const { id } = file;
   console.log('uploaded file: ', file)
-  return res.status(200).json({id: file.id})
+  return res.status(200).json({ id: file.id })
 })
 
 const apiGetImg = asyncHandler((req, res) => {
@@ -83,7 +83,7 @@ const apiGetImg = asyncHandler((req, res) => {
   gfs.find({ _id }).toArray((err, file) => {
     // Check if file
     if (!file || file.length === 0) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         err: "No file exists",
       });
     }
