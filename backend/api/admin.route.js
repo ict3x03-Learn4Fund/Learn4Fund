@@ -2,7 +2,7 @@
 
 const express = require('express')
 const { protect } = require('../middleware/authMiddleware')
-const { apiGetAllLogs, apiGetAllAccounts, apiAddLog, apiLockUnlockAccount, apiDeleteAccount} = require("../controller/admin.controller")
+const { apiGetAllLogs, apiGetAllAccounts, apiAddLog, apiLockUnlockAccount, apiDeleteAccount } = require("../controller/admin.controller")
 const router = express.Router()
 
 // @route   GET /api/admin/getAllLogs
