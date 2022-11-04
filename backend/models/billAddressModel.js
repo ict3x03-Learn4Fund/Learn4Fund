@@ -15,19 +15,19 @@ const billAddressSchema = mongoose.Schema(
       default: "",
     },
     address: {
-        type: String,
-        default: ""
+      type: String,
+      default: ""
     },
     unit: {
-        type: String,
-        defualt: ""
+      type: String,
+      defualt: ""
     },
     city: {
-        type: String,
-        default: "Singapore"
+      type: String,
+      default: "Singapore"
     },
     postalCode: {
-        type: Number,
+      type: Number,
     }
   },
   {
