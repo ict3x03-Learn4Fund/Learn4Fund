@@ -18,6 +18,9 @@ const apiGetCourses = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiCreateCourse = asyncHandler(async (req, res) => {
+  if (req.body.courseDiscountedPrice > req.body.courseOriginalPrice) {
+    return res.status(400).json({ message: "Discounted price cannot be higher than original price" });
+  }
   const course = await Course.create({                      // Create new course
     courseName: req.body.courseName,
     courseImg: req.body.courseImg,
@@ -47,6 +50,9 @@ const apiUpdateCourse = asyncHandler(async (req, res) => {
   if (!req.body){
     res.status(400);
     throw new Error('Please input your updated values');
+  }
+  if (req.body.courseDiscountedPrice > req.body.courseOriginalPrice) {
+    return res.status(400).json({ message: "Discounted price cannot be higher than original price" });
   }
   const updatedCourse = await Course.findByIdAndUpdate(req.params.id, {                      // Create new course
     courseName: req.body.courseName,

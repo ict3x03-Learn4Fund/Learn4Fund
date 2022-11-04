@@ -23,7 +23,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       courseName: "",
       courseOriginalPrice: 0.00,
       courseTutor: "",
-      courseType: "",
+      courseType: "IT",
       quantity: 0,
       _id: ""
     });
@@ -46,6 +46,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
 
   function validation() {
     const error = false;
+    console.log(updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice)
     if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) { 
       if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true;}
       if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); error = true; }
@@ -55,7 +56,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       if (!error){
         updatedList.courseName = validator.escape(updatedList.courseName)
         updatedList.courseDescription = validator.escape(updatedList.courseDescription)
-        updatedList.courseTutor = validator.trim(updatedList.courseTutor)
+        updatedList.courseTutor = validator.escape(updatedList.courseTutor)
         return true;
         
       }
@@ -144,18 +145,22 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     }
 
     const addOrUpdateCourse = () => {
-    //   if (!validation())
-    // {
-    //   return
-    // }
-    // check if price amounts are more than a certain value
-    if (originalAmtRef.current.value <= 0 || discountAmtRef.current.value <= 0){
-      toast.error("Price amounts must be more than 0", {autoClose: false, limit: 1})
-      return;
-    }
+      // if (!validation())
+      // {
+      //   return
+      // }
+      // check if price amounts are more than a certain value
+      if (originalAmtRef.current.value <= 0 || discountAmtRef.current.value <= 0){
+        toast.error("Price amounts must be more than 0", {autoClose: false, limit: 1})
+        return;
+      }
       // check if price amounts are more than a certain value
       if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000){
         toast.error("Price amounts cannot be more than $50,000", {autoClose: false, limit: 1})
+        return;
+      }
+      if (originalAmtRef.current.value < discountAmtRef.current.value) {
+        toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
         return;
       }
 
@@ -181,7 +186,10 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       console.log(response)
       toast.success('Course Created');
     })
-    .catch((e) => {
+      .catch((e) => {
+      if (e.response.data.message){
+        return toast.error(e.response.data.message)
+      }
       toast.error('Error creating course');
       console.log(e);
     });
@@ -197,9 +205,12 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       console.log(response)
       toast.success('Course Updated');
     })
-    .catch((e) => {
-      toast.error('Error updating course');
-      console.log(e);
+      .catch((e) => {
+        if (e.response.data.message){
+          return toast.error(e.response.data.message)
+        }
+        toast.error('Error updating course');
+        console.log(e);
     });
     
   };
