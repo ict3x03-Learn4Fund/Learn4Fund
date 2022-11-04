@@ -16,7 +16,7 @@ router.route("/").get(apiGetDonations);
 
 router.route("/total").get(apiGetTotal);
 
-router.route("/add").post(
+router.route("/add").post(protect,
   [
     body("donationAmt", "Enter amount between 0.01 to 10 million").isLength({min:0, max:8}).isFloat({ min: 0.01, max: 10000000 }),
   ], (req, res) => {
