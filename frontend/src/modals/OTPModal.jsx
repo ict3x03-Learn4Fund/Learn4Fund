@@ -14,7 +14,7 @@ import { clearSignupState, logout } from "../features/user/userSlice";
 import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
 
-export const OTPModal = ({ closeModal, formData }) => {
+export const OTPModal = ({ closeModal }) => {
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -22,13 +22,9 @@ export const OTPModal = ({ closeModal, formData }) => {
       document.body.style.overflow = "unset";
     };
   }, []);
-  const {
-    loading,
-    success,
-    error,
-    qrUrl,
-    stateErrorMsg,
-  } = useSelector((state) => state.user);
+  const { loading, otpError, otpSuccess, qrUrl, stateErrorMsg } = useSelector(
+    (state) => state.user
+  );
 
   const {
     register,
@@ -62,28 +58,25 @@ export const OTPModal = ({ closeModal, formData }) => {
           return;
         });
     } else {
-      if (formData) {
-        formData.token = otp;
-        dispatch(userLogin(formData));
-      }
+      dispatch(user2FA({ token: otp }));
     }
   };
 
   useEffect(() => {
     if (!qrUrl) {
-      if (success) {
+      if (otpSuccess) {
         toast.success('Logged in')
         dispatch(getUserDetails(localStorage.getItem("userId")));
         dispatch(getCartNumber());
         navigate("/");
       }
-      if (error) {
+      if (otpError) {
         dispatch(logout());
         closeModal(false)
         toast.error(stateErrorMsg);
       }
     }
-  }, [dispatch, success, error, stateErrorMsg, qrUrl]);
+  }, [dispatch, otpError, otpSuccess, stateErrorMsg, qrUrl]);
 
   return (
     <div className="fixed w-screen h-screen bg-[rgba(100,100,100,0.2)] top-0 left-0 overflow-auto z-90 transition ease-in-out delay-300">
