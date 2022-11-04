@@ -6,7 +6,7 @@ const {
     apiDeleteCard,
     apiDeleteAddr,
     apiGetMethods,
-    apiGetTransactions} = require('../controller/payments.controller')
+    apiGetTransactions } = require('../controller/payments.controller')
 const { protect } = require('../middleware/authMiddleware')
 const { param, body, validationResult } = require('express-validator')
 const router = express.Router()
@@ -28,7 +28,7 @@ router.route("/:id").get(protect,
             return res.status(400).json({ message: "Invalid Request" });
         }
         apiGetMethods(req, res)
-})
+    })
 
 /***
  * @desc Make payment
@@ -72,7 +72,7 @@ router.route("/pay").post(protect,
             return res.status(400).json({ message: errMessage });
         }
         apiMakePayment(req, res)
-})
+    })
 /***
  * @desc Add payment method
  * @route POST /v1/api/payments/addAddr
@@ -113,7 +113,7 @@ router.route("/addAddr").post(protect,
             return res.status(400).json({ message: "Invalid address" });
         }
         apiAddAddr(req, res)
-})
+    })
 
 router.route("/addCard").post(
     [
@@ -135,9 +135,9 @@ router.route("/addCard").post(
             .custom(value => {
                 if (value !== 'VisaCard' && value !== 'MasterCard') {
                     throw new Error('Invalid card type')
-            }
-            return true;
-        }),
+                }
+                return true;
+            }),
         body('creditCard.expiryDate', 'Invalid expiry date')
             .notEmpty().bail()
             .customSanitizer(value => value.replace(/\s*/g, ""))
@@ -150,7 +150,7 @@ router.route("/addCard").post(
             return res.status(400).json({ message: errMessage });
         }
         apiAddCard(req, res)
-})
+    })
 router.route("/deleteCard/:id").get(protect,
     [
         param('id', 'Invalid ID')
@@ -163,7 +163,7 @@ router.route("/deleteCard/:id").get(protect,
             return res.status(400).json({ message: "Invalid ID" });
         }
         apiDeleteCard(req, res)
-})
+    })
 
 router.route("/deleteAddr/:id").get(protect,
     [
@@ -177,7 +177,7 @@ router.route("/deleteAddr/:id").get(protect,
             return res.status(400).json({ message: "Invalid Request" });
         }
         apiDeleteAddr(req, res)
-})
+    })
 router.route("/getTransactions/:id").get(protect,
     [
         param('id', 'Invalid ID')
@@ -190,6 +190,6 @@ router.route("/getTransactions/:id").get(protect,
             return res.status(400).json({ message: "Invalid Request" });
         }
         apiGetTransactions(req, res)
-})
+    })
 
 module.exports = router
