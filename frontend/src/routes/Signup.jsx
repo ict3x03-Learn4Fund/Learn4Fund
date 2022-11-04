@@ -171,7 +171,6 @@ const Signup = () => {
       await axios
         .post(process.env.REACT_APP_API_URL, { token })
         .then((res) => {
-          console.log(res);
           dispatch(registerUser(accountForm));
         })
         .catch((error) => {

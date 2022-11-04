@@ -58,7 +58,6 @@ function Homepage({ setNewsModal }) {
         setDataCourses(response.data);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 

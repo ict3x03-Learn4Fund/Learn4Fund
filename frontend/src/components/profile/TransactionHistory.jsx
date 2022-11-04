@@ -12,7 +12,6 @@ function TransactionHistory() {
   const retrieveTransactions = () => {
     paymentsService.getTransactions(userInfo.id).then((response) => {
       if (response.status == 200) {
-        console.log(response.data);
         setTransaction(response.data.reverse());
       }
     });

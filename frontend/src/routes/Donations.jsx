@@ -107,7 +107,6 @@ function Donations() {
         .addDonationToCart(userInfo.id, offerAmtRef.current.value, showName)
         .then((response) => {
           if (response.status == 200) {
-            console.log(response.data);
             toast.success("Donations added into cart.");
           } else {
             toast.error(response.data.message);

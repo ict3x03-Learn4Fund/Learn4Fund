@@ -17,7 +17,6 @@ export const ConfirmationModal = ({ closeModal, courseInfo }) => {
     courseService
       .deleteCourse(courseInfo._id)
       .then((response) => {
-        console.log(response.status);
         if (response.status === 200) {
           toast.success("Successfully deleted course.");
           closeModal();
@@ -26,7 +25,6 @@ export const ConfirmationModal = ({ closeModal, courseInfo }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
       });
   }
   return (

@@ -32,7 +32,6 @@ export function AuthProvider({ children }) {
     setAuthMsg("");
     try {
       const verifyUser = await authService.register(userForm);
-      console.log(verifyUser);
       setCurrentUser(verifyUser);
       // navigate("/login2FA"); <- CHANGE TO GO TO HOMEPAGE STRAIGHT RMB CHANGE BACK 
       sessionStorage.setItem("authed", true)//delete later!!
@@ -58,7 +57,6 @@ export function AuthProvider({ children }) {
     setAuthMsg("");
     try {
       const verifyUser = await authService.login(email, password);
-      console.log(verifyUser);
       setCurrentUser(verifyUser);
       // navigate("/login2FA"); <- CHANGE TO GO TO HOMEPAGE STRAIGHT RMB CHANGE BACK 
       setAuthed(true); //delete later!!
@@ -85,8 +83,6 @@ export function AuthProvider({ children }) {
       const verifyUser = await authService.verify2FA(currentUser.email, token);
       setCurrentUser(verifyUser);
       setAuthed(true);
-      console.log("2fa", currentUser);
-      console.log("2fa", authed);
       sessionStorage.setItem("authed", true)
       sessionStorage.setItem("currentUser", JSON.stringify(verifyUser))
       navigate("/")
@@ -154,7 +150,6 @@ export function AuthProvider({ children }) {
   const lockUnlockAccount = async (data) => {
     try {
       const response = await adminAuthService.lockUnlockAccount(data);  // [Management] /services/admin.js
-      console.log(response);
       axios.interceptors.response.use(response => {                     // [Error] To intercept error codes from Response
         return response.data.message;                                   // [Error] Return error message
       }, error => {
@@ -178,7 +173,6 @@ export function AuthProvider({ children }) {
   const deleteAccount = async (data) => {
     try {
       const response = await adminAuthService.deleteAccount(data);  // [Management] /services/admin.js
-      console.log(response);
       axios.interceptors.response.use(response => {                 // [Error] To intercept error codes from Response
         return response.data.message;                               // [Error] Return error message
       }, error => {
@@ -239,7 +233,6 @@ export function RequireAuth({ children }) {                               // [Au
 }
 export function RequireAdmin({ children }) {                              // [Authorization] To check if Admin is logged in
   const { authed, currentUser } = useAuth();
-  console.log("RequireAdmin:  ", currentUser);
   if (authed === true && currentUser.role === "admin") {                  // [Authorization] If user is logged in and is admin, return children pages allowed (from App.jsx)
     return children;
   }
@@ -247,7 +240,6 @@ export function RequireAdmin({ children }) {                              // [Au
     return <Navigate to="/" />
   }
   else {                                                                  // [Authorization] If user is not logged in, redirect to login page
-    console.log("go login");
     return <Navigate to="/login" />
   }
 

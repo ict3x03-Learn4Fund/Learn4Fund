@@ -46,7 +46,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
 
   function validation() {
     const error = false;
-    console.log(updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice)
     if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) {
       if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true; }
       if (!validator.isLength(updatedList.courseName, { max: 100 })) { toast.error("Course name: 100 characters only"); error = true; }
@@ -103,7 +102,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   };
 
   useEffect(() => {
-    console.log('changed!')
   }, [updatedList])
 
   const uploadImage = (e) => {
@@ -182,7 +180,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     courseService
       .createCourse(data)
       .then((response) => {
-        console.log(response)
         toast.success('Course Created');
       })
       .catch((e) => {
@@ -190,7 +187,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
           return toast.error(e.response.data.message)
         }
         toast.error('Error creating course');
-        console.log(e);
       });
 
   };
@@ -201,7 +197,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     courseService
       .updateCourse(id, data)
       .then((response) => {
-        console.log(response)
         toast.success('Course Updated');
       })
       .catch((e) => {
@@ -209,7 +204,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
           return toast.error(e.response.data.message)
         }
         toast.error('Error updating course');
-        console.log(e);
       });
 
   };

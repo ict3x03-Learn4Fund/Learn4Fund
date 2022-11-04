@@ -147,11 +147,8 @@ function ChangePassword() {
       }
       else {
         const payload = { userId: userId, token: otp }
-        console.log(payload)
         authService.verify2FA(payload).then((response) => {
-          console.log("status", response.status)
           if (response.status == 200) {
-            console.log(userId, password)
             authService.normalChangePass(userId, password).then((res) => {
               if (res.status == 200) {
                 toast.success("Password changed successfully!")
@@ -162,7 +159,6 @@ function ChangePassword() {
               }
             }).catch((err) => {
               toast.error(err.response.data.message);
-              // console.log(err.response.data.message)
             })
 
           } else {

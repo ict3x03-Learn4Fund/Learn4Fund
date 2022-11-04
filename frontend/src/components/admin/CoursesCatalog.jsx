@@ -24,7 +24,6 @@ const CoursesCatalog = () => {
         setDataCourses(response.data);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 
