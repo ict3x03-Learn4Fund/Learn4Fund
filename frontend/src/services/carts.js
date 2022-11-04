@@ -22,7 +22,7 @@ const getTotal = async (accoundId) => {
 }
 
 const addDonationToCart = async (accountId, donationAmt, showDonation) => {
-  const cart = {accountId, donationAmt, showDonation};
+  const cart = { accountId, donationAmt, showDonation };
   return await http.post("/carts/addDonation", cart);
 }
 
