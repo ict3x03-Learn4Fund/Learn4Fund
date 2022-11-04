@@ -6,6 +6,7 @@ import cartsService from "../services/carts";
 import { useDispatch, useSelector } from "react-redux";
 import donationsService from "../services/donations";
 import { useNav } from "../hooks/useNav";
+import validator from "validator";
 
 function Donations() {
   const { userInfo } = useSelector((state) => state.user);
@@ -76,10 +77,15 @@ function Donations() {
   };
 
   function addToCart() {
+    if(offerAmtRef.current.value <= 0){
+      toast.error("Please enter a valid amount");
+      return;
+    }
     if(offerAmtRef.current.value >9999999){
       toast.info('Please enter a valid amount less than 10 million') 
+      return
     }
-    if (userInfo) {
+    else if (userInfo) {
       addDonation();
     } else {
       toast.error("Please login to continue");
@@ -93,19 +99,29 @@ function Donations() {
     } else {
       showName = true;
     }
-    cartsService
+    if (!validator.isFloat(offerAmtRef.current.value)) {
+      toast.error("Please enter a valid amount");
+    }
+    else {
+      cartsService
       .addDonationToCart(userInfo.id, offerAmtRef.current.value, showName)
       .then((response) => {
         if (response.status == 200) {
           console.log(response.data);
           toast.success("Donations added into cart.");
         } else {
-          toast.error(response.data);
+          toast.error(response.data.message);
         }
       })
-      .catch((e) => {
-        toast.error("Error adding donations")
+        .catch((e) => {
+          if (e.response.data.message)
+          {
+            toast.error(e.response.data.message);
+            return
+          }
+          toast.error("Error adding donations")
       });
+    }
   };
 
   return (
@@ -139,7 +155,7 @@ function Donations() {
         </div>
         <div className="flex flex-col w-full h-[240px] lg:h-[320px] my-[16px]">
           <div className="flex w-full h-full justify-center">
-            <img src={Banner} alt={""} />
+            <img src={Banner} alt={""} className="bg-black"/>
           </div>
         </div>
         <hr className="flex flex-wrap w-full border-1 border-[black] self-center m-2" />
@@ -167,6 +183,7 @@ function Donations() {
             <div className="flex h-full w-1/2 border-2 border-b2 justify-center text-center">
               <input
                 className="font-type1 font-normal text-[1.5vw] leading-[20px] w-full  text-center self-center"
+                maxLength={8}
                 type="number"
                 step=".01"
                 ref={offerAmtRef}

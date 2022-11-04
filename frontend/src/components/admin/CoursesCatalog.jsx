@@ -14,8 +14,8 @@ const CoursesCatalog = () => {
 
   useEffect(() => {
     retrieveCourses();
-  },[]);
-
+  }, [modalIsOpen, confirmDeleteModal]);
+  
   // retrieve all courses
   const retrieveCourses = () => {
     courseService

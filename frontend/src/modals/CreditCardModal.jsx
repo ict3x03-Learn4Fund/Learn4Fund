@@ -33,6 +33,8 @@ export const CreditCardModal = ({
   const [existCardType, setExistCardType] = useState();
   const [cvv, setCvv] = useState("");
   const [loading, setLoading] = useState(false);
+  const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/
+
   let cardType = "";
 
   useEffect(() => {
@@ -222,6 +224,10 @@ export const CreditCardModal = ({
           toast.error("Invalid address details");
           error = true;
       }
+      if (validator.matches(firstName, emojiRegex) || !validator.matches(lastName, emojiRegex) || !validator.matches(city, emojiRegex) || !validator.matches(address, emojiRegex) || !validator.matches(unit, emojiRegex)) {
+        toast.error("Names and address cannot contain emojis!");
+        error = true;
+      }
       if (!error) {
         paymentsService
         .addAddr(userInfo.id, addressForm)
@@ -268,7 +274,7 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     if (name && cardNumber && expiryDate) {
-      if ( !validator.isLength(name, { max: 50 })) {
+      if ( !validator.isLength(name, { max: 50 }) || !validator.matches(name, emojiRegex)) {
         toast.error("Name is invalid!");
         return
       }
@@ -276,22 +282,21 @@ export const CreditCardModal = ({
         toast.error("Card number is invalid!");
         return
       }
-      else { 
-        const request = { name, cardNo: cardNumber, cardType, expiryDate };
-        paymentsService
-        .addCard(userInfo.id, request)
-        .then((res) => {
-          if (res.status == 200) {
-            toast.success("Successfully save new card.");
-            setCardId(res.data.id);
-          } else {
-            toast.error(res.data.message);
-          }
-        })
-        .catch((err) => {
-          toast.error(err.response.data.message);
-        });
-      }
+    
+      const request = { name, cardNo: cardNumber, cardType, expiryDate };
+      paymentsService
+      .addCard(userInfo.id, request)
+      .then((res) => {
+        if (res.status == 200) {
+          toast.success("Successfully save new card.");
+          setCardId(res.data.id);
+        } else {
+          toast.error(res.data.message);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
     }
     else {
       toast.error("Please fill up all the fields!");

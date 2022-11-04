@@ -34,6 +34,8 @@ export const userLogin = createAsyncThunk(
             localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
+            console.log(error)
+
             // return custom error message from API if any
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)
@@ -51,10 +53,8 @@ export const getUserDetails = createAsyncThunk(
             // send user's id to retrieve account information
             if(localStorage.getItem('userId')) {
             const data = await authService.getAccount(localStorage.getItem('userId'));
-            console.log(data)
-
             if(data.sessionTimeout){
-      toast.warning('Your sessions has expired, please login again')
+      toast.warning('Your sessions has expired, please login again', {autoClose: false, limit: 1})
                 localStorage.removeItem('userId');
             }
             return data
