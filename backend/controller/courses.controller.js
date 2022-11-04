@@ -7,7 +7,7 @@ const Course = require("../models/courseModel");
  * @access Private
  */
 const apiGetCourses = asyncHandler(async (req, res) => {
-  const courses = await Course.find();
+  const courses = await Course.find({deleteIndicator: "false"});
   // console.log(courses)
   res.json(courses);
 });
