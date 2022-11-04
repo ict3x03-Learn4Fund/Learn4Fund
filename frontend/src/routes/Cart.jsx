@@ -30,7 +30,6 @@ const Cart = () => {
 
   useEffect(() => {
     if (!showModal) {
-      console.log("runn here");
       setTotalAmount(0);
       setDonation(0);
       setCheckout([]);
