@@ -22,18 +22,9 @@ services:
         volumes: 
             - /app/node_modules
             - ./frontend:/app    
-        #request will forward to same url, so we only need /api to distinguish that this request will forward to our backend           
+        
         environment: 
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
-    
-    # nginx:
-    #     build:
-    #         context: ./nginx
-    #         dockerfile: Dockerfile.dev
-    #     ports: 
-    #         - 3000:80
-    #     restart: always
-
 volumes: 
     db-volume:

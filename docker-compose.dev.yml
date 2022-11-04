@@ -1,23 +1,17 @@
-# docker compose file version
 version: '3.8'
 
-# all of your services list will define here
 services:
     backend:
-#        mem_limit: "1300M"   
-        build: # build image
-            context: ./backend #directory location
-            dockerfile: Dockerfile.dev # dockerfile name
+        build:
+            context: ./backend
+            dockerfile: Dockerfile.dev
         volumes:
             - /app/node_modules
             - ./backend:/app
         environment:
-             # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
-             # container service name and port on which it is running
-            - CHOKIDAR_USEPOLLING=true #for hot reloading
+            - CHOKIDAR_USEPOLLING=true
             - CURRENT_ENV=testing
         restart: always
-        #added    
         ports:
             - 5000:5000
 
@@ -28,16 +22,14 @@ services:
             context: ./frontend
             dockerfile: Dockerfile.dev
         volumes:
-            - /app/node_modules # we reference the node_modules which is present in app directory inside the docker, to our current node modules which is present in front directory
-            - ./frontend:/app  # frontend directory is used as a volume(bind mount)  
+            - /app/node_modules
+            - ./frontend:/app
         restart: always
-        environment:
-            #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
+        environment:            
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
             - REACT_APP_CURRENT_ENV=testing
         ports:
             - 3000:3000
-# volumes are defined here
 volumes:
     db-volume:
