@@ -5,7 +5,7 @@ import { React, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import adminAuthService from "../services/admin";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { useNav } from "../hooks/useNav";
 
 const Admin = () => {
@@ -13,7 +13,7 @@ const Admin = () => {
   const [accounts, setAccounts] = useState([]);
   const [logs, setLogs] = useState([]);
   const navigate = useNavigate();
-  const {setTab} = useNav();
+  const { setTab } = useNav();
 
   const fetchLogData = async () => {
     try {
@@ -43,8 +43,8 @@ const Admin = () => {
     try {
       const response = await adminAuthService.getAllAccounts(); // [Logging] /services/admin.js
       axios.interceptors.response.use((response) => {                   // [Error] To intercept error codes from Response
-          return response.data.message; // [Error] Return error message
-        },
+        return response.data.message; // [Error] Return error message
+      },
         (error) => {
           if (error.response.status === 401) {
             navigate("/");
