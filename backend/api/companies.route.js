@@ -21,7 +21,7 @@ const verifyVoucherLimiter = rateLimit({                                  // [Do
             reason: "Attempt to verify voucher was rate limited.",
             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
         });
-        response.status(500).json({message:"Tries exceeded 50, please try again in 1 hour"});
+        response.status(429).json({message:"Tries exceeded 50, please try again in 1 hour"});
     }
 });
 

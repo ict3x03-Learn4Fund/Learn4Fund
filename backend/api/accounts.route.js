@@ -42,7 +42,7 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
       reason: "Attempt to register account " + request.body['email'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(500).json({ message: "Too many accounts created from this IP, please try again after 1 hour" });
+    response.status(429).json({ message: "Too many accounts created from this IP, please try again after 1 hour" });
   }
 });
 const verify2FALimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
@@ -59,7 +59,7 @@ const verify2FALimiter = rateLimit({                                  // [DoS] P
       reason: "Attempt to verify 2fa from " + request.body['userId'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(500).json({message: "Too much tries, please try again in 3 mins"})
+    response.status(429).json({message: "Too much tries, please try again in 3 mins"})
   }
 });
 const resetPasswordLimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
@@ -76,7 +76,7 @@ const resetPasswordLimiter = rateLimit({                                  // [Do
       reason: "Attempt to reset password was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(500).json({ message: "Too much tries, please try again in 10 mins"})
+    response.status(429).json({ message: "Too much tries, please try again in 10 mins"})
   }
 });
 
@@ -95,7 +95,7 @@ const loginRateLimiter = rateLimit({                              // [DoS] Preve
       reason: "Login from " + request.body['email'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    return response.status(500).json({ message: "Too many logins from this IP address, please try again after 10 mins" })
+    return response.status(429).json({ message: "Too many logins from this IP address, please try again after 10 mins" })
   }
 });
 
