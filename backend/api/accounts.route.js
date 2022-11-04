@@ -40,7 +40,7 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
       email: request.body['email'],
       type: "auth",
       reason: "Attempt to register account " + request.body['email'] + " was rate limited.",
-      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+      time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
     response.status(options.statusCode).send(options.message)
   }
@@ -57,7 +57,7 @@ const verify2FALimiter = rateLimit({                                  // [DoS] P
       userId: request.body["userId"],
       type: "auth",
       reason: "Attempt to verify 2fa from " + request.body['userId'] + " was rate limited.",
-      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+      time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
     response.status(options.statusCode).send(options.message)
   }
@@ -74,7 +74,7 @@ const resetPasswordLimiter = rateLimit({                                  // [Do
       email: request.body["email"],
       type: "auth",
       reason: "Attempt to reset password was rate limited.",
-      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+      time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
     response.status(options.statusCode).send(options.message)
   }
@@ -93,7 +93,7 @@ const loginRateLimiter = rateLimit({                              // [DoS] Preve
       email: request.body['email'],
       type: "auth",
       reason: "Login from " + request.body['email'] + " was rate limited.",
-      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+      time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
     response.status(options.statusCode).send(options.message)
   }
@@ -101,7 +101,7 @@ const loginRateLimiter = rateLimit({                              // [DoS] Preve
 
 // @route   POST api/accounts/register
 router.route("/register").post(createAccountLimiter,
-  
+
   [
     check("email", 'Invalid email')
       .notEmpty().bail()                             // [Validation] check if email is empty
@@ -120,7 +120,7 @@ router.route("/register").post(createAccountLimiter,
       .notEmpty()
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
-      .isLength({max: 128}),                                         // [Validation] check if password is at least 12 characters
+      .isLength({ max: 128 }),                                         // [Validation] check if password is at least 12 characters
     check("firstName", "Invalid First Name")
       .notEmpty()
       .withMessage("First name is required").bail()                          // [Validation] check if first name is empty
@@ -137,7 +137,7 @@ router.route("/register").post(createAccountLimiter,
       .withMessage("No emoji allowed").bail()                         // [Validation] check if first name contains emoji
       .isLength({ max: 25 })                                         // [Validation] max length
       .escape(),                                                       // [Sanitization] Escape HTML characters                                         // [Validation] max length
-  ],(req, res) => {
+  ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: "Invalid User Inputs" });
@@ -166,18 +166,18 @@ router.route("/login").post(loginRateLimiter,
 
 // @route   POST api/accounts/verify2FA
 router.route('/verify2FA').post(verify2FALimiter,
-    [
-      check('token', 'Invalid code')
-        .isNumeric()                                               // [Validation] Check if token is a number
-        .isLength({ min: 6, max: 6 }),                             // [Validation] 6 digits
-      
-    ], (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ message: "Invalid code" });
-        }
-        apiVerify2FA(req, res);
-})
+  [
+    check('token', 'Invalid code')
+      .isNumeric()                                               // [Validation] Check if token is a number
+      .isLength({ min: 6, max: 6 }),                             // [Validation] 6 digits
+
+  ], (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: "Invalid code" });
+    }
+    apiVerify2FA(req, res);
+  })
 
 // @route   GET api/getAccount
 router.route("/getAccount").get(protect, apiGetAccount);
@@ -187,14 +187,14 @@ router.route("/reset").post(resetPasswordLimiter,
   [
     check("email", 'Email is invalid')
       .notEmpty().bail()
-      .trim() 
-      .isLength({ max: 255 }).bail()                                                       
+      .trim()
+      .isLength({ max: 255 }).bail()
       .isEmail().bail()
       .normalizeEmail(),                                               // [Sanitization] Sanitize email
     check('token', 'Invalid code')
       .trim()
       .isInt().isLength({ min: 6, max: 6 }),                             // [Validation] 6 digits
-    
+
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -203,7 +203,7 @@ router.route("/reset").post(resetPasswordLimiter,
     else {
       apiResetPassword(req, res);
     }
-})
+  })
 
 // @route GET api/accounts/reset/:id/:jwt (verify after click link in email)
 router.route("/reset/:id/:jwt").get(resetPasswordLimiter,
@@ -215,14 +215,14 @@ router.route("/reset/:id/:jwt").get(resetPasswordLimiter,
     check('jwt', 'Invalid token')
       .notEmpty().bail()
       .isJWT(),
-    
+
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: "Error Reset Credentials" });
     }
     apiVerifyReset(req, res);
-})
+  })
 
 // @route POST api/accounts/reset/:id/:jwt (after verify link)
 router.route("/reset/:id/:jwt").post(resetPasswordLimiter,
@@ -239,7 +239,7 @@ router.route("/reset/:id/:jwt").post(resetPasswordLimiter,
       .withMessage("Password is required").bail()                            // [Validation] check if password is empty
       .not().matches(emojiRegex).bail()
       .isLength({ min: 12, max: 128 }),
-    
+
   ], (req, res) => {
     const errors = validationResult(req);
     console.log(errors)
@@ -247,8 +247,8 @@ router.route("/reset/:id/:jwt").post(resetPasswordLimiter,
       return res.status(400).json({ message: "Invalid Credentials" });
     }
     apiChangePassword(req, res);
-});
-  
+  });
+
 // @route POST api/accounts/changePass
 router.route("/changePass").post(protect,
   [
@@ -260,14 +260,14 @@ router.route("/changePass").post(protect,
       .notEmpty().bail()
       .not().matches(emojiRegex).bail()
       .isLength({ min: 12, max: 128 }),
-    
-  ], (req, res) => { 
+
+  ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
     apiNormalChangePass(req, res);
-});
+  });
 
 // @route POST api/accounts/uploadAvatar
 router.route("/uploadAvatar").post(protect,
@@ -275,13 +275,13 @@ router.route("/uploadAvatar").post(protect,
     check('userId', 'Invalid account').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
     check('imgId', 'Missing Image').notEmpty().bail().isAlphanumeric().bail().isLength({ min: 24, max: 24 }),
 
-  ], (req, res) => { 
+  ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ message: "Error: Image not uploaded" });
     }
     apiUploadAvatar(req, res);
-});
+  });
 
 // @route POST api/accounts/update
 router.route("/update").post(protect,
@@ -299,7 +299,7 @@ router.route("/update").post(protect,
       .trim()                                                         // [Sanitization] remove whitespace
       .not().matches(emojiRegex)
       .withMessage("First name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ min:2, max: 25 }).bail()                                         // [Validation] max length
+      .isLength({ min: 2, max: 25 }).bail()                                         // [Validation] max length
       .escape(),                                                       // [Sanitization] Escape HTML characters
     check("lastName", "Invalid Last Name")
       .notEmpty()
@@ -307,8 +307,8 @@ router.route("/update").post(protect,
       .trim()                                                         // [Sanitization] Remove whitespace from both sides of a string
       .not().matches(emojiRegex)
       .withMessage("Last name: Emoji detected").bail()                         // [Validation] check if first name contains emoji
-      .isLength({ min:2, max: 25 })                                         // [Validation] max length
-      .escape(),  
+      .isLength({ min: 2, max: 25 })                                         // [Validation] max length
+      .escape(),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -329,7 +329,7 @@ router.route("/updateSubscription").post(protect,
       return res.status(400).json({ message: "Error updating subscription" });
     }
     apiUpdateSubscription(req, res);
-});
+  });
 
 // @route POST api/accounts/delete/:id
 router.route("/delete/:id").post(protect,
@@ -342,24 +342,24 @@ router.route("/delete/:id").post(protect,
       return res.status(400).json({ message: "Error deleting account. Try again later" });
     }
     apiDelete(req, res);
-});
+  });
 
 //Check captcha
 router.post("/checkCaptcha", async (req, res) => {
-    //Destructuring response token from request body
-        const {token} = req.body;
-    
-    //sends secret key and response token to google
-        await axios.post(
-          `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
-          );
-    
-    //check response status and send back to the client-side
-          if (res.status(200)) {
-            res.status(200).json({message: "Success"});
-        }else{
-          res.status(400).json({message: "Failed"});
-        }
-    });
+  //Destructuring response token from request body
+  const { token } = req.body;
+
+  //sends secret key and response token to google
+  await axios.post(
+    `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.SECRET_KEY}&response=${token}`
+  );
+
+  //check response status and send back to the client-side
+  if (res.status(200)) {
+    res.status(200).json({ message: "Success" });
+  } else {
+    res.status(400).json({ message: "Failed" });
+  }
+});
 
 module.exports = router
