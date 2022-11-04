@@ -20,7 +20,7 @@ const accountSchema = mongoose.Schema(
       type: Object,
       default: ""
     },
-      avatarImg: {
+    avatarImg: {
       type: String,
       default: ""
     },
@@ -30,39 +30,39 @@ const accountSchema = mongoose.Schema(
       required: [true, "Please add a password"],
     },
     donationId: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'Donation'
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'Donation'
     },
     firstName: {
-        type: String,
-        required: [true, "Please add a first name"],
+      type: String,
+      required: [true, "Please add a first name"],
     },
     lastName: {
-        type: String,
-        required: [true, "Please add a last name"],
+      type: String,
+      required: [true, "Please add a last name"],
     },
     emailSubscription: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     lockedOut: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     loginTimes: {
-        type: Number,
-        default: 0,
+      type: Number,
+      default: 0,
     },
     loggedTimestamp: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now
     },
     ipAddress: {
       type: String,
     },
     role: {
-        type: String,
-        default: "user",
+      type: String,
+      default: "user",
     }
   },
   {
