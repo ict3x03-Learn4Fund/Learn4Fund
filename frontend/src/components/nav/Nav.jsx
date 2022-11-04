@@ -26,7 +26,7 @@ function Nav() {
   const [avatar, setAvatar] = useState();
 
   // get user info
-  useEffect(()=> {
+  useEffect(() => {
     dispatch(getUserDetails())
     setInterval(() => {
       //checks user every 1 mins
