@@ -54,9 +54,9 @@ const verify2FALimiter = rateLimit({                                  // [DoS] P
   handler: (request, response, options) => {
     // Send logs to db
     Logs.create({
-      email: request.body["userId"],
+      userId: request.body["userId"],
       type: "auth",
-      reason: "Attempt to verify 2fa was rate limited.",
+      reason: "Attempt to verify 2fa from " + request.body['userId'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
     });
     response.status(options.statusCode).send(options.message)
@@ -71,9 +71,28 @@ const resetPasswordLimiter = rateLimit({                                  // [Do
   handler: (request, response, options) => {
     // Send logs to db
     Logs.create({
-      email: request.body["userId"],
+      email: request.body["email"],
       type: "auth",
       reason: "Attempt to reset password was rate limited.",
+      time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
+    });
+    response.status(options.statusCode).send(options.message)
+  }
+});
+
+const loginRateLimiter = rateLimit({                              // [DoS] Prevent mass account creation
+  windowMs: 10 * 60 * 1000, // 10 mins
+  max: 10, // Limit each IP to 10 login requests per 10 mins
+  message:
+    "Multiple logins detected from this IP address, please try again after 10 mins",
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (request, response, options) => {
+    // Send logs to db
+    Logs.create({
+      email: request.body['email'],
+      type: "auth",
+      reason: "Login from " + request.body['email'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", {timeZone: "Asia/Singapore",}),
     });
     response.status(options.statusCode).send(options.message)
@@ -128,8 +147,7 @@ router.route("/register").post(createAccountLimiter,
 );
 
 // @route   POST api/accounts/login
-router.route("/login").post(
-  // Not protected by rate limiter since there is account lock
+router.route("/login").post(loginRateLimiter,
   [
     check("email")
       .notEmpty()
