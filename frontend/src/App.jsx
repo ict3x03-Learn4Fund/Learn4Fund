@@ -70,7 +70,7 @@ function App() {
             <Route exact path="reset/:userId/:jwt" element={<ChangePass />} />
             <Route exact path="otp" element={<OTPModal />} />
             <Route exact path="login" element={<Login />} />
-            <Route exact path="signup" element={<Signup/>} />
+            <Route exact path="signup" element={<Signup />} />
             <Route exact path="courses" element={<Catalog />} />
             <Route exact path="courses/:courseID" element={<CourseInfo />} />
 
@@ -105,29 +105,29 @@ function App() {
             />
           </Routes>
 
-            {!bannerClose && (
-              <Banner
-                closeBanner={setBannerClose}
-                setPromoModal={setToggleModal}
-              />
-            )}
-            {toggleModal && <PromotionModal closeModal={setToggleModal} />}
-            {newsModal && <NewsLetterModal closeModal={setNewsModal} />}
-            <ToastContainer
-              position="bottom-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
+          {!bannerClose && (
+            <Banner
+              closeBanner={setBannerClose}
+              setPromoModal={setToggleModal}
             />
-            <Footer />
-          </>
-        
+          )}
+          {toggleModal && <PromotionModal closeModal={setToggleModal} />}
+          {newsModal && <NewsLetterModal closeModal={setNewsModal} />}
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          <Footer />
+        </>
+
       </NavProvider>
     </Provider>
   );
