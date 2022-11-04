@@ -18,7 +18,7 @@ const cartModel = mongoose.Schema(
     },
     showDonation: {
       type: Boolean,
-      default: false, 
+      default: false,
     }
   },
   {
