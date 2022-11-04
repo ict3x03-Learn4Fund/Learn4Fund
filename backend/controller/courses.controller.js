@@ -7,7 +7,7 @@ const Course = require("../models/courseModel");
  * @access Private
  */
 const apiGetCourses = asyncHandler(async (req, res) => {
-  const courses = await Course.find({deleteIndicator: "false"});
+  const courses = await Course.find({ deleteIndicator: "false" });
   // console.log(courses)
   res.json(courses);
 });
@@ -43,11 +43,11 @@ const apiCreateCourse = asyncHandler(async (req, res) => {
  */
 const apiUpdateCourse = asyncHandler(async (req, res) => {
   const course = await Course.findById(req.params.id);
-  if (!course){
+  if (!course) {
     res.status(400);
     throw new Error('Course not found');
   }
-  if (!req.body){
+  if (!req.body) {
     res.status(400);
     throw new Error('Please input your updated values');
   }
@@ -65,7 +65,7 @@ const apiUpdateCourse = asyncHandler(async (req, res) => {
     courseTutor: req.body.courseTutor,
     quantity: req.body.quantity,
     company: req.body.company
-  }, {new: true,});
+  }, { new: true, });
   res.status(200).json(updatedCourse);
 });
 
@@ -74,14 +74,14 @@ const apiUpdateCourse = asyncHandler(async (req, res) => {
  * @route PUT course /v1/api/courses/delete/:id
  * @access Private
  */
-const apiDeleteCourse = asyncHandler(async (req, res) => {   
+const apiDeleteCourse = asyncHandler(async (req, res) => {
   const course = await Course.findById(req.params.id);
-  if (!course){
+  if (!course) {
     res.status(400);
     throw new Error('Course not found');
   }
   // TODO: delete indicator set but still displayed on frontend
-  const updatedCourse = await Course.findByIdAndUpdate({_id : req.params.id}, {deleteIndicator: true});  
+  const updatedCourse = await Course.findByIdAndUpdate({ _id: req.params.id }, { deleteIndicator: true });
   res.status(200).json(updatedCourse);
 });
 
