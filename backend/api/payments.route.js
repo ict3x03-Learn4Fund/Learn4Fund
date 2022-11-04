@@ -67,7 +67,9 @@ router.route("/pay").post(protect,
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ message: "Invalid payment request" });
+            const errArray = errors.array();
+            const errMessage = errArray.map((err) => err.msg).join("\n");
+            return res.status(400).json({ message: errMessage });
         }
         apiMakePayment(req, res)
 })

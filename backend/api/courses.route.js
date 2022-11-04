@@ -16,15 +16,15 @@ router.route("/create").post(protect,
     [
         body('courseName', 'Invalid course name')
             .notEmpty().bail()
-            .isAlphanumeric().bail()
+            .isString().bail()
             .isLength({ max:100 })
             .escape().trim(),
         body('courseOriginalPrice', 'Invalid price')
             .notEmpty().bail()
-            .isNumeric(),
+            .isFloat({ min:0 }),
         body('courseDiscountedPrice', 'Invalid discounted price')
             .notEmpty().bail()
-            .isNumeric(),
+            .isFloat({min:0}),
         body('canBeDiscounted', 'Type Error')
             .isBoolean(),
         body('courseType', 'Invalid course type')
@@ -45,14 +45,15 @@ router.route("/create").post(protect,
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
             .notEmpty().bail()
-            .isString().bail().trim(),
+            .isString().bail()
+            .escape().trim(),
 
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: errMessage });
         }
         apiCreateCourse(req, res)
     }
@@ -68,37 +69,37 @@ router.route("/update/:id").put(protect,
             .isLength({min: 24, max: 24}),
         body('courseName', 'Invalid course name')
             .if(body('courseName').notEmpty())
-            .isAscii().bail()
+            .isString().bail()
+            .isLength({ max:100 })
             .escape().trim(),
         body('courseOriginalPrice', 'Invalid price')
             .if(body('courseOriginalPrice').notEmpty())
-            .isNumeric(),
+            .isFloat({min:0}),
         body('courseDiscountedPrice', 'Invalid discounted price')
             .if(body('courseDiscountedPrice').notEmpty())
-            .notEmpty().bail()
-            .isNumeric(),
+            .isFloat({min:0}),
         body('canBeDiscounted', 'Type Error')
             .if(body('canBeDiscounted').notEmpty())
             .isBoolean(),
         body('courseType', 'Invalid course type')
             .if(body('courseType').notEmpty())
-            .notEmpty().bail()
             .isString(),
         body('courseDescription', 'Invalid course description')
             .if(body('courseDescription').notEmpty())
             .isString().bail()
+            .isLength({ max: 500 })
             .escape().trim(),
         body('courseTutor', 'Tutor name is invalid')
             .if(body('courseTutor').notEmpty())
-            .notEmpty().bail()
             .isString().bail()
-            .trim(),
+            .isLength({ max: 50 })
+            .escape().trim(),
         body('company', 'Company is invalid')
             .if(body('company').notEmpty())
-            .notEmpty().bail()
-            .isString().bail().trim(),
+            .isString().bail()
+            .escape().trim(),
         body('quantity', 'Invalid quantity')
-            .notEmpty().bail()
+            .if(body('quantity').notEmpty())
             .isInt({min: 1}),
 
     ], (req, res) => {
@@ -106,7 +107,7 @@ router.route("/update/:id").put(protect,
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: errMessage });
         }
         apiUpdateCourse(req, res)
 }) 
@@ -125,7 +126,7 @@ router.route("/delete/:id").post(protect,
         if (!errors.isEmpty()) {
             const errArray = errors.array();
             const errMessage = errArray.map((err) => err.msg).join("\n");
-            return res.status(400).json({ errors: errMessage });
+            return res.status(400).json({ message: errMessage });
         }
         apiDeleteCourse(req, res)
     }) 
