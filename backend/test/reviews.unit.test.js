@@ -5,11 +5,11 @@ let chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
 
-describe("Testing Admin.js", () => {
-  it("Authentication for admin", (done) => {
+describe("Testing Reviews.js", () => {
+  it("Authentication for reviews", (done) => {
     chai
       .request(app)
-      .get(`/v1/api/admin/getAllLogs`)
+      .post(`/v1/api/reviews/create`)
       .end((err, res) => {
         res.should.have.status(401);
         done();
