@@ -1,5 +1,5 @@
 const express = require("express");
-const { apiGetReviews, apiCreateReview, apiVerifyReview} = require("../controller/reviews.controller");
+const { apiGetReviews, apiCreateReview, apiVerifyReview } = require("../controller/reviews.controller");
 const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 const { check, validationResult } = require("express-validator")
