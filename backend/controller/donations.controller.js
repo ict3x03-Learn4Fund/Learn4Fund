@@ -33,7 +33,7 @@ const apiGetTotal = asyncHandler(async (req, res) => {
       })
     })
     // console.log(courses)
-    res.status(200).json({total: total});
+    res.status(200).json({ total: total });
   } catch (error) {
     res.status(400).json(`message: ${error.message}`);
   }
@@ -82,13 +82,13 @@ const apiGetTop5Donors = asyncHandler(async (req, res) => {
       });
       const date = new Date(user.updatedAt)
       const niceD = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-      const donor = { name: user.accountId.firstName, amount: totalAmt, date: niceD}
+      const donor = { name: user.accountId.firstName, amount: totalAmt, date: niceD }
       sortedList.push(donor)
-    });    
-    sortedList.sort((a,b) => {
+    });
+    sortedList.sort((a, b) => {
       return b.amount - a.amount;
     })
-    const top5donors = sortedList.slice(0,5);
+    const top5donors = sortedList.slice(0, 5);
     return res.status(200).json(top5donors)
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -102,18 +102,18 @@ const apiTopRecent = asyncHandler(async (req, res) => {
     let donorLists = [];
     donors.map((donor) => {
       donor.donationList.map((object) => {
-        if (object.showDonation){
+        if (object.showDonation) {
           const d = object.date
           const date = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
-          const newObject = {name: donor.accountId.firstName, amount: object.amount, date: date }
+          const newObject = { name: donor.accountId.firstName, amount: object.amount, date: date }
           donorLists.push(newObject);
         }
       })
     })
-    donorLists = donorLists.sort((a,b) => {
+    donorLists = donorLists.sort((a, b) => {
       return b.date - a.date
     })
-    donorLists = donorLists.slice(0,10)
+    donorLists = donorLists.slice(0, 10)
     return res.status(200).json(donorLists)
   } catch (error) {
     return res.status(400).json({ message: error.message });
