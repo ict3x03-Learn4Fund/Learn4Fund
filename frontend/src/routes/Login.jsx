@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
 import { OTPModal } from "../modals/OTPModal";
+import { useDispatch, useSelector } from "react-redux";
+import {toast} from "react-toastify";
+import { userLogin } from "../features/user/userActions";
 
 function Login() {
   const {
@@ -14,11 +17,16 @@ function Login() {
     formState: { errors },
   } = useForm();
 
+  const {
+    success,
+    error,
+    stateErrorMsg,
+  } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const { setTab } = useNav();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [userCredentials, setUserCredentials] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
 
   function handleEmailChange(event) {
@@ -33,12 +41,22 @@ function Login() {
     window.scrollTo(0, 0);
   }, [setTab]);
 
+  // redirect authenticated user to profile screen
+  useEffect(() => {
+    if (success) {
+        setModalOpen(true);
+      
+    }
+    if (error) {
+      toast.error(stateErrorMsg);
+    }
+  }, [dispatch, success, error]);
+
   /***
    * Calls the OTPModal component to open the modal
    */
   const submitForm = (data) => {
-    setUserCredentials(data);
-    setModalOpen(true);
+    dispatch(userLogin(data));
   };
 
   return (
@@ -143,7 +161,6 @@ function Login() {
       {modalOpen ? (
         <OTPModal
           closeModal={setModalOpen}
-          formData={userCredentials}
         ></OTPModal>
       ) : null}
     </main>
