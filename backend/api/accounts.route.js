@@ -31,10 +31,10 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 5, // Limit each IP to 5 create account requests per hour
   message:
-    "Too many accounts created from this IP, please try again after an hour",
+    "Too many accounts created from this IP, please try again after 1 hour",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (request, response, options) => {
+  handler: (request, response) => {
     // Send logs to db
     Logs.create({
       email: request.body['email'],
@@ -42,7 +42,7 @@ const createAccountLimiter = rateLimit({                              // [DoS] P
       reason: "Attempt to register account " + request.body['email'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(options.statusCode).send(options.message)
+    response.status(500).json({ message: "Too many accounts created from this IP, please try again after 1 hour" });
   }
 });
 const verify2FALimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
@@ -51,7 +51,7 @@ const verify2FALimiter = rateLimit({                                  // [DoS] P
   message: "Too much tries, please try again in 3 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (request, response, options) => {
+  handler: (request, response) => {
     // Send logs to db
     Logs.create({
       userId: request.body["userId"],
@@ -59,7 +59,7 @@ const verify2FALimiter = rateLimit({                                  // [DoS] P
       reason: "Attempt to verify 2fa from " + request.body['userId'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(options.statusCode).send(options.message)
+    response.status(500).json({message: "Too much tries, please try again in 3 mins"})
   }
 });
 const resetPasswordLimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
@@ -68,7 +68,7 @@ const resetPasswordLimiter = rateLimit({                                  // [Do
   message: "Too much tries, please try again in 10 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (request, response, options) => {
+  handler: (request, response) => {
     // Send logs to db
     Logs.create({
       email: request.body["email"],
@@ -76,18 +76,18 @@ const resetPasswordLimiter = rateLimit({                                  // [Do
       reason: "Attempt to reset password was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(options.statusCode).send(options.message)
+    response.status(500).json({ message: "Too much tries, please try again in 10 mins"})
   }
 });
 
 const loginRateLimiter = rateLimit({                              // [DoS] Prevent mass account creation
   windowMs: 10 * 60 * 1000, // 10 mins
-  max: 10, // Limit each IP to 10 login requests per 10 mins
+  max: 5, // Limit each IP to 10 login requests per 10 mins
   message:
     "Multiple logins detected from this IP address, please try again after 10 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  handler: (request, response, options) => {
+  handler: (request, response) => {
     // Send logs to db
     Logs.create({
       email: request.body['email'],
@@ -95,7 +95,7 @@ const loginRateLimiter = rateLimit({                              // [DoS] Preve
       reason: "Login from " + request.body['email'] + " was rate limited.",
       time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
     });
-    response.status(options.statusCode).send(options.message)
+    return response.status(500).json({ message: "Too many logins from this IP address, please try again after 10 mins" })
   }
 });
 
