@@ -173,7 +173,7 @@ export const CreditCardModal = ({
       .catch((error) => {
         if (error.response && error.response.data.message) {
           return toast.error(error.response.data.message);
-        }  else {
+        } else {
           return toast.error(error.message);
         }
       });
@@ -211,18 +211,16 @@ export const CreditCardModal = ({
       toast.error("Enter valid Postal Code!");
       return;
     }
-    if (firstName && lastName && address && unit && city && postalCode)
-    {
-      if (!validator.isLength(firstName, { min: 2, max: 25 }) || !validator.isLength(lastName, { min: 2, max: 25 })){
+    if (firstName && lastName && address && unit && city && postalCode) {
+      if (!validator.isLength(firstName, { min: 2, max: 25 }) || !validator.isLength(lastName, { min: 2, max: 25 })) {
         toast.error("Names should be between 2 to 25 characters!");
         error = true;
       }
       if (!validator.isLength(address, { min: 2, max: 100 })
         || !validator.isLength(city, { min: 2, max: 35 })
-        || !validator.isLength(unit, { max: 10 }))
-      {
-          toast.error("Invalid address details");
-          error = true;
+        || !validator.isLength(unit, { max: 10 })) {
+        toast.error("Invalid address details");
+        error = true;
       }
       if (validator.matches(firstName, emojiRegex) || !validator.matches(lastName, emojiRegex) || !validator.matches(city, emojiRegex) || !validator.matches(address, emojiRegex) || !validator.matches(unit, emojiRegex)) {
         toast.error("Names and address cannot contain emojis!");
@@ -230,25 +228,25 @@ export const CreditCardModal = ({
       }
       if (!error) {
         paymentsService
-        .addAddr(userInfo.id, addressForm)
-        .then((res) => {
-          if (res.status == 200) {
-            toast.success("Successfully save new address.");
-            setAddrId(res.data.id);
-          } else {
-            toast.error(res.data.message);
-          }
-        })
-        .catch((err) => {
-          toast.error(err.response.data.message);
-        });
+          .addAddr(userInfo.id, addressForm)
+          .then((res) => {
+            if (res.status == 200) {
+              toast.success("Successfully save new address.");
+              setAddrId(res.data.id);
+            } else {
+              toast.error(res.data.message);
+            }
+          })
+          .catch((err) => {
+            toast.error(err.response.data.message);
+          });
       }
 
     }
     else {
       toast.error("Please fill up all the fields!");
     }
-    
+
   };
 
   //Handle form for card
@@ -274,7 +272,7 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     if (name && cardNumber && expiryDate) {
-      if ( !validator.isLength(name, { max: 50 }) || !validator.matches(name, emojiRegex)) {
+      if (!validator.isLength(name, { max: 50 }) || !validator.matches(name, emojiRegex)) {
         toast.error("Name is invalid!");
         return
       }
@@ -282,26 +280,26 @@ export const CreditCardModal = ({
         toast.error("Card number is invalid!");
         return
       }
-    
+
       const request = { name, cardNo: cardNumber, cardType, expiryDate };
       paymentsService
-      .addCard(userInfo.id, request)
-      .then((res) => {
-        if (res.status == 200) {
-          toast.success("Successfully save new card.");
-          setCardId(res.data.id);
-        } else {
-          toast.error(res.data.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+        .addCard(userInfo.id, request)
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success("Successfully save new card.");
+            setCardId(res.data.id);
+          } else {
+            toast.error(res.data.message);
+          }
+        })
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
     }
     else {
       toast.error("Please fill up all the fields!");
     }
-    
+
   };
 
   const selectAddr = (addrId) => {
@@ -404,7 +402,7 @@ export const CreditCardModal = ({
                             type="text"
                             id="firstName"
                             name="firstName"
-                            value={firstName}                          
+                            value={firstName}
                             placeholder="First Name"
                             className="p-2 border-2 border-black w-40"
                             onChange={onChangeAddr}
@@ -615,7 +613,7 @@ export const CreditCardModal = ({
                             placeholder="xxxx xxxx xxxx xxxx"
                             className="p-2 border-2 border-black w-80"
                             defaultValue={cardNumber}
-                            {...getCardNumberProps({onChange: (e) => onChangeCard(e)})}
+                            {...getCardNumberProps({ onChange: (e) => onChangeCard(e) })}
                           />
                           <span className="text-red-500 self-center">
                             {erroredInputs.cardNumber &&
