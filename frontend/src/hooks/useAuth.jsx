@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import authService from "../services/accounts";
 import adminAuthService from "../services/admin";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import axios from "axios";                // [Error] To intercept error codes from Response
 
 const AuthContext = createContext(null);
@@ -19,14 +19,14 @@ export function AuthProvider({ children }) {
   const [authMsg, setAuthMsg] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() =>{
-    if (sessionStorage.getItem("authed") == "true"){
+  useEffect(() => {
+    if (sessionStorage.getItem("authed") == "true") {
       setAuthed(true)
       const user = JSON.parse(sessionStorage.getItem("currentUser"))
       if (user)
         setCurrentUser(user)
     }
-  },[])
+  }, [])
 
   const authRegister = async (userForm) => {
     setAuthMsg("");
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
 
     setAuthMsg("");
-    try { 
+    try {
       const verifyUser = await authService.login(email, password);
       console.log(verifyUser);
       setCurrentUser(verifyUser);
@@ -65,7 +65,7 @@ export function AuthProvider({ children }) {
       sessionStorage.setItem("authed", true) //delete later!
       sessionStorage.setItem("currentUser", JSON.stringify(verifyUser)) // delete later!
       navigate("/"); //delete later!!
-      
+
       return verifyUser;
     } catch (error) {
       const message =
@@ -139,7 +139,7 @@ export function AuthProvider({ children }) {
       });
       return response;                                      // [Logging] Got all the logs successfully
     } catch (error) {
-        const message =
+      const message =
         (error.response &&
           error.response.data &&
           error.response.data.message) ||
