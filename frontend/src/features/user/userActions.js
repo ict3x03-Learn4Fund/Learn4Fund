@@ -27,11 +27,9 @@ export const registerUser = createAsyncThunk(
 
 export const userLogin = createAsyncThunk(
     'user/login',
-    async ({ email, password, token }, { rejectWithValue }) => {
+    async ({ email, password }, { rejectWithValue }) => {
         try {
             const verifyUser = await authService.login(email, password);
-            await authService.verify2FA({ token: token, userId: verifyUser._id });
-            localStorage.setItem('userId', verifyUser._id);
             return verifyUser
         } catch (error) {
             console.log(error)
@@ -76,6 +74,9 @@ export const user2FA = createAsyncThunk(
         try {
             let {user} = getState()
             const response = await authService.verify2FA({token: token, userId: user.userId});
+            console.log(response)
+            localStorage.setItem('userId', user.userId);
+
             return response.data
         } catch (error) {
             console.log(error)
