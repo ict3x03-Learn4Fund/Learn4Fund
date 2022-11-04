@@ -28,7 +28,7 @@ describe("Testing Accounts.js", () => {
         res.should.have.status(400);
         done();
       });
-      
+
   }).timeout(5000);
   it("Password Input validation error for Register", (done) => {
     const req = {
