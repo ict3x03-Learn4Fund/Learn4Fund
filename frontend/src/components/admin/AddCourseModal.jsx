@@ -51,8 +51,8 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true;}
       if (!validator.isLength(updatedList.courseName, { max: 100 })){ toast.error("Course name: 100 characters only"); error = true; }
       if (!validator.isLength(updatedList.courseTutor, { max: 50 })) { toast.error("Course Tutor: Within 50 characters"); error = true;}
-      if (!validator.isInt(updatedList.quantity) || !validator.isLength(updatedList.quantity, { min: 1 })) { toast.error("Invalid Quantity"); error = true; }
-      if (!validator.isFloat(updatedList.courseOriginalPrice)) { toast.error("Invalid: Original Price"); error = true; }
+      if (!validator.isInt(updatedList.quantity.toString()) || !validator.isLength(updatedList.quantity.toString(), { min: 1 })) { toast.error("Invalid Quantity"); error = true; }
+      if (!validator.isFloat(updatedList.courseOriginalPrice.toString())) { toast.error("Invalid: Original Price"); error = true; }
       if (!error){
         updatedList.courseName = validator.escape(updatedList.courseName)
         updatedList.courseDescription = validator.escape(updatedList.courseDescription)
@@ -145,10 +145,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
     }
 
     const addOrUpdateCourse = () => {
-      // if (!validation())
-      // {
-      //   return
-      // }
+      
       // check if price amounts are more than a certain value
       if (originalAmtRef.current.value <= 0 || discountAmtRef.current.value <= 0){
         toast.error("Price amounts must be more than 0", {autoClose: false, limit: 1})
@@ -167,7 +164,10 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
       // set original amount to the ref value
       updatedList.courseOriginalPrice = originalAmtRef.current.value;
       updatedList.courseDiscountedPrice = discountAmtRef.current.value;
-
+      if (!validation())
+      {
+        return
+      }
         // update course
         if(updatedList._id){
           updateCourses(updatedList._id, updatedList)
