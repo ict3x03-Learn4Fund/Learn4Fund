@@ -4,8 +4,10 @@ let chai = require("chai");
 let chaiHttp = require("chai-http");
 chai.should();
 chai.use(chaiHttp);
+const { v4: uuidv4 } = require("uuid");
 
 describe("Testing Accounts.js", () => {
+  let email = uuidv4();
   it("Email Input validation error for Register", (done) => {
     const req = {
       firstName: "Lucas",
@@ -26,7 +28,8 @@ describe("Testing Accounts.js", () => {
         res.should.have.status(400);
         done();
       });
-  });
+      
+  }).timeout(5000);
   it("Password Input validation error for Register", (done) => {
     const req = {
       firstName: "Lucas",
@@ -84,7 +87,7 @@ describe("Testing Accounts.js", () => {
     const req = {
       firstName: "Lucas",
       lastName: "Chua",
-      email: "test@test.com",
+      email: `${email}@test.com`,
       emailSubscription: true,
       password: "Password123456",
       phone: "92282700",
@@ -104,7 +107,7 @@ describe("Testing Accounts.js", () => {
   });
   it("Successful Login", (done) => {
     const req = {
-      email: "test@test.com",
+      email: `${email}@test.com`,
       password: "Password123456",
     };
     chai
