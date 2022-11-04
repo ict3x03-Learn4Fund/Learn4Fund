@@ -80,7 +80,7 @@ function CourseInfo() {
     if (userInfo) {
       verifyReview();
     }
-  },[]);
+  }, []);
 
   // Add quantity to const variable
   function handleChange(event) {
