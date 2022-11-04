@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import paymentsService from "../../services/payment";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../../features/user/userActions";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 function TransactionHistory() {
   const [transactions, setTransaction] = useState([]);
@@ -81,7 +81,7 @@ function TransactionHistory() {
                     {
                       transaction.donationAmount != null && (<tr>
                         <td>
-                        &nbsp;&nbsp;Donations Made:
+                          &nbsp;&nbsp;Donations Made:
                         </td>
                         <td></td>
                         <td></td>
@@ -89,9 +89,9 @@ function TransactionHistory() {
                           ${transaction.donationAmount.toFixed(2)}
                         </td>
                         <td></td>
-                      </tr>) 
+                      </tr>)
                     }
-                    
+
                   </Fragment>
                 );
               })
