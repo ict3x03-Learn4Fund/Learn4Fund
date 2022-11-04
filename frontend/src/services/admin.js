@@ -4,7 +4,6 @@ import http from "../http-common";
 const getAllAccounts = async () => {                        // [Logging] Get all accounts
   // Making calls to server side, return response
   const res = await http.get("/admin/getAllAccounts");      // Route /v1/api/admin/getAllAccounts
-  // console.log("account.js:" + res.status);
   return res;
 
 }

@@ -47,7 +47,6 @@ const verifyReset = async (id, jwt) => {
 
 // change password after reset
 const changePass = async (id, jwt, password) => {
-  console.log(id, jwt, password)
   const response = await http.post(`/accounts/reset/${id}/${jwt}`, { password: password });
   return response;
 }

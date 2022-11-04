@@ -32,7 +32,6 @@ export const userLogin = createAsyncThunk(
             const verifyUser = await authService.login(email, password);
             return verifyUser
         } catch (error) {
-            console.log(error)
 
             // return custom error message from API if any
             if (error.response && error.response.data.message) {
@@ -74,12 +73,10 @@ export const user2FA = createAsyncThunk(
         try {
             let { user } = getState()
             const response = await authService.verify2FA({ token: token, userId: user.userId });
-            console.log(response)
             localStorage.setItem('userId', user.userId);
 
             return response.data
         } catch (error) {
-            console.log(error)
             // return custom error message from API if any
             if (error.response && error.response.data.message) {
                 return rejectWithValue(error.response.data.message)

@@ -14,7 +14,6 @@ function Catalog() {
     window.scrollTo(0, 0);
     retrieveCourses();
     if (state && state.filter) {
-      console.log(state.filter);
       setSelectedTab(state.filter);
     }
   }, [state]);
@@ -27,7 +26,6 @@ function Catalog() {
         setDataCourses(response.data);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 

@@ -54,7 +54,6 @@ export const OTPModal = ({ closeModal }) => {
         })
         .catch((e) => {
           toast.error("Wrong Code!");
-          console.log(e);
           return;
         });
     } else {

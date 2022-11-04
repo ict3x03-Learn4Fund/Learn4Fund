@@ -56,7 +56,6 @@ function ChangePass() {
       }
     }
     authService.changePass(userId, jwt, password).then((response) => {
-      console.log(response)
       if (response.status == 200) {
         toast.success(response.data.message)
         navigate("/login")

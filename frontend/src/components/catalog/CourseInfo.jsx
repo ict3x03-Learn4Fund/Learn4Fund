@@ -32,7 +32,6 @@ function CourseInfo() {
   // retrieve all reviews
   const retrieveReviews = () => {
     reviewsService.getReviews(courseID).then((response) => {
-      console.log(response.data.reviews);
       setReviews(response.data.reviews);
     });
   };
@@ -42,7 +41,6 @@ function CourseInfo() {
     courseService
       .getAll()
       .then((response) => {
-        console.log(response.data);
         setCourses(response.data);
         const course = response.data.find(
           (course) => course._id.toString() === courseID
@@ -50,7 +48,6 @@ function CourseInfo() {
         setCourseDetails(course);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 
@@ -60,7 +57,6 @@ function CourseInfo() {
       .verifyReview(userInfo.id, courseID)
       .then((response) => {
         if (response.status == 200) {
-          console.log("repsonse", response.data.authorize);
           setReviewAllowed(response.data.authorize);
         }
       })
@@ -113,13 +109,11 @@ function CourseInfo() {
     cartsService
       .addCart(userInfo.id, courseDetails._id, quantitySelected)
       .then((response) => {
-        console.log(response.data);
         toast.success("Item added into cart.");
         dispatch(getCartNumber(userInfo.id));
       })
       .catch((e) => {
         toast.error("Error adding item to cart");
-        console.log(e);
       });
   };
 

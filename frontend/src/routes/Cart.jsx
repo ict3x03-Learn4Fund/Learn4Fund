@@ -45,13 +45,11 @@ const Cart = () => {
     cartsService
       .getCart(userInfo.id)
       .then((response) => {
-        console.log(response.data);
         setCartList(response.data.coursesAdded);
         setDonation(response.data.donationAmt);
         setShowDonation(response.data.showDonation);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 
@@ -76,7 +74,6 @@ const Cart = () => {
           ) + parseFloat(donation)
         ).toFixed(2)
       );
-      console.log(totalAmount, "\n", donation, "\n", checkout);
       setShowModal(true);
     } else {
       toast.error("Select items to checkout");
@@ -92,7 +89,6 @@ const Cart = () => {
         toast.success("Items successfully deleted from cart.");
       })
       .catch((e) => {
-        console.log(e);
         toast.success("Items failed to deleted from cart.");
       });
   };
@@ -112,7 +108,6 @@ const Cart = () => {
     } else {
       setCheckout([...checkout, item]);
     }
-    console.log("checkout: ", checkout);
   }
 
   const removeDonations = () => {

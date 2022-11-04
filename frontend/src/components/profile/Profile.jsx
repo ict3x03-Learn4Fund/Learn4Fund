@@ -37,7 +37,6 @@ function Profile() {
   }, [setAvatar]);
 
   const updateProfile = () => {
-    console.log(firstName, lastName, email);
     var error = false;
     if (firstName && lastName && email) {
       const normalizedEmail = validator.normalizeEmail(email);
@@ -72,7 +71,6 @@ function Profile() {
           })
           .catch((err) => {
             toast.error("Error updating profile. Try again later.");
-            console.log(err.response.data.message);
           });
       }
     }
@@ -84,7 +82,6 @@ function Profile() {
 
   const uploadImage = (e) => {
     e.preventDefault();
-    console.log(file);
     if (file.type != "image/jpeg" && file.type != "image/png") {
       toast.error("Please choose only jpeg and png images")
       return
@@ -94,7 +91,6 @@ function Profile() {
       .uploadImage(formData)
       .then((response) => {
         if (response.status == 200) {
-          console.log(response.data);
           const imgId = response.data.id;
           authService
             .uploadAvatar(userInfo.id, imgId)
@@ -136,7 +132,6 @@ function Profile() {
 
   const updateSubscription = () => {
     const emailSubscription = !userInfo?.emailSubscription
-    console.log(emailSubscription)
     authService
       .updateSubscription(userInfo.id, emailSubscription)
       .then((res) => {

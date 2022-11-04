@@ -11,7 +11,6 @@ export default function UserManagementActivity({ account, fetchData }) {
   const lockUnlockAccount = async (data) => {
     try {
       const response = await adminAuthService.lockUnlockAccount(data); // [Management] /services/admin.js
-      console.log(response);
       axios.interceptors.response.use(
         (response) => {
           // [Error] To intercept error codes from Response
@@ -37,7 +36,6 @@ export default function UserManagementActivity({ account, fetchData }) {
   const deleteAccount = async (data) => {
     try {
       const response = await adminAuthService.deleteAccount(data); // [Management] /services/admin.js
-      console.log(response);
       axios.interceptors.response.use(
         (response) => {
           // [Error] To intercept error codes from Response
