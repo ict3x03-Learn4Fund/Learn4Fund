@@ -7,7 +7,7 @@ const Account = require("../models/accountModel");
 const Logs = require("../models/logsModel");
 const authy = require("authy")(process.env.AUTHY_API_KEY);
 const speakEasy = require("speakeasy");
-const {sendEmail} = require("../middleware/mailer.js")
+const { sendEmail } = require("../middleware/mailer.js")
 
 /***
  * @desc Register
@@ -69,12 +69,12 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
       encoding: "base32",
       token,
     });
-    
-    if (process.env.CURRENT_ENV == 'testing'){           // [UI Testing] Skip 2fa verification for UI testing phase
+
+    if (process.env.CURRENT_ENV == 'testing') {           // [UI Testing] Skip 2fa verification for UI testing phase
       console.log('DEBUG: Current environment is "testing", skipping 2fa verification.')
       verified = true;
     }
-    
+
     if (verified) {
       const access_token = generateToken(userId);
       res.cookie("access_token", access_token, {
@@ -90,7 +90,7 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
         role: user.role,
       });
     } else {
-      return res.status(400).json({ verified: false, message:  "Invalid token." });
+      return res.status(400).json({ verified: false, message: "Invalid token." });
     }
   } catch (error) {
     res.status(400).json({ message: "Validation Failed" });
@@ -321,50 +321,50 @@ const apiResetPassword = asyncHandler(async (req, res) => {
       const link = `http://localhost:3000/reset/${user._id}/${jwt}`;
       const message = `Click on this link to reset your password: ${link}`
       const emailSuccess = await sendEmail(email, "Learn4Fund password reset", message);
-      if (emailSuccess){
-        return res.status(200).json({message: "An email has been sent to you to reset your password."});
+      if (emailSuccess) {
+        return res.status(200).json({ message: "An email has been sent to you to reset your password." });
       } else {
-        return res.status(400).json({message: "Failed to sent email. Please try again."});
+        return res.status(400).json({ message: "Failed to sent email. Please try again." });
       }
     } else {
-      return res.status(400).json({message: "Request failed."});
+      return res.status(400).json({ message: "Request failed." });
     }
   } catch (error) {
-    return res.status(400).json({message: error.message});
+    return res.status(400).json({ message: error.message });
   }
 });
 
-const apiVerifyReset = asyncHandler(async (req,res) => {
+const apiVerifyReset = asyncHandler(async (req, res) => {
   try {
     // const userId = req.params.id;
     const jwtToken = req.params.jwt;
     if (!jwtToken) {
-      return res.status(400).json({message: "No token, authorization denied"});
-    } 
-    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, {algorithm:"HS512"});
+      return res.status(400).json({ message: "No token, authorization denied" });
+    }
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, { algorithm: "HS512" });
     const user = await Account.findById(decoded.id)
-    if (!user){
-      return res.status(400).json({message: "Not authenticated, Invalid JWT token"});
+    if (!user) {
+      return res.status(400).json({ message: "Not authenticated, Invalid JWT token" });
     } else {
-      return res.status(200).json({message: "Authentication Successful"})
+      return res.status(200).json({ message: "Authentication Successful" })
     }
   } catch (error) {
-    return res.status(400).json({message: "Verification error"})
+    return res.status(400).json({ message: "Verification error" })
   }
 })
 
-const apiChangePassword = asyncHandler(async (req,res) => {
+const apiChangePassword = asyncHandler(async (req, res) => {
   try {
     const userId = req.params.id;
     const jwtToken = req.params.jwt;
-    const {password} = req.body;
+    const { password } = req.body;
     if (!jwtToken) {
-      return res.status(400).json({message: "Not authorized"});
-    } 
-    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, {algorithm:"HS512"});
+      return res.status(400).json({ message: "Not authorized" });
+    }
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, { algorithm: "HS512" });
     const user = await Account.findById(decoded.id)
-    if (!user){
-      return res.status(400).json({message: "Not authenticated"});
+    if (!user) {
+      return res.status(400).json({ message: "Not authenticated" });
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -378,20 +378,20 @@ const apiChangePassword = asyncHandler(async (req,res) => {
           }
         }
       )
-      return res.status(200).json({message: "Password changed successfully."})
+      return res.status(200).json({ message: "Password changed successfully." })
     }
 
   } catch (error) {
-    return res.status(400).json({message: error.message})
+    return res.status(400).json({ message: error.message })
   }
 })
 
-const apiNormalChangePass = asyncHandler(async (req,res) => {
+const apiNormalChangePass = asyncHandler(async (req, res) => {
   try {
-    const {userId, password} = req.body;
+    const { userId, password } = req.body;
     const user = await Account.findById(userId)
-    if (!user){
-      return res.status(400).json({message: "Not authenticated"});
+    if (!user) {
+      return res.status(400).json({ message: "Not authenticated" });
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -405,46 +405,46 @@ const apiNormalChangePass = asyncHandler(async (req,res) => {
           }
         }
       )
-      return res.status(200).json({message: "Password changed successfully."})
+      return res.status(200).json({ message: "Password changed successfully." })
     }
 
   } catch (error) {
-    return res.status(400).json({message: error.message})
+    return res.status(400).json({ message: error.message })
   }
 })
 
 // upload avatar
-const apiUploadAvatar = asyncHandler(async (req,res) => {
+const apiUploadAvatar = asyncHandler(async (req, res) => {
   try {
-    const {userId, imgId} = req.body;
+    const { userId, imgId } = req.body;
     const user = await Account.findById(userId);
     if (!user) {
-      return res.status(400).json({message: "User not found."});
+      return res.status(400).json({ message: "User not found." });
     }
     if (!imgId) {
-      return res.status(400).json({message: "Image not found."});
+      return res.status(400).json({ message: "Image not found." });
     }
-    const updatedUser = await Account.findByIdAndUpdate({_id: userId}, {avatarImg: imgId});
+    const updatedUser = await Account.findByIdAndUpdate({ _id: userId }, { avatarImg: imgId });
     return res.status(200).json(updatedUser);
   } catch (error) {
-    return res.status(400).json({message: error.message});
+    return res.status(400).json({ message: error.message });
   }
 })
 
-const apiUpdateDetails = asyncHandler(async (req,res) => {
+const apiUpdateDetails = asyncHandler(async (req, res) => {
   try {
-    const {userId, firstName, lastName, email} = req.body;
+    const { userId, firstName, lastName, email } = req.body;
     const user = await Account.findById(userId);
-    if (!firstName || !lastName || !email){
-      return res.status(400).json({message: "Empty fields"})
+    if (!firstName || !lastName || !email) {
+      return res.status(400).json({ message: "Empty fields" })
     }
-    if (!user){
-      return res.status(400).json({message: "User is not found"})
+    if (!user) {
+      return res.status(400).json({ message: "User is not found" })
     }
-    if (user.firstName != firstName){
+    if (user.firstName != firstName) {
       user.firstName = firstName;
     }
-    if (user.lastName != lastName){
+    if (user.lastName != lastName) {
       user.lastName = lastName;
     }
     if (user.email != email) {
@@ -452,29 +452,29 @@ const apiUpdateDetails = asyncHandler(async (req,res) => {
         user.email = email;
       }
       else {
-        return res.status(400).json({message: "Invalid email"})
+        return res.status(400).json({ message: "Invalid email" })
       }
     }
     user.save()
     return res.status(200).json(user)
 
   } catch (error) {
-    return res.status(400).json({ message: "Error updating profile"})
+    return res.status(400).json({ message: "Error updating profile" })
   }
 })
 
-const apiUpdateSubscription = asyncHandler(async (req,res) => {
+const apiUpdateSubscription = asyncHandler(async (req, res) => {
   try {
-    const {userId, emailSubscription} = req.body;
+    const { userId, emailSubscription } = req.body;
     const user = await Account.findById(userId);
-    if (!user){
-      return res.status(400).json({message: "User is not found"})
+    if (!user) {
+      return res.status(400).json({ message: "User is not found" })
     }
     user.emailSubscription = emailSubscription
     user.save()
     return res.status(200).json(user)
   } catch (error) {
-    return res.status(400).json({message: error.message})
+    return res.status(400).json({ message: error.message })
   }
 })
 
@@ -482,14 +482,14 @@ const apiDelete = asyncHandler(async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await Account.findById(userId);
-    if (!user){
-      return res.status(400).json({message: "User is not found"})
+    if (!user) {
+      return res.status(400).json({ message: "User is not found" })
     }
     const userDeleted = await Account.findByIdAndDelete(userId);
     return res.status(200).json(userDeleted)
   } catch (error) {
     return res.status(400).json(error.message)
-  } 
+  }
 })
 
 
@@ -513,5 +513,5 @@ module.exports = {
   apiNormalChangePass,
   apiUpdateDetails,
   apiDelete,
-  apiUpdateSubscription 
+  apiUpdateSubscription
 };
