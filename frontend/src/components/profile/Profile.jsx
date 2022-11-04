@@ -223,7 +223,7 @@ function Profile() {
               <img
                 src={
                   avatar
-                    ? `http://localhost:5000/v1/api/images/getImg/${avatar}`
+                    ? `https://learn4fund.tk/v1/api/images/getImg/${avatar}`
                     : noimage
                 }
                 alt={"avatar of user"}

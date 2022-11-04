@@ -99,7 +99,7 @@ const CoursesCatalog = () => {
                 </td>
                 <td className='w-1/6'>
                 <img
-                    src={`http://localhost:5000/v1/api/images/getImg/${course.courseImg}`}
+                    src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
                     className="flex h-[120px] w-full object-stretch"
                     alt={"example"}
                   /></td>

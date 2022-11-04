@@ -264,7 +264,7 @@ export const AddCourseModal = ({closeModal, courseInfo}) => {
             </div>
             <div className='flex-col w-1/2 space-y-2'>
             <div className='flex h-[12vh] flex-wrap mr-8 mt-2'>
-                <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={updatedList.courseImg ? `http://localhost:5000/v1/api/images/getImg/${updatedList.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
+                <label className='self-center font-type3 text-lg font-bold w-1/3'>Upload Image</label><img className='bg-cover w-1/4 h-full' src={updatedList.courseImg ? `https://learn4fund.tk/v1/api/images/getImg/${updatedList.courseImg}`: require('../../assets/vectors/noimage.png')}/> 
                 <div className='flex-col w-2/5'>
                 <input
                 type="file"

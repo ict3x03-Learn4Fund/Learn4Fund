@@ -123,7 +123,7 @@ const apiLogin = asyncHandler(async (req, res) => {
       // IF SUCCEED RESET THE lockTimes
       Account.updateOne(
         { email: email },
-        { $set: { loginTimes: 0, loggedTimestamp: new Date(), ipAddress: req.socket.remoteAddress } },
+        { $set: { loginTimes: 0, loggedTimestamp: new Date(), ipAddress: req.headers['x-forwarded-for'] } },
         function (err, result) {                                      // [Authentication] Reset the loginTimes
           if (err) {
             console.log("Set loginTimes failed. Error: " + err);
@@ -285,7 +285,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     role,
   } = await Account.findById(req.account.id);
 
-  const sessionTimeout = ((new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000) && (req.socket.remoteAddress === ipAddress) ? true : false
+  const sessionTimeout = ((new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000) && (req.headers['x-forwarded-for'] === ipAddress) ? true : false
 
   res.status(200).json({
     id: _id,
@@ -318,7 +318,7 @@ const apiResetPassword = asyncHandler(async (req, res) => {
     });
     if (verified) {
       const jwt = generateToken(user._id);
-      const link = `http://localhost:3000/reset/${user._id}/${jwt}`;
+      const link = `https://learn4fund.tk/reset/${user._id}/${jwt}`;
       const message = `Click on this link to reset your password: ${link}`
       const emailSuccess = await sendEmail(email, "Learn4Fund password reset", message);
       if (emailSuccess) {

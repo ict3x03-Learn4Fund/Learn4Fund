@@ -60,7 +60,7 @@ function Nav() {
               <img
                 src={
                   avatar
-                    ? `http://localhost:5000/v1/api/images/getImg/${userInfo?.avatarImg}`
+                    ? `https://learn4fund.tk/v1/api/images/getImg/${userInfo?.avatarImg}`
                     : picture
                 }
                 alt={"user profile"}
