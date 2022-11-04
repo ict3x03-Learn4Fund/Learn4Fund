@@ -34,19 +34,19 @@ function ResetPassword() {
   });
 
   const resetPassword = () => {
-    if (email && otp){
-      if (!validator.isEmail(email) || (!validator.isInt(otp) && !validator.isLength(otp, { min: 6, max: 6 }) && !validator.matches(otp,/^[0-9]*$/))) {
+    if (email && otp) {
+      if (!validator.isEmail(email) || (!validator.isInt(otp) && !validator.isLength(otp, { min: 6, max: 6 }) && !validator.matches(otp, /^[0-9]*$/))) {
         toast.error("Invalid Credentials");
         return;
       }
       else {
-        const request = {email: email, token: otp}
+        const request = { email: email, token: otp }
         authService.resetPass(request).then((response) => {
-          if (response.status == 200){
+          if (response.status == 200) {
             toast.success(response.data.message)
           }
         }).catch((error) => {
-          toast.error(error.response.data.message) 
+          toast.error(error.response.data.message)
         })
       }
     }
@@ -67,7 +67,7 @@ function ResetPassword() {
                   <MdAlternateEmail className="self-center text-w1" />
                 </div>
               </span>
-              <input required 
+              <input required
                 className="flex w-3/4 h-[40px] input"
                 autoComplete="off"
                 type="text"
@@ -103,7 +103,7 @@ function ResetPassword() {
                 type="submit"
                 disabled={loading}
               >
-                Reset 
+                Reset
               </button>
             </div>
           </div>

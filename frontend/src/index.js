@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter
@@ -8,9 +8,9 @@ import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <Suspense fallback={(<div className='w-screen h-screen bg-black text-w1'>Please wait...</div>)}>
-      <BrowserRouter>
-      <App/>
-      </BrowserRouter>
-    </Suspense>
+  <Suspense fallback={(<div className='w-screen h-screen bg-black text-w1'>Please wait...</div>)}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Suspense>
 );

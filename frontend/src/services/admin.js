@@ -15,13 +15,13 @@ const getAllLogs = async () => {                            // [Logging] Get all
 }
 
 const lockUnlockAccount = async (data) => {                 // [Management] Lock or unlock account
-    // Making calls to server side, return response
-    return await http.post("/admin/lockUnlockAccount", data); // Route /v1/api/admin/lockUnlockAccount
+  // Making calls to server side, return response
+  return await http.post("/admin/lockUnlockAccount", data); // Route /v1/api/admin/lockUnlockAccount
 }
 
 const deleteAccount = async (data) => {                     // [Management] Delete account
-    // Making calls to server side, return response
-    return await http.post("/admin/deleteAccount", data);   // Route /v1/api/admin/deleteAccount
+  // Making calls to server side, return response
+  return await http.post("/admin/deleteAccount", data);   // Route /v1/api/admin/deleteAccount
 }
 
 // Client side functions

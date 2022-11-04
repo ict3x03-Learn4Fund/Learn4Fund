@@ -5,7 +5,7 @@ import { useNav } from "../hooks/useNav";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import authService from "../services/accounts";
 import validator from "validator";
 
@@ -33,7 +33,7 @@ function ChangePass() {
   const verifyReset = () => {
     authService
       .verifyReset(userId, jwt)
-      .then((response) => {})
+      .then((response) => { })
       .catch((error) => {
         toast.error(error.response.data.message);
         navigate("/login");
@@ -57,10 +57,10 @@ function ChangePass() {
     }
     authService.changePass(userId, jwt, password).then((response) => {
       console.log(response)
-      if (response.status == 200){
+      if (response.status == 200) {
         toast.success(response.data.message)
         navigate("/login")
-      } 
+      }
       else { toast.error(response.data.message) }
     }).catch((error) => {
       toast.error(error.response.data.message)
