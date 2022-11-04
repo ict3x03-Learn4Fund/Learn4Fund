@@ -7,7 +7,7 @@ import { useNav } from "../hooks/useNav";
 import { useForm } from "react-hook-form";
 import { OTPModal } from "../modals/OTPModal";
 import { useDispatch, useSelector } from "react-redux";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { userLogin } from "../features/user/userActions";
 
 function Login() {
@@ -44,8 +44,8 @@ function Login() {
   // redirect authenticated user to profile screen
   useEffect(() => {
     if (success) {
-        setModalOpen(true);
-      
+      setModalOpen(true);
+
     }
     if (error) {
       toast.error(stateErrorMsg);
