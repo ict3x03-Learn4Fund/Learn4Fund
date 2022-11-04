@@ -169,20 +169,20 @@ const apiDeleteCart = asyncHandler(async (req, res) => {
  */
 const apiAddDonationToCart = asyncHandler(async (req, res) => {
   try {
-    const { accountId, donationAmt, showDonation} = req.body;
+    const { accountId, donationAmt, showDonation } = req.body;
     if (!accountId) {
-      return res.status(400).json({message: "Account Id cannot be null."})
+      return res.status(400).json({ message: "Account Id cannot be null." })
     }
-    let cart = await Cart.findOne({accountId: accountId})
-    if (!cart){
-      cart = await Cart.create({accountId: accountId})
+    let cart = await Cart.findOne({ accountId: accountId })
+    if (!cart) {
+      cart = await Cart.create({ accountId: accountId })
     }
     cart.showDonation = showDonation;
-    cart.donationAmt = parseFloat(cart.donationAmt) +  parseFloat(donationAmt);
+    cart.donationAmt = parseFloat(cart.donationAmt) + parseFloat(donationAmt);
     cart.save()
     return res.status(200).json(cart)
   } catch (e) {
-    return res.status(400).json({message: e.message })
+    return res.status(400).json({ message: e.message })
   }
 });
 /***
@@ -193,15 +193,15 @@ const apiAddDonationToCart = asyncHandler(async (req, res) => {
 const apiClearDonation = asyncHandler(async (req, res) => {
   try {
     const accountId = req.params.id
-    const cart = await Cart.findOne({accountId: accountId})
-    if (!cart){
-      return res.status(400).json({message: "User not found."})
+    const cart = await Cart.findOne({ accountId: accountId })
+    if (!cart) {
+      return res.status(400).json({ message: "User not found." })
     }
     cart.donationAmt = 0
     cart.save()
-    return res.status(200).json({cart})
+    return res.status(200).json({ cart })
   } catch (e) {
-    return res.status(400).json({message: e.message})
+    return res.status(400).json({ message: e.message })
   }
 });
 
