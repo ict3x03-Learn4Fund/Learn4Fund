@@ -71,14 +71,6 @@ pipeline {
 
         stage("Production Build") {
             steps {
-                script{
-                    try{
-                        sh 'rm dependency-check-report.html'
-                        sh 'rm dependency-check-report.xml'
-                    }catch (err){
-                        echo 'Skipping, ODC reports pre-generated.'
-                    }
-                }
                 sh 'cp /home/.backend.env backend/.env'
                 sh 'cp /home/.frontend.env frontend/.env'                              
                 sh 'docker compose down --rmi all'
