@@ -29,7 +29,7 @@ const protect = asyncHandler((req,res,next) =>{
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
                     
-                    if(url !== '/v1/api/accounts/getAccount'){
+                    if(url !== '/v1/api/accounts' && url !== '/v1/api/carts'){
                     //update user session timestamp
                     await Account.findByIdAndUpdate(decoded.id, {loggedTimestamp: Date.now()}) //[Authentication] Update user session timestamp
                     }
