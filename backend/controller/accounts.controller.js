@@ -497,7 +497,7 @@ const apiDelete = asyncHandler(async (req, res) => {
 const generateToken = (id) => {                       // [Session/Authentication] Generate JWT 
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     algorithm: "HS512",
-    expiresIn: "35m",
+    expiresIn: "30m",
   });
 };
 

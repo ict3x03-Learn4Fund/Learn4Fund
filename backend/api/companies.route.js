@@ -8,12 +8,12 @@ const Company = require("../models/companyModel"); // to access the DB
 const Logs = require("../models/logsModel");
 
 const verifyVoucherLimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
-    windowMs: 60 * 60 * 1000, // 15 mins
-    max: 50, // Limit each IP to 5 code verification requests per 15 mins
-    message: "Tries exceeded 50, please try again in 60 mins",
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 50, // Limit each IP to 5 code verification requests per 1 hour
+    message: "Tries exceeded 50, please try again in 1 hour",
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-    handler: (request, response, options) => {
+    handler: (request, response) => {
         // Send logs to db
         Logs.create({
             email: request.body["companyId"],
@@ -21,7 +21,7 @@ const verifyVoucherLimiter = rateLimit({                                  // [Do
             reason: "Attempt to verify voucher was rate limited.",
             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
         });
-        response.status(options.statusCode).send(options.message)
+        response.status(500).json({message:"Tries exceeded 50, please try again in 1 hour"});
     }
 });
 
