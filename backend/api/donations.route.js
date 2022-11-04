@@ -18,14 +18,14 @@ router.route("/total").get(apiGetTotal);
 
 router.route("/add").post(
   [
-    body("donationAmt", "Enter amount between 0.01 to 10 million").isLength({min:0, max:8}).isFloat({ min: 0.01, max: 10000000 }),
+    body("donationAmt", "Enter amount between 0.01 to 10 million").isLength({ min: 0, max: 8 }).isFloat({ min: 0.01, max: 10000000 }),
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const errArray = errors.array();
       const errMessage = errArray.map((err) => err.msg).join("\n");
       return res.status(400).json({ message: errMessage });
-  }
+    }
     apiAddDonations(req, res);
   });
 
