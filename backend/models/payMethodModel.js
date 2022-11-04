@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 mongoose.set('sanitizeFilter', true)
-const payMethodSchema = mongoose.Schema(    
+const payMethodSchema = mongoose.Schema(
   {
     accountId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account",
-        required: [true, "AccountId cannot be empty"],
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+      required: [true, "AccountId cannot be empty"],
+    },
     methods: {
-        type: Array,
-        default: [],
+      type: Array,
+      default: [],
     }
   },
   {
