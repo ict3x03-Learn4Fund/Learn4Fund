@@ -340,7 +340,6 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
     const transactions = await Transaction.find({
       accountId: accountId,
     })
-      .populate("billAddressId")
       .populate({ path: "cardId", select: ["cardType", "last4No"] });
 
     const filteredTrans = transactions;
