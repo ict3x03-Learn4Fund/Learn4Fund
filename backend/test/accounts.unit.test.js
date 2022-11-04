@@ -24,7 +24,6 @@ describe("Testing Accounts.js", () => {
       .type("json")
       .send(req)
       .end((err, res) => {
-        const body = res.body;
         res.should.have.status(400);
         done();
       });
@@ -46,7 +45,6 @@ describe("Testing Accounts.js", () => {
       .type("json")
       .send(req)
       .end((err, res) => {
-        const body = res.body;
         res.should.have.status(400);
         done();
       });
@@ -62,7 +60,6 @@ describe("Testing Accounts.js", () => {
       .type("json")
       .send(req)
       .end((err, res) => {
-        const body = res.body;
         res.should.have.status(400);
         done();
       });
@@ -78,7 +75,6 @@ describe("Testing Accounts.js", () => {
       .type("json")
       .send(req)
       .end((err, res) => {
-        const body = res.body;
         res.should.have.status(400);
         done();
       });
@@ -99,7 +95,6 @@ describe("Testing Accounts.js", () => {
       .type("json")
       .send(req)
       .end((err, res) => {
-        const body = res.body;
         res.body.should.have.property("_id");
         res.body.should.have.property("secret");
         done();
@@ -116,7 +111,6 @@ describe("Testing Accounts.js", () => {
       .type("json")
       .send(req)
       .end((err, res) => {
-        const body = res.body;
         res.should.have.status(200);
         res.body.should.have.property("_id");
         done();

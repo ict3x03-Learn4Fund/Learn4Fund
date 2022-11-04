@@ -8,7 +8,6 @@ const Course = require("../models/courseModel");
  */
 const apiGetCourses = asyncHandler(async (req, res) => {
   const courses = await Course.find({ deleteIndicator: "false" });
-  // console.log(courses)
   res.json(courses);
 });
 
@@ -80,7 +79,6 @@ const apiDeleteCourse = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Course not found');
   }
-  // TODO: delete indicator set but still displayed on frontend
   const updatedCourse = await Course.findByIdAndUpdate({ _id: req.params.id }, { deleteIndicator: true });
   res.status(200).json(updatedCourse);
 });

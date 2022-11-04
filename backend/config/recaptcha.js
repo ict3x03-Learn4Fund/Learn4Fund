@@ -3,7 +3,6 @@ const Recaptcha = require('express-recaptcha').RecaptchaV2
 export const recaptcha = async () => {
     try { new Recaptcha(process.env.SITE_KEY, process.env.SECRET_KEY) }
     catch (error) {
-        console.log(error);
         process.exit(1);
     }
 };

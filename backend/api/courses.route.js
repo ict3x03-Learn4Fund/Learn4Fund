@@ -112,7 +112,7 @@ router.route("/update/:id").put(protect,
         apiUpdateCourse(req, res)
     })
 
-// POST /api/courses/:id private
+// POST /api/courses/delete/:id private
 router.route("/delete/:id").post(protect,
     [
         param('id', 'Invalid course id')

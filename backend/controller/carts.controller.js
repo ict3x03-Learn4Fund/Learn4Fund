@@ -17,26 +17,17 @@ const apiAddCart = asyncHandler(async (req, res) => {
     }
 
     let cart = await Cart.findOne({ accountId: accountId });
-    console.log("cart: ", cart);
     if (!cart) cart = await Cart.create({ accountId: accountId });
 
-    console.log("account id: ", accountId);
 
     let counterFlag = 0;
     cart.coursesAdded.some((existingCart) => {
-      console.log("existing cart:", existingCart);
       if (existingCart.cartItem.courseId === cartItem.courseId) {
         existingCart.cartItem.quantity += cartItem.quantity;
-        console.log(
-          `${existingCart.cartItem.courseId} now has ${existingCart.cartItem.quantity}.`
-        );
       } else {
         counterFlag++;
       }
     });
-    console.log(
-      `counter flag: ${counterFlag} length: ${cart.coursesAdded.length}`
-    );
     if (counterFlag === cart.coursesAdded.length)
       cart.coursesAdded.push({ cartItem });
     cart.markModified("coursesAdded");
@@ -77,7 +68,6 @@ const apiGetCart = asyncHandler(async (req, res) => {
         ).toFixed(2),
       };
       cartArray.push(cartItem);
-      console.log(cartItem);
     }
 
     return res
@@ -151,7 +141,6 @@ const apiDeleteCart = asyncHandler(async (req, res) => {
         ).toFixed(2),
       };
       cartArray.push(cartItem);
-      console.log(cartItem);
     }
 
     return res

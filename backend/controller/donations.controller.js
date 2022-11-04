@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const Donation = require("../models/donationModel");
-const Account = require("../models/accountModel");
 
 /***
  * @desc Get All donations
@@ -10,8 +9,6 @@ const Account = require("../models/accountModel");
 const apiGetDonations = asyncHandler(async (req, res) => {
   try {
     const donationList = await Donation.find();
-
-    // console.log(courses)
     res.status(200).json(donationList);
   } catch (error) {
     res.status(400).json(`message: ${error.message}`);
@@ -32,7 +29,6 @@ const apiGetTotal = asyncHandler(async (req, res) => {
         total += parseInt(object.amount);
       })
     })
-    // console.log(courses)
     res.status(200).json({ total: total });
   } catch (error) {
     res.status(400).json(`message: ${error.message}`);

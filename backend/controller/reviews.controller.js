@@ -1,7 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Review = require("../models/reviewModel");
 const Account = require("../models/accountModel");
-const mongoose = require("mongoose");
 const Transaction = require("../models/transactionModel");
 /***
  * @desc Get All review
@@ -32,7 +31,6 @@ const apiGetReviews = asyncHandler(async (req, res) => {
         reviewList.push(extendReview);
       }
     }
-    // console.log(courses)
     res.status(200).json({ reviews: reviewList }); // Return the list of reviews
   } catch (error) {
     res.status(400).json(`message: ${error.message}`); // Return error message
