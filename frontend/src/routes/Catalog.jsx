@@ -49,7 +49,7 @@ function Catalog() {
       // discount
       return dataCourses.sort((a, b) =>
         a.courseOriginalPrice - a.courseDiscountedPrice <
-        b.courseOriginalPrice - b.courseDiscountedPrice
+          b.courseOriginalPrice - b.courseDiscountedPrice
           ? 1
           : -1
       );
@@ -180,32 +180,32 @@ function Catalog() {
                       </div>
 
                       <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
-                      {!course.canBeDiscounted && (
-                        <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
-                          NOW ${course.courseOriginalPrice.toFixed(2)}
-                        </span>
-                      )}
-                      {course.canBeDiscounted && (
-                        <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
-                          U.P. ${course.courseOriginalPrice.toFixed(2)}
-                        </span>
-                      )}
-                      {course.canBeDiscounted && (
-                        <span className="bg-success h-[24px] text-w1 lg:p-1">
-                          NOW ${course.courseDiscountedPrice.toFixed(2)}
-                        </span>
-                      )}
-                      {course.canBeDiscounted && (
-                        <span className="bg-g2 h-[24px] text-w1 lg:p-1">
-                          {(
-                            ((course.courseOriginalPrice -
-                              course.courseDiscountedPrice) /
-                              course.courseOriginalPrice) *
-                            100
-                          ).toFixed(0)}
-                          % OFF
-                        </span>
-                      )}
+                        {!course.canBeDiscounted && (
+                          <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
+                            NOW ${course.courseOriginalPrice.toFixed(2)}
+                          </span>
+                        )}
+                        {course.canBeDiscounted && (
+                          <span className="bg-black h-[24px] text-w1 lg:p-1 line-through">
+                            U.P. ${course.courseOriginalPrice.toFixed(2)}
+                          </span>
+                        )}
+                        {course.canBeDiscounted && (
+                          <span className="bg-success h-[24px] text-w1 lg:p-1">
+                            NOW ${course.courseDiscountedPrice.toFixed(2)}
+                          </span>
+                        )}
+                        {course.canBeDiscounted && (
+                          <span className="bg-g2 h-[24px] text-w1 lg:p-1">
+                            {(
+                              ((course.courseOriginalPrice -
+                                course.courseDiscountedPrice) /
+                                course.courseOriginalPrice) *
+                              100
+                            ).toFixed(0)}
+                            % OFF
+                          </span>
+                        )}
                       </div>
                       <div className="flex w-full h-[40px] justify-between text-[12px] leading-[20px] font-bold font-type1">
                         <button className="font-type1 font-bold uppercase btn w-full h-[40px]">
