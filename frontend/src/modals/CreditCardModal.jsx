@@ -224,7 +224,7 @@ export const CreditCardModal = ({
           toast.error("Invalid address details");
           error = true;
       }
-      if (validator.matches(firstName, emojiRegex) || !validator.matches(lastName, emojiRegex) || !validator.matches(city, emojiRegex) || !validator.matches(address, emojiRegex) || !validator.matches(unit, emojiRegex)) {
+      if (validator.matches(firstName, emojiRegex) || validator.matches(lastName, emojiRegex) || validator.matches(city, emojiRegex) || validator.matches(address, emojiRegex) || validator.matches(unit, emojiRegex)) {
         toast.error("Names and address cannot contain emojis!");
         error = true;
       }
@@ -274,7 +274,7 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     if (name && cardNumber && expiryDate) {
-      if ( !validator.isLength(name, { max: 50 }) || !validator.matches(name, emojiRegex)) {
+      if ( !validator.isLength(name, { max: 50 }) || validator.matches(name, emojiRegex)) {
         toast.error("Name is invalid!");
         return
       }
