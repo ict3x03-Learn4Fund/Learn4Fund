@@ -229,7 +229,7 @@ function Donations() {
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-yellow-500" />
                   {top5List.length >= 1
-                    ? `${top5List[0].name} - $${top5List[0].amount}`
+                    ? `${top5List[0].name} - $${top5List[0].amount.toFixed(2)}`
                     : null}
                 </div>
                 <div>{top5List.length >= 1 ? `${top5List[0].date}` : null}</div>
@@ -238,7 +238,7 @@ function Donations() {
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-gray-500" />
                   {top5List.length >= 2
-                    ? `${top5List[1].name} - $${top5List[1].amount}`
+                    ? `${top5List[1].name} - $${top5List[1].amount.toFixed(2)}`
                     : null}
                 </div>
                 <div>{top5List.length >= 2 ? `${top5List[1].date}` : null}</div>
@@ -247,7 +247,7 @@ function Donations() {
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-brown-500" />
                   {top5List.length >= 3
-                    ? `${top5List[2].name} - $${top5List[2].amount}`
+                    ? `${top5List[2].name} - $${top5List[2].amount.toFixed(2)}`
                     : null}
                 </div>
                 <div>{top5List.length >= 3 ? `${top5List[2].date}` : null}</div>
@@ -256,7 +256,7 @@ function Donations() {
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-brown-500" />
                   {top5List.length >= 4
-                    ? `${top5List[3].name} - $${top5List[3].amount}`
+                    ? `${top5List[3].name} - $${top5List[3].amount.toFixed(2)}`
                     : null}
                 </div>
                 <div>{top5List.length >= 4 ? `${top5List[3].date}` : null}</div>
@@ -265,7 +265,7 @@ function Donations() {
                 <div className="flex flex-nowrap font-type1 font-bold">
                   <BsAward className="self-center text-brown-500" />
                   {top5List.length >= 5
-                    ? `${top5List[4].name} - $${top5List[4].amount}`
+                    ? `${top5List[4].name} - $${top5List[4].amount.toFixed(2)}`
                     : null}
                 </div>
                 <div>{top5List.length >= 5 ? `${top5List[4].date}` : null}</div>
@@ -284,7 +284,7 @@ function Donations() {
               {top10List.map((value, index) => (
                 <div key={index} className="flex w-full justify-between">
                   <div className="flex flex-nowrap font-type1 font-bold">
-                    {value.name} - ${value.amount}
+                    {value.name} - ${value.amount.toFixed(2)}
                   </div>
                   <div>{value.date}</div>
                 </div>
