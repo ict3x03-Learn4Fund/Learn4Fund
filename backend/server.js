@@ -8,6 +8,7 @@ const dotenv = require("dotenv").config();
 const port = process.env.port || 5000;
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
+const requestIp = require("request-ip"); // [DoS] Prevent brute force attacks
 
 connectDB();
 
@@ -17,6 +18,7 @@ module.exports = { app };
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(requestIp.mw()); // [DoS] Prevent brute force attacks
 // parse application/x-www-form-urlencoded, false can only parse incoming Request Object of strings or arrays
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
