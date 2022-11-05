@@ -17,7 +17,7 @@ const apiGetCourses = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiCreateCourse = asyncHandler(async (req, res) => {
-  if (req.body.courseDiscountedPrice > req.body.courseOriginalPrice) {
+  if (parseFloat(req.body.courseDiscountedPrice) > parseFloat(req.body.courseOriginalPrice)) {
     return res.status(400).json({ message: "Discounted price cannot be higher than original price" });
   }
   const course = await Course.create({                      // Create new course
