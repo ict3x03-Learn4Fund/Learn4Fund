@@ -154,10 +154,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
       toast.error("Price amounts cannot be more than $50,000", { autoClose: false, limit: 1 })
       return;
     }
-    if (parseFloat(riginalAmtRef.current.value) < parseFloat(discountAmtRef.current.value)) {
-      toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
-      return;
-    }
 
     if (updatedList.courseTutor > 70){
       toast.error("Tutor name cannot be more than 70 characters", { autoClose: false, limit: 1 })
@@ -171,6 +167,11 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     // set original amount to the ref value
     updatedList.courseOriginalPrice = originalAmtRef.current.value;
     updatedList.courseDiscountedPrice = discountAmtRef.current.value;
+
+    if (parseFloat(updatedList.courseOriginalPrice) < parseFloat(updatedList.courseDiscountedPrice)) {
+      toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
+      return;
+    }
     if (!validation()) {
       return
     }
