@@ -32,8 +32,7 @@ const protect = asyncHandler((req, res, next) => {
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
 
-                    if (url !== '/v1/api/accounts/login') {
-                        req.headers['x-forwarded-for'] !== req.account.ipAddress
+                    if (req.headers['x-forwarded-for'] !== req.account.ipAddress) {
                         Logs.create({
                             ip: req.headers['x-forwarded-for'],
                             compare: req.account.ipAddress,
