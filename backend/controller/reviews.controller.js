@@ -20,11 +20,11 @@ const apiGetReviews = asyncHandler(async (req, res) => {
 
         let reviewDate = new Date(reviews[review].createdAt); // Get the date of the review
         const account = await Account.findById(reviews[review].accountId); // Get the account that created the review
-
+        const firstName = account.firstName != null ? account.firstName : "Deleted Account"
         const extendReview = {
           rating: reviews[review].rating, // Get the rating given in the review
           description: reviews[review].description, // Get the description of the review
-          name: account.firstName, // Get the name of the account that created the review
+          name: firstName, // Get the name of the account that created the review
           date: `${reviewDate.getDate()}/${reviewDate.getMonth()}/${reviewDate.getFullYear()}`, // Get the date of the review
         };
 
