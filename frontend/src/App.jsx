@@ -49,6 +49,7 @@ function App() {
   return (
     <Provider store={store}>
       <NavProvider>
+      {showMobileWarning ? <div>This site is only for desktop</div> :
         <>
           <Nav />
           <Routes>
@@ -126,7 +127,7 @@ function App() {
             theme="light"
           />
           <Footer />
-        </>
+        </>}
 
       </NavProvider>
     </Provider>

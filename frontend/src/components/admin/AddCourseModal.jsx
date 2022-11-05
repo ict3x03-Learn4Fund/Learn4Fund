@@ -145,7 +145,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   const addOrUpdateCourse = () => {
 
     // check if price amounts are more than a certain value
-    if (originalAmtRef.current.value <= 0 || discountAmtRef.current.value <= 0) {
+    if (originalAmtRef.current.value <= 0) {
       toast.error("Price amounts must be more than 0", { autoClose: false, limit: 1 })
       return;
     }
@@ -154,8 +154,17 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
       toast.error("Price amounts cannot be more than $50,000", { autoClose: false, limit: 1 })
       return;
     }
-    if (originalAmtRef.current.value < discountAmtRef.current.value) {
+    if (originalAmtRef.current.value > discountAmtRef.current.value) {
       toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
+      return;
+    }
+
+    if (updatedList.courseTutor > 70){
+      toast.error("Tutor name cannot be more than 70 characters", { autoClose: false, limit: 1 })
+    }
+
+    if (updatedList.quantity > 1000 || updatedList < 1){
+      toast.error("Quantity must be between 1 and 1000", { autoClose: false, limit: 1 })
       return;
     }
 
@@ -209,6 +218,9 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   };
 
   const handleFile = (e) => {
+    if(!e.target.files[0]){
+      toast.error('Please choose an image', {autoClose: false, limit: 1})
+    }
     setFile(e.target.files[0]);
   };
 
@@ -299,7 +311,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
 
           <div className="flex w-full justify-center text-[1vw]">
             {userInfo.role === 'admin' && <button className="bg-success text-w1 font-bold py-2 px-4 rounded-full" onClick={() => addOrUpdateCourse()}>
-              Confirm {updatedList._id ? 'Update' : 'Add'}
+              Confirm {updatedList._id ? 'Update Course' : 'Add Course'}
             </button>}
 
           </div>
