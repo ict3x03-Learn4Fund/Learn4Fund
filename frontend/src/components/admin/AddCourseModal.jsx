@@ -154,7 +154,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
       toast.error("Price amounts cannot be more than $50,000", { autoClose: false, limit: 1 })
       return;
     }
-    if (originalAmtRef.current.value > discountAmtRef.current.value) {
+    if (originalAmtRef.current.value < discountAmtRef.current.value) {
       toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
       return;
     }
