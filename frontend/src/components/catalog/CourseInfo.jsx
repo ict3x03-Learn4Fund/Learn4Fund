@@ -15,7 +15,7 @@ function CourseInfo() {
     (state) => state.user
   );
   const parse = require("html-react-parser");
-  const [quantitySelected, setQuantitySelected] = useState(0);
+  const [quantitySelected, setQuantitySelected] = useState(1);
   const { courseID } = useParams();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -259,8 +259,8 @@ function CourseInfo() {
             <div className="font-type5 font-bold text-[1vw] text-success leading-[25px] self-center">
               Current Price:{" "}
               {courseDetails.canBeDiscounted
-                ? `${courseDetails.courseDiscountedPrice}`
-                : `${courseDetails.courseOriginalPrice}`}
+                ? `${courseDetails.courseDiscountedPrice.toFixed(2)}`
+                : `${courseDetails.courseOriginalPrice.toFixed(2)}`}
             </div>
           </div>
           <div className="font-type5 font-bold text-[1vw] text-[#55585D] leading-[25px] self-center">
@@ -325,7 +325,7 @@ function CourseInfo() {
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
             <span className="font-type5 text-[1vw] text-b3 font-bold">
-              Customer Reviews - {averageStars ? averageStars : 0}/5
+              Customer Reviews - {averageStars ? averageStars.toFixed(2) : 0}/5
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />
           </div>
