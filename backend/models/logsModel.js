@@ -20,10 +20,6 @@ const logsSchema = mongoose.Schema(
     ip: {
       type: String,
       default: ""
-    },
-    compare: {
-      type: String,
-      default: ""
     }
   },
   {

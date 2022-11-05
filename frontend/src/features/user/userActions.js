@@ -97,7 +97,11 @@ export const getCartNumber = createAsyncThunk(
             let { user } = getState()
             const response = await cartsService.getTotal(user.userInfo.id)
             if (response.status == 200) {
+                if(response.data.totalNo){
                 return response.data.totalNo
+                }else{
+                    return 0
+                }
             } else {
                 return 0
             }
