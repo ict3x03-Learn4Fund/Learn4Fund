@@ -82,6 +82,10 @@ function Profile() {
 
   const uploadImage = (e) => {
     e.preventDefault();
+    if(file === null){
+      toast.error('Please choose an image', {autoClose: false, limit: 1})
+      return
+    }
     if (file.type != "image/jpeg" && file.type != "image/png") {
       toast.error("Please choose only jpeg and png images")
       return
