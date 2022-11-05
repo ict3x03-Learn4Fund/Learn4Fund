@@ -27,9 +27,10 @@ describe("Testing Courses.js", () => {
       courseTutor: "KAKAK",
       quantity: 15,
     };
+    const userId = "123"
     chai
       .request(app)
-      .post("/v1/api/courses/create")
+      .post(`/v1/api/courses/create/${userId}`)
       .send(req)
       .end((err, res) => {
         res.should.have.status(401);
