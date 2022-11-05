@@ -32,6 +32,9 @@ const createAccountLimiter = rateLimit({
   // [DoS] Prevent mass account creation
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 5, // Limit each IP to 5 create account requests per hour
+  keyGenerator: (req, res) => {
+    return req.clientIp;
+  },
   message:
     "Too many accounts created from this IP, please try again after 1 hour",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -59,6 +62,9 @@ const verify2FALimiter = rateLimit({
   // [DoS] Prevent brute force attacks on 2FA
   windowMs: 3 * 60 * 1000, // 3 mins
   max: 5, // Limit each IP to 5 code verification requests per 3 mins
+  keyGenerator: (req, res) => {
+    return req.clientIp;
+  },
   message: "Too much tries, please try again in 3 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -82,6 +88,9 @@ const resetPasswordLimiter = rateLimit({
   // [DoS] Prevent brute force attacks on 2FA
   windowMs: 10 * 60 * 1000, // 10 mins
   max: 5, // Limit each IP to 5 code verification requests per 10 mins
+  keyGenerator: (req, res) => {
+    return req.clientIp;
+  },
   message: "Too much tries, please try again in 10 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -103,6 +112,9 @@ const loginRateLimiter = rateLimit({
   // [DoS] Prevent mass account creation
   windowMs: 10 * 60 * 1000, // 10 mins
   max: 5, // Limit each IP to 10 login requests per 10 mins
+  keyGenerator: (req, res) => {
+    return req.clientIp;
+  },
   message:
     "Multiple logins detected from this IP address, please try again after 10 mins",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers

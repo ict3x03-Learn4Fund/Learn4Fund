@@ -9,6 +9,9 @@ const Logs = require("../models/logsModel");
 const verifyVoucherLimiter = rateLimit({                                  // [DoS] Prevent brute force attacks on 2FA
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 50, // Limit each IP to 5 code verification requests per 1 hour
+    keyGenerator: (req, res) => {
+        return req.clientIp;
+      },
     message: "Tries exceeded 50, please try again in 1 hour",
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
