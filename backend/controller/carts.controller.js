@@ -21,13 +21,22 @@ const apiAddCart = asyncHandler(async (req, res) => {
 
 
     let counterFlag = 0;
+    let courseId;
     cart.coursesAdded.some((existingCart) => {
       if (existingCart.cartItem.courseId === cartItem.courseId) {
+        courseId = existingCart.cartItem.courseId
         existingCart.cartItem.quantity += cartItem.quantity;
       } else {
         counterFlag++;
       }
     });
+    if (courseId){
+      const course = await Course.findById(courseId)
+      if (course.quantity < cartItem.quantity){
+        return res.status(400).json({message:"Quantity exceeded."})
+      }
+    }
+
     if (counterFlag === cart.coursesAdded.length)
       cart.coursesAdded.push({ cartItem });
     cart.markModified("coursesAdded");
@@ -45,7 +54,7 @@ const apiAddCart = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiGetCart = asyncHandler(async (req, res) => {
-  const accountId = mongoose.Types.ObjectId(req.params.id);
+  const accountId = mongoose.Types.ObjectId(req.params.userId);
   try {
     let cart = await Cart.findOne({ accountId: accountId });
 
@@ -95,7 +104,7 @@ const apiGetCart = asyncHandler(async (req, res) => {
  */
 const apiGetNo = asyncHandler(async (req, res) => {
   try {
-    const accountId = req.params.id
+    const accountId = req.params.userId
     let cart = await Cart.findOne({ accountId: accountId });
 
     if (!cart) cart = await Cart.create({ accountId: accountId });
@@ -186,7 +195,7 @@ const apiAddDonationToCart = asyncHandler(async (req, res) => {
  */
 const apiClearDonation = asyncHandler(async (req, res) => {
   try {
-    const accountId = req.params.id
+    const accountId = req.params.userId
     const cart = await Cart.findOne({ accountId: accountId })
     if (!cart) {
       return res.status(400).json({ message: "User not found." })

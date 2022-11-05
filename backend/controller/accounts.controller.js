@@ -233,7 +233,7 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     loggedTimestamp,
     ipAddress,
     role,
-  } = await Account.findById(req.account.id);
+  } = req.account;
 
   const sessionTimeout = ((new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000) || (req.headers['x-forwarded-for'] !== ipAddress) ? true : false
   
@@ -430,7 +430,7 @@ const apiUpdateSubscription = asyncHandler(async (req, res) => {
 
 const apiDelete = asyncHandler(async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const user = await Account.findById(userId);
     if (!user) {
       return res.status(400).json({ message: "User is not found" })

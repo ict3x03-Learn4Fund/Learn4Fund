@@ -113,13 +113,13 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     formData.append("image", file);
 
     imagesService
-      .uploadImage(formData)
+      .uploadImage(formData, localStorage.getItem('userId'))
       .then((response) => {
         if (response.status == 200) {
           updatedList.courseImg = response.data.id;
           const imgId = response.data.id;
           coursesService
-            .uploadCourseImage(imgId)
+            .uploadCourseImage(imgId, localStorage.getItem('userId'))
             .then(() => {
               toast.success("Successfully uploaded image of course");
             })
@@ -187,7 +187,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   // create courses
   const createCourses = (data) => {
     courseService
-      .createCourse(data)
+      .createCourse(data, localStorage.getItem('userId'))
       .then((response) => {
         toast.success('Course Created');
       })
@@ -204,7 +204,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   const updateCourses = (id, data) => {
 
     courseService
-      .updateCourse(id, data)
+      .updateCourse(id, data, localStorage.getItem('userId'))
       .then((response) => {
         toast.success('Course Updated');
       })

@@ -91,6 +91,7 @@ const Cart = () => {
       .deleteCart(userInfo.id, courseId)
       .then((response) => {
         setCartList(response.data.coursesAdded);
+        dispatch(getCartNumber(localStorage.getItem('userId')));
         toast.success("Items successfully deleted from cart.");
       })
       .catch((e) => {

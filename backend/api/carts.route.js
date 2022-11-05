@@ -13,9 +13,9 @@ const router = express.Router()
 * @route Get /v1/api/carts/
 * @access Private
 */
-router.route("/:id").get(protect,
+router.route("/:userId").get(protect,
   [
-    param('id', 'Invalid course id')
+    param('userId', 'Invalid user Id')
       .notEmpty().bail()
       .isString().bail()
       .isAlphanumeric().bail()
@@ -33,8 +33,13 @@ router.route("/:id").get(protect,
  * @route POST /v1/api/carts/add
  * @access Private
  */
-router.route("/add").post(protect,
+router.route("/add/:userId").post(protect,
   [
+    param('userId', 'Invalid user Id')
+      .notEmpty().bail()
+      .isString().bail()
+      .isAlphanumeric().bail()
+      .isLength({ min: 24, max: 24 }),
     body('accountId', 'Invalid account id')
       .notEmpty().bail()
       .isString().bail()
@@ -63,8 +68,13 @@ router.route("/add").post(protect,
  * @route Post /v1/api/carts/delete
  * @access Private
  */
-router.route("/delete").post(protect,
+router.route("/delete/:userId").post(protect,
   [
+    param('userId', 'Invalid user Id')
+    .notEmpty().bail()
+    .isString().bail()
+    .isAlphanumeric().bail()
+    .isLength({ min: 24, max: 24 }),
     body('accountId', 'Invalid account id')
       .notEmpty().bail()
       .isString().bail()
@@ -90,9 +100,9 @@ router.route("/delete").post(protect,
  * @route Get /v1/api/carts/:id/totalNo
  * @access Private
  */
-router.route("/:id/totalNo").get(protect,
+router.route("/:userId/totalNo/").get(protect,
   [
-    param('id', 'Invalid account')
+    param('userId', 'Invalid account')
       .notEmpty().bail()
       .isString().bail()
       .isAlphanumeric().bail()
@@ -112,8 +122,13 @@ router.route("/:id/totalNo").get(protect,
  * @route Post /v1/api/carts/addDonation
  * @access Private
  */
-router.route("/addDonation").post(protect,
+router.route("/addDonation/:userId").post(protect,
   [
+    param('userId', 'Invalid user Id')
+    .notEmpty().bail()
+    .isString().bail()
+    .isAlphanumeric().bail()
+    .isLength({ min: 24, max: 24 }),
     body('accountId', 'Account error')
       .notEmpty().bail()
       .isAlphanumeric(),
@@ -139,9 +154,9 @@ router.route("/addDonation").post(protect,
  * @route Post /v1/api/carts/clearDonation/:id
  * @access Private
  */
-router.route("/clearDonation/:id").get(
+router.route("/clearDonation/:userId").get(
   [
-    param('id', 'Invalid account')
+    param('userId', 'Invalid account')
       .notEmpty().bail()
       .isAlphanumeric().bail()
       .isLength({ min: 24, max: 24 }),
