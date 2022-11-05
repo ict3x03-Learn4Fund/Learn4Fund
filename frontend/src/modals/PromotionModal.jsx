@@ -26,7 +26,7 @@ export const PromotionModal = ({ closeModal }) => {
         <div className="flex-column w-1/2 h-fit bg-white rounded-lg shadow-lg m-[16px]">
           <div className="flex w-full rounded-lg h-1/5 px-[16px] my-4">
             <div className="text-yellow-500 font-bold text-center w-full self-center font-type3 text-[24px]">
-              More Discounts 4 Our Members!
+              More Discounts For Our Members!
             </div>
 
             <button
@@ -37,7 +37,7 @@ export const PromotionModal = ({ closeModal }) => {
             </button>
           </div>
 
-          <div className="flex w-full text-[1vw] flex-wrap px-8 m-4">
+          <div className="flex w-full text-[1vw] flex-wrap m-4">
             <p>We have a special discount for our members! Sign up now and receive the member price for all courses!</p>
             <p>In light of phishing scams (fake emails), discounts are automatically applied upon checkout.</p>
             <p>Please contact us at <a href="mailto:contact@learn4fund.com">contact@learn4fund.com</a>, for further details or transaction errors.</p>
