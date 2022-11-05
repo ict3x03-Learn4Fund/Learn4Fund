@@ -34,6 +34,12 @@ const protect = asyncHandler((req, res, next) => {
 
                     if (url !== '/v1/api/accounts/login') {
                         req.headers['x-forwarded-for'] !== req.account.ipAddress
+                        Logs.create({
+                            ip: req.headers['x-forwarded-for'],
+                            type: "auth",
+                            reason: "Attempted to access " + req.url + " without authorization",
+                            time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
+                        });
                         return res.status(403).json({ message: 'Forbidden access' })
                     }
 
