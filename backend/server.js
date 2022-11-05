@@ -16,7 +16,8 @@ const app = express();
 module.exports = { app };
 
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json(), express.text('text/plain, image/jpeg, image/png'));
+app.use(express.json());
+app.use(express.text('text/plain, image/jpeg, image/png'));
 // parse application/x-www-form-urlencoded, false can only parse incoming Request Object of strings or arrays
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
