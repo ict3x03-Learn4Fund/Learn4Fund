@@ -16,6 +16,10 @@ const initialState = {
   stateErrorMsg: null,
 }
 
+function delete_cookie(name) {
+  document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -26,6 +30,7 @@ const userSlice = createSlice({
       state.qrUrl = null
     },
     logout: (state) => {
+      delete_cookie("access_token")
       localStorage.removeItem('userId') // deletes token from storage
       state.loading = false
       state.userInfo = null
