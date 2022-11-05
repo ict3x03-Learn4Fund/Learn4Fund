@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { BsDash, BsPlus } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
@@ -33,6 +33,12 @@ function CourseInfo() {
   const retrieveReviews = () => {
     reviewsService.getReviews(courseID).then((response) => {
       setReviews(response.data.reviews);
+      let sum = 0;
+      response.data.reviews.map((review, index) => {
+        sum += parseInt(review.rating);
+      });
+      sum = sum / response.data.reviews.length;
+      setAverageStars(sum);
     });
   };
 
@@ -46,9 +52,9 @@ function CourseInfo() {
           (course) => course._id.toString() === courseID
         );
         setCourseDetails(course);
+        calculateAverageStars();
       })
-      .catch((e) => {
-      });
+      .catch((e) => {});
   };
 
   //function to see if user can make review
@@ -137,15 +143,14 @@ function CourseInfo() {
   };
 
   const handleNewReview = () => {
-    var escapedReview = reviewDescription
+    var escapedReview = reviewDescription;
     if (validator.isEmpty(userInfo.id) || validator.isEmpty(courseID)) {
       toast.error("Error adding review");
       return;
     }
     if (!validator.isEmpty(reviewDescription)) {
       escapedReview = validator.escape(reviewDescription);
-    }
-    else {
+    } else {
       toast.error("Please enter a review");
       return;
     }
@@ -164,7 +169,7 @@ function CourseInfo() {
         }
       })
       .catch((error) => {
-        if (error.response.data.message){
+        if (error.response.data.message) {
           toast.error(error.response.data.message);
         }
       });
@@ -252,7 +257,10 @@ function CourseInfo() {
               </span>
             </div>
             <div className="font-type5 font-bold text-[1vw] text-success leading-[25px] self-center">
-              Current Price: {courseDetails.canBeDiscounted ? `${courseDetails.courseDiscountedPrice}`: `${courseDetails.courseOriginalPrice}`}
+              Current Price:{" "}
+              {courseDetails.canBeDiscounted
+                ? `${courseDetails.courseDiscountedPrice}`
+                : `${courseDetails.courseOriginalPrice}`}
             </div>
           </div>
           <div className="font-type5 font-bold text-[1vw] text-[#55585D] leading-[25px] self-center">
@@ -331,16 +339,20 @@ function CourseInfo() {
           >
             {reviews.map((review, index) => {
               return (
-                <div className="flex-row flex-wrap w-full my-2 mt-[24px] mx-[16px] p-[24px]">
-                  <div className="flex w-full justify-between">
-                    <div className="flex flex-nowrap font-type1 font-bold">
-                      {review.name} [{review.rating}{" "}
-                      <AiFillStar className="self-center text-yellow-500" />]
+                <Fragment>
+                  <div className="flex-row flex-wrap w-full my-2 mt-[16px] mx-[16px] ">
+                    <div className="flex w-full justify-between">
+                      <div className="flex flex-nowrap font-type1 font-bold">
+                        {review.name} [{review.rating}{" "}
+                        <AiFillStar className="self-center text-yellow-500" />]
+                      </div>
+                      <div>{review.date}</div>
                     </div>
-                    <div>{review.date}</div>
+                    <p className="flex flex-wrap break-all">
+                      {review.description}
+                    </p>
                   </div>
-                  <p className="flex flex-wrap break-all">{review.description}</p>
-                </div>
+                </Fragment>
               );
             })}
           </div>
