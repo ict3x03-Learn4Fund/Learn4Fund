@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import {
-  userLogin,
   getUserDetails,
   getCartNumber,
   user2FA,

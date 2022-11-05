@@ -38,6 +38,7 @@ const apiRegister = asyncHandler(async (req, res) => {
       loggedTimestamp: Date.now(),
       password: hashedPassword,
       secret: secret,
+      ipAddress: req.headers['x-forwarded-for']
     });
     return res.status(200).json({
       _id: account.id,

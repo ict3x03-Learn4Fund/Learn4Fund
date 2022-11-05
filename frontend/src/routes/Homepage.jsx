@@ -20,13 +20,22 @@ import "swiper/css/pagination";
 import Subscribe from "../components/banner/Subscribe";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import {useDispatch, useSelector} from "react-redux";
+import { getUserDetails } from "../features/user/userActions";
 
 function Homepage({ setNewsModal }) {
   const navigate = useNavigate();
   const { setTab } = useNav();
   const [dataCourses, setDataCourses] = useState([]);
+  const {userInfo} = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    if (userInfo){
+      dispatch(getUserDetails(userInfo.id))
+    }
     window.scrollTo(0, 0);
+    retrieveCourses();
     setTab("");
   }, []);
 
@@ -45,10 +54,6 @@ function Homepage({ setNewsModal }) {
     }
     return 0;
   }
-
-  useEffect(() => {
-    retrieveCourses();
-  }, []);
 
   // retrieve all courses
   const retrieveCourses = () => {
