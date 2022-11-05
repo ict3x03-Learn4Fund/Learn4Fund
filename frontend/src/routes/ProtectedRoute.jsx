@@ -11,9 +11,6 @@ const ProtectedRoute = () => {
   useEffect(() => {
     if (!localStorage.getItem('userId')) {
       dispatch(logout())
-      setTimeout(() => {
-        navigate('/login')
-      }, 5000)
 
     }
   }, [])
@@ -26,7 +23,6 @@ const ProtectedRoute = () => {
           <p className="font-bold text-2xl text-white">
             Unauthorized &nbsp;
           </p>
-          <p>Redirecting to login screen in 5</p>
           <span className='mr-2'>
             <NavLink to='/login' className="font-bold text-blue-600">Login</NavLink> to gain access.
           </span>
