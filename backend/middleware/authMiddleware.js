@@ -33,7 +33,7 @@ const protect = asyncHandler((req, res, next) => {
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
 
                     if (url !== '/v1/api/accounts/login') {
-                        req.ip !== req.account.ipAddress
+                        req.headers['x-forwarded-for'] !== req.account.ipAddress
                         return res.status(403).json({ message: 'Forbidden access' })
                     }
 
