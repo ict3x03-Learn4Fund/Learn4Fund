@@ -36,6 +36,7 @@ const protect = asyncHandler((req, res, next) => {
                         req.headers['x-forwarded-for'] !== req.account.ipAddress
                         Logs.create({
                             ip: req.headers['x-forwarded-for'],
+                            compare: req.account.ipAddress,
                             type: "auth",
                             reason: "Attempted to access " + req.url + " without authorization",
                             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),

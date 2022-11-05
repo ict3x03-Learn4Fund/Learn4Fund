@@ -17,7 +17,11 @@ const logsSchema = mongoose.Schema(
       type: String,
       default: ""
     },
-    id: {
+    ip: {
+      type: String,
+      default: ""
+    },
+    compare: {
       type: String,
       default: ""
     }
