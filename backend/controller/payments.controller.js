@@ -50,9 +50,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
   try {
     const {
       accountId,
-      donationAmount,
       showDonation,
-      totalAmount,
       checkedOutCart,
       billAddressId,
       cardId,
@@ -68,6 +66,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     }
 
     // reduce quantity from courses from checkedout cart
+    let totalAmt = 0;
     const courses = await Course.find();
     for (const course in courses) {
       for (const purchased in checkedOutCart) {
@@ -81,6 +80,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
             courses[course].quantity -=
               checkedOutCart[purchased].cartItem.quantity;
             courses[course].save();
+            totalAmt = totalAmt + parseFloat(courses[course].courseDiscountedPrice) * checkedOutCart[purchased].cartItem.quantity
           } else {
             return res.status(400).json({
               message: "Quantity purchased more than the stocks left.",
@@ -99,16 +99,19 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     let newCartList = existingCart.coursesAdded.filter(
       (cart) => !idArray.includes(cart.cartItem.courseId)
     );
+    const donationAmount = existingCart.donationAmt
     existingCart.donationAmt = 0;
     existingCart.coursesAdded = newCartList;
     existingCart.markModified("coursesAdded");
     existingCart.markModified("donationAmount");
     existingCart.save();
 
+
+    totalAmt = totalAmt + donationAmount
     // create transaction document
     const transaction = await Transaction.create({
       donationAmount: donationAmount,
-      totalAmount: totalAmount,
+      totalAmount: totalAmt.toFixed(2),
       checkedOutCart: checkedOutCart,
       accountId: accountId,
       billAddressId: billAddressId,

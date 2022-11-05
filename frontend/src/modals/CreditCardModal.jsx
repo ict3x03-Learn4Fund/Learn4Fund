@@ -12,8 +12,6 @@ import { useCreditCardValidator } from "react-creditcard-validator";
 
 export const CreditCardModal = ({
   closeModal,
-  totalAmount,
-  donation,
   showDonation,
   checkout,
 }) => {
@@ -95,9 +93,7 @@ export const CreditCardModal = ({
 
     const payload = {
       accountId: userInfo.id,
-      donationAmount: donation,
       showDonation: showDonation,
-      totalAmount: totalAmount,
       cardId: cardId,
       billAddressId: addrId,
       checkedOutCart: filteredCart,

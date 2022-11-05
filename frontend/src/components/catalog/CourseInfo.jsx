@@ -164,7 +164,9 @@ function CourseInfo() {
         }
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        if (error.response.data.message){
+          toast.error(error.response.data.message);
+        }
       });
   };
 
@@ -337,7 +339,7 @@ function CourseInfo() {
                     </div>
                     <div>{review.date}</div>
                   </div>
-                  <p>{review.description}</p>
+                  <p className="flex flex-wrap break-all">{review.description}</p>
                 </div>
               );
             })}
