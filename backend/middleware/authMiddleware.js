@@ -31,6 +31,16 @@ const protect = asyncHandler((req, res, next) => {
                         
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
+                    
+                    if(req.account.ipAddress != req.headers['x-forwarded-for']){
+                        Logs.create({
+                            ip: req.headers['x-forwarded-for'],
+                            type: "ip-address fail to match",
+                            reason: req.headers['x-forwarded-for'] + " tried to access " + req.url + " without authorization",
+                            time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
+                        });
+                        return res.status(403).json({ message: 'Forbidden access', sessionTimeout: true })
+                    }
 
                     if (url !== '/v1/api/accounts' || url !== '/v1/api/carts') {
                         //update user session timestamp
@@ -54,18 +64,7 @@ const protect = asyncHandler((req, res, next) => {
                         
                     }
 
-                    if (url !== '/v1/api/accounts/login' || url !== '/v1/api/accounts/getAccount') {
-                        if(req.account.ipAddress != req.headers['x-forwarded-for']){
-                        Logs.create({
-                            ip: req.headers['x-forwarded-for'],
-                            compare: req.account.ipAddress,
-                            type: "ip-address fail to match",
-                            reason: "Attempted to access " + req.url + " without authorization",
-                            time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
-                        });
-                        return res.status(403).json({ message: 'Forbidden access' })
-                    }
-                    }
+                        
 
                     next() // Move on from the middleware
                 } catch (error) {
