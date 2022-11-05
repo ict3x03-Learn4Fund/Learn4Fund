@@ -1,26 +1,26 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import http from "../http-common";
 
-const getAllAccounts = async () => {                        // [Logging] Get all accounts
+const getAllAccounts = async (userId) => {                        // [Logging] Get all accounts
   // Making calls to server side, return response
-  const res = await http.get("/admin/getAllAccounts");      // Route /v1/api/admin/getAllAccounts
+  const res = await http.get(`/admin/getAllAccounts/${userId}`);      // Route /v1/api/admin/getAllAccounts
   return res;
 
 }
 // Get all logs [admin]
-const getAllLogs = async () => {                            // [Logging] Get all logs
+const getAllLogs = async (userId) => {                            // [Logging] Get all logs
   // Making calls to server side, return response
-  return await http.get("/admin/getAllLogs");               // Route /v1/api/admin/getAllLogs
+  return await http.get(`/admin/getAllLogs/${userId}`);               // Route /v1/api/admin/getAllLogs
 }
 
-const lockUnlockAccount = async (data) => {                 // [Management] Lock or unlock account
+const lockUnlockAccount = async (data, userId) => {                 // [Management] Lock or unlock account
   // Making calls to server side, return response
-  return await http.post("/admin/lockUnlockAccount", data); // Route /v1/api/admin/lockUnlockAccount
+  return await http.post(`/admin/lockUnlockAccount/${userId}`, data); // Route /v1/api/admin/lockUnlockAccount
 }
 
-const deleteAccount = async (data) => {                     // [Management] Delete account
+const deleteAccount = async (data, userId) => {                     // [Management] Delete account
   // Making calls to server side, return response
-  return await http.post("/admin/deleteAccount", data);   // Route /v1/api/admin/deleteAccount
+  return await http.post(`/admin/deleteAccount/${userId}`, data);   // Route /v1/api/admin/deleteAccount
 }
 
 // Client side functions

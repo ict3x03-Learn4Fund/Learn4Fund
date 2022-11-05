@@ -15,7 +15,7 @@ export const ConfirmationModal = ({ closeModal, courseInfo }) => {
   const { userInfo } = useSelector(state => state.user)
   const deleteCourse = () => {
     courseService
-      .deleteCourse(courseInfo._id)
+      .deleteCourse(courseInfo._id, localStorage.getItem('userId'))
       .then((response) => {
         if (response.status === 200) {
           toast.success("Successfully deleted course.");

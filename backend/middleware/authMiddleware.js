@@ -27,7 +27,10 @@ const protect = asyncHandler((req, res, next) => {
                         token,
                         process.env.JWT_SECRET,
                         { algorithm: "HS512" })
-
+                    
+                    if (req.params.userId != decoded.id){
+                        return res.status(400).json({message: "Please do not use someone else's userId."})
+                    }
                         
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account

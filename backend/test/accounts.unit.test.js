@@ -145,9 +145,10 @@ describe("Testing Accounts.js", () => {
       });
   });
   it("Authentication to retrieve user", (done) => {
+    const userId = "123"
     chai
       .request(app)
-      .get("/v1/api/accounts/getAccount")
+      .get(`/v1/api/accounts/getAccount/${userId}`)
       .end((err, res) => {
         res.should.have.status(401);
         done();

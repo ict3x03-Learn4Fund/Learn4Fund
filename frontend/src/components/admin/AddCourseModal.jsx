@@ -113,13 +113,13 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     formData.append("image", file);
 
     imagesService
-      .uploadImage(formData)
+      .uploadImage(formData, localStorage.getItem('userId'))
       .then((response) => {
         if (response.status == 200) {
           updatedList.courseImg = response.data.id;
           const imgId = response.data.id;
           coursesService
-            .uploadCourseImage(imgId)
+            .uploadCourseImage(imgId, localStorage.getItem('userId'))
             .then(() => {
               toast.success("Successfully uploaded image of course");
             })
@@ -154,16 +154,12 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
       toast.error("Price amounts cannot be more than $50,000", { autoClose: false, limit: 1 })
       return;
     }
-    if (originalAmtRef.current.value < discountAmtRef.current.value) {
-      toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
-      return;
-    }
 
     if (updatedList.courseTutor > 70){
       toast.error("Tutor name cannot be more than 70 characters", { autoClose: false, limit: 1 })
     }
 
-    if (updatedList.quantity > 1000 || updatedList < 1){
+    if (updatedList.quantity > 1000 || updatedList.quantity < 1){
       toast.error("Quantity must be between 1 and 1000", { autoClose: false, limit: 1 })
       return;
     }
@@ -171,6 +167,11 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     // set original amount to the ref value
     updatedList.courseOriginalPrice = originalAmtRef.current.value;
     updatedList.courseDiscountedPrice = discountAmtRef.current.value;
+
+    if (parseFloat(updatedList.courseOriginalPrice) < parseFloat(updatedList.courseDiscountedPrice)) {
+      toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
+      return;
+    }
     if (!validation()) {
       return
     }
@@ -187,7 +188,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   // create courses
   const createCourses = (data) => {
     courseService
-      .createCourse(data)
+      .createCourse(data, localStorage.getItem('userId'))
       .then((response) => {
         toast.success('Course Created');
       })
@@ -204,7 +205,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   const updateCourses = (id, data) => {
 
     courseService
-      .updateCourse(id, data)
+      .updateCourse(id, data, localStorage.getItem('userId'))
       .then((response) => {
         toast.success('Course Updated');
       })

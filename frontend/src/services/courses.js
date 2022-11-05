@@ -5,23 +5,23 @@ const getAll = async () => {
     return response;
 }
 
-const deleteCourse = async (id) => {
-    const response = await http.post(`/courses/delete/${id}`)
+const deleteCourse = async (id, userId) => {
+    const response = await http.post(`/courses/delete/${id}/${userId}`)
     return response;
 }
 
-const createCourse = async (data) => {
-    const response = await http.post("/courses/create", data)
+const createCourse = async (data, userId) => {
+    const response = await http.post(`/courses/create/${userId}`, data)
     return response;
 }
 
-const updateCourse = async (id, data) => {
-    const response = await http.put(`/courses/update/${id}`, data)
+const updateCourse = async (id, data, userId) => {
+    const response = await http.put(`/courses/update/${id}/${userId}`, data)
     return response;
 }
 
-const uploadCourseImage = async (imgId) => {
-    const response = await http.post(`/courses/uploadCourseImage`, imgId);
+const uploadCourseImage = async (imgId, userId) => {
+    const response = await http.post(`/courses/uploadCourseImage/${userId}`, imgId);
     return response;
 }
 

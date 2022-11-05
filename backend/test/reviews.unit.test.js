@@ -7,9 +7,10 @@ chai.use(chaiHttp);
 
 describe("Testing Reviews.js", () => {
   it("Authentication for reviews", (done) => {
+    const user = "123"
     chai
       .request(app)
-      .post(`/v1/api/reviews/create`)
+      .post(`/v1/api/reviews/create/${user}`)
       .end((err, res) => {
         res.should.have.status(401);
         done();

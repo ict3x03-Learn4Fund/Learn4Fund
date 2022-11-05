@@ -9,7 +9,7 @@ import authService from "../../services/accounts";
 import validator from "validator";
 
 function ChangePassword() {
-  const { userId } = useSelector(
+  const { userInfo } = useSelector(
     (state) => state.user
   );
 
@@ -140,16 +140,17 @@ function ChangePassword() {
 
   // for otp submit
   const submitForm = (data) => {
-    if (userId && otp && password) {
-      if (!validator.isAlphanumeric(userId) && !validator.isLength(userId, { min: 24, max: 24 })) {
+    console.log(userInfo.id, otp, password)
+    if (userInfo.id && otp && password) {
+      if (!validator.isAlphanumeric(userInfo.id) && !validator.isLength(userInfo.id, { min: 24, max: 24 })) {
         toast.error("Request denied");
         return;
       }
       else {
-        const payload = { userId: userId, token: otp }
+        const payload = { userId: userInfo.id, token: otp }
         authService.verify2FA(payload).then((response) => {
           if (response.status == 200) {
-            authService.normalChangePass(userId, password).then((res) => {
+            authService.normalChangePass(userInfo.id, password).then((res) => {
               if (res.status == 200) {
                 toast.success("Password changed successfully!")
                 setModalOpen(false)

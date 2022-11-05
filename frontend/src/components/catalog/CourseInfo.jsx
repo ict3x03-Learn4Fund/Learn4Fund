@@ -161,7 +161,7 @@ function CourseInfo() {
       courseId: courseID,
     };
     reviewsService
-      .getCreateReview(newReview)
+      .getCreateReview(newReview, localStorage.getItem("userId"))
       .then((response) => {
         if (response.status == 200) {
           toast.success("A review has been added successfully.");

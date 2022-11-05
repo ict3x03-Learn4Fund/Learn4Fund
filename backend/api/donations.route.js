@@ -1,6 +1,6 @@
 const express = require("express");
 const { protect } = require('../middleware/authMiddleware')
-const { body, validationResult } = require('express-validator')
+const { body, validationResult, param } = require('express-validator')
 
 const {
   apiAddDonations,
@@ -16,8 +16,13 @@ router.route("/").get(apiGetDonations);
 
 router.route("/total").get(apiGetTotal);
 
-router.route("/add").post(protect,
+router.route("/add/:userId").post(protect,
   [
+    param('userId', 'Invalid user Id')
+    .notEmpty().bail()
+    .isString().bail()
+    .isAlphanumeric().bail()
+    .isLength({ min: 24, max: 24 }),
     body("donationAmt", "Enter amount between 0.01 to 10 million").isLength({ min: 0, max: 8 }).isFloat({ min: 0.01, max: 10000000 }),
   ], (req, res) => {
     const errors = validationResult(req);

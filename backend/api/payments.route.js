@@ -16,9 +16,9 @@ const router = express.Router()
  * @route GET /v1/api/payments/:id
  * @access Private
  */
-router.route("/:id").get(protect,
+router.route("/:userId").get(protect,
     [
-        param('id', 'Invalid account ID')
+        param('userId', 'Invalid account ID')
             .notEmpty().bail()
             .isAlphanumeric()
             .bail().isLength({ min: 24, max: 24 }),
@@ -35,8 +35,13 @@ router.route("/:id").get(protect,
  * @route POST /v1/api/payments/pay
  * @access Private
  */
-router.route("/pay").post(protect,
+router.route("/pay/:userId").post(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
             .isAlphanumeric().bail()
@@ -73,8 +78,13 @@ router.route("/pay").post(protect,
  * @route POST /v1/api/payments/addAddr
  * @access Private
  */
-router.route("/addAddr").post(protect,
+router.route("/addAddr/:userId").post(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
             .isAlphanumeric().bail()
@@ -110,8 +120,13 @@ router.route("/addAddr").post(protect,
         apiAddAddr(req, res)
     })
 
-router.route("/addCard").post(protect,
+router.route("/addCard/:userId").post(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
             .isAlphanumeric().bail()
@@ -146,9 +161,14 @@ router.route("/addCard").post(protect,
         }
         apiAddCard(req, res)
     })
-router.route("/deleteCard/:id").get(protect,
+router.route("/deleteCard/:id/:userId").get(protect,
     [
-        param('id', 'Invalid ID')
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
+        param('id', 'Invalid address ID')
             .notEmpty().bail()
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
@@ -160,9 +180,14 @@ router.route("/deleteCard/:id").get(protect,
         apiDeleteCard(req, res)
     })
 
-router.route("/deleteAddr/:id").get(protect,
+router.route("/deleteAddr/:id/:userId").get(protect,
     [
-        param('id', 'Invalid ID')
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
+        param('id', 'Invalid card ID')
             .notEmpty().bail()
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
@@ -173,9 +198,9 @@ router.route("/deleteAddr/:id").get(protect,
         }
         apiDeleteAddr(req, res)
     })
-router.route("/getTransactions/:id").get(protect,
+router.route("/getTransactions/:userId").get(protect,
     [
-        param('id', 'Invalid ID')
+        param('userId', 'Invalid user ID')
             .notEmpty().bail()
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
