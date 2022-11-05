@@ -58,7 +58,6 @@ function Homepage({ setNewsModal }) {
         setDataCourses(response.data);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 
@@ -128,7 +127,7 @@ function Homepage({ setNewsModal }) {
                   key={index}
                   className="cursor-pointer flex flex-col flex-wrap w-1/4 bg-w1 border-[1px] border-w1 p-2 rounded"
                   style={course.quantity <= 0 ? { opacity: 0.8 } : {}}
-                  onClick={() => {course.quantity > 0? navigate("courses/" + course._id): toast.warning('Courses sold out!')}}
+                  onClick={() => { course.quantity > 0 ? navigate("courses/" + course._id) : toast.warning('Courses sold out!') }}
                 >
                   <img
                     src={`https://learn4fund.tk/v1/api/images/getImg/${course.courseImg}`}
@@ -232,7 +231,7 @@ function Homepage({ setNewsModal }) {
                     </div>
 
                     <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
-                    {!course.canBeDiscounted && (
+                      {!course.canBeDiscounted && (
                         <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
                           NOW ${course.courseOriginalPrice.toFixed(2)}
                         </span>
@@ -316,7 +315,7 @@ function Homepage({ setNewsModal }) {
                     </div>
 
                     <div className="flex w-full justify-between text-[1vw] leading-[20px] font-bold font-type1">
-                    {!course.canBeDiscounted && (
+                      {!course.canBeDiscounted && (
                         <span className="bg-success h-[24px] m-auto text-w1 lg:p-1">
                           NOW ${course.courseOriginalPrice.toFixed(2)}
                         </span>

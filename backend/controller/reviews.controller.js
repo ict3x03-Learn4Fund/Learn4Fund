@@ -1,7 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Review = require("../models/reviewModel");
 const Account = require("../models/accountModel");
-const mongoose = require("mongoose");
 const Transaction = require("../models/transactionModel");
 /***
  * @desc Get All review
@@ -21,18 +20,17 @@ const apiGetReviews = asyncHandler(async (req, res) => {
 
         let reviewDate = new Date(reviews[review].createdAt); // Get the date of the review
         const account = await Account.findById(reviews[review].accountId); // Get the account that created the review
-
+        const firstName = account.firstName != null ? account.firstName : "Deleted Account"
         const extendReview = {
           rating: reviews[review].rating, // Get the rating given in the review
           description: reviews[review].description, // Get the description of the review
-          name: account.firstName, // Get the name of the account that created the review
+          name: firstName, // Get the name of the account that created the review
           date: `${reviewDate.getDate()}/${reviewDate.getMonth()}/${reviewDate.getFullYear()}`, // Get the date of the review
         };
 
         reviewList.push(extendReview);
       }
     }
-    // console.log(courses)
     res.status(200).json({ reviews: reviewList }); // Return the list of reviews
   } catch (error) {
     res.status(400).json(`message: ${error.message}`); // Return error message

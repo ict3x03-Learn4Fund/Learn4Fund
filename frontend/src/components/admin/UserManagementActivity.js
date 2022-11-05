@@ -1,6 +1,6 @@
 import React from "react";
 import http from "../../http-common";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import adminAuthService from "../../services/admin";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,6 @@ export default function UserManagementActivity({ account, fetchData }) {
   const lockUnlockAccount = async (data) => {
     try {
       const response = await adminAuthService.lockUnlockAccount(data); // [Management] /services/admin.js
-      console.log(response);
       axios.interceptors.response.use(
         (response) => {
           // [Error] To intercept error codes from Response
@@ -37,7 +36,6 @@ export default function UserManagementActivity({ account, fetchData }) {
   const deleteAccount = async (data) => {
     try {
       const response = await adminAuthService.deleteAccount(data); // [Management] /services/admin.js
-      console.log(response);
       axios.interceptors.response.use(
         (response) => {
           // [Error] To intercept error codes from Response
@@ -106,12 +104,12 @@ export default function UserManagementActivity({ account, fetchData }) {
       <td>{account.lockedOut + ""}</td>
       <td>
         <tr>
-        <td>
-          <button className="btn btn-primary" onClick={HandleLockUnlockClick}> {value} </button>
-        </td>
-        <td>
-          <button className="btn btn-primary" onClick={HandleRemoveClick}> REMOVE </button>
-        </td>
+          <td>
+            <button className="btn btn-primary" onClick={HandleLockUnlockClick}> {value} </button>
+          </td>
+          <td>
+            <button className="btn btn-primary" onClick={HandleRemoveClick}> REMOVE </button>
+          </td>
         </tr>
       </td>
     </tr>

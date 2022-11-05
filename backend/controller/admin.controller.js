@@ -34,7 +34,6 @@ const apiAddLog = asyncHandler(async (req, res) => {             // [Logging] Ad
 
   Logs.create({ type: type, email: email, reason: reason })
   res.status(200).json({ message: "success" });
-  console.log(result);
 });
 
 
@@ -43,25 +42,20 @@ const apiAddLog = asyncHandler(async (req, res) => {             // [Logging] Ad
  * @route POST /v1/api/accounts/lockUnlockAccount
  * @access Private
  */
-const apiLockUnlockAccount = asyncHandler(async (req, res) => {   // [Logging] Lock or unlock account
-  console.log(req.body)
+const apiLockUnlockAccount = asyncHandler(async (req, res) => { 
   const { email, lockedOut } = req.body;
 
   var isLock = null
   if (lockedOut == false) {
     isLock = true
-    console.log("isLock is true")
   } else {
     isLock = false
-    console.log("isLock is false")
   }
   if (email == null) {
-    console.log(email)
     res.status(200).json({ message: "Failed" });
   } else {
     Account.updateOne({ email: email }, { $set: { "lockedOut": isLock } }, function (result) {
       res.status(200).json({ message: "success" });
-      console.log(result);
     });
   }
 
@@ -72,13 +66,11 @@ const apiLockUnlockAccount = asyncHandler(async (req, res) => {   // [Logging] L
 * @route POST /v1/api/accounts/deleteAccount
 * @access Private
 */
-const apiDeleteAccount = asyncHandler(async (req, res) => {     // [Logging] Delete account
-  console.log(req.body)
+const apiDeleteAccount = asyncHandler(async (req, res) => {    
   const { email } = req.body;
 
   Account.deleteOne({ email: email }, function (result) {
     res.status(200).json({ message: "success" });
-    console.log(result);
   });
 
 });

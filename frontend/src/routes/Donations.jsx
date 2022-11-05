@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { BsAward } from "react-icons/bs";
 import Banner from "../assets/images/donation banner.png";
 import cartsService from "../services/carts";
@@ -18,15 +18,15 @@ function Donations() {
   const { setTab } = useNav();
 
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
-      getTop5();
-      getTop10();
-      getTotal();
-      window.scrollTo(0, 0);
+    getTop5();
+    getTop10();
+    getTotal();
+    window.scrollTo(0, 0);
     setTab("donate");
-  },[]);
+  }, []);
 
 
 
@@ -48,7 +48,7 @@ function Donations() {
 
   const getTotal = () => {
     donationsService.getTotal().then((response) => {
-      if (response.status == 200){
+      if (response.status == 200) {
         setTotal(response.data.total)
       }
     })
@@ -77,12 +77,12 @@ function Donations() {
   };
 
   function addToCart() {
-    if(offerAmtRef.current.value <= 0){
+    if (offerAmtRef.current.value <= 0) {
       toast.error("Please enter a valid amount");
       return;
     }
-    if(offerAmtRef.current.value >9999999){
-      toast.info('Please enter a valid amount less than 10 million') 
+    if (offerAmtRef.current.value > 9999999) {
+      toast.info('Please enter a valid amount less than 10 million')
       return
     }
     else if (userInfo) {
@@ -104,23 +104,21 @@ function Donations() {
     }
     else {
       cartsService
-      .addDonationToCart(userInfo.id, offerAmtRef.current.value, showName)
-      .then((response) => {
-        if (response.status == 200) {
-          console.log(response.data);
-          toast.success("Donations added into cart.");
-        } else {
-          toast.error(response.data.message);
-        }
-      })
+        .addDonationToCart(userInfo.id, offerAmtRef.current.value, showName)
+        .then((response) => {
+          if (response.status == 200) {
+            toast.success("Donations added into cart.");
+          } else {
+            toast.error(response.data.message);
+          }
+        })
         .catch((e) => {
-          if (e.response.data.message)
-          {
+          if (e.response.data.message) {
             toast.error(e.response.data.message);
             return
           }
           toast.error("Error adding donations")
-      });
+        });
     }
   };
 
@@ -155,7 +153,7 @@ function Donations() {
         </div>
         <div className="flex flex-col w-full h-[240px] lg:h-[320px] my-[16px]">
           <div className="flex w-full h-full justify-center">
-            <img src={Banner} alt={""} className="bg-black"/>
+            <img src={Banner} alt={""} className="bg-black" />
           </div>
         </div>
         <hr className="flex flex-wrap w-full border-1 border-[black] self-center m-2" />

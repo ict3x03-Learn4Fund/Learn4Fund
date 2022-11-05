@@ -5,7 +5,6 @@ const dotenv = require("dotenv").config();
 //  Account Schema
 const Account = require("../models/accountModel");
 const Logs = require("../models/logsModel");
-const authy = require("authy")(process.env.AUTHY_API_KEY);
 const speakEasy = require("speakeasy");
 const { sendEmail } = require("../middleware/mailer.js")
 
@@ -71,7 +70,6 @@ const apiVerify2FA = asyncHandler(async (req, res) => {
     });
 
     if (process.env.CURRENT_ENV == 'testing') {           // [UI Testing] Skip 2fa verification for UI testing phase
-      console.log('DEBUG: Current environment is "testing", skipping 2fa verification.')
       verified = true;
     }
 
@@ -126,9 +124,7 @@ const apiLogin = asyncHandler(async (req, res) => {
         { $set: { loginTimes: 0, loggedTimestamp: new Date(), ipAddress: req.headers['x-forwarded-for'] } },
         function (err, result) {                                      // [Authentication] Reset the loginTimes
           if (err) {
-            console.log("Set loginTimes failed. Error: " + err);
           } else {
-            console.log("Success! loginTimes reset to 0: " + email);
           }
         }
       );
@@ -136,21 +132,16 @@ const apiLogin = asyncHandler(async (req, res) => {
         _id: account.id,
       });
     } else {
-      console.log("Failed login");
 
       /* ACCOUNT LOCKING START*/
       // If user attempts to login 5 times and account is not locked, lock the account
       if (account.loginTimes > 3 && account.lockedOut == false) {   // [Logging] Check if user has attempted to login 5 times     
-        console.log("Locking account: " + email);
         Account.updateOne(
           { email: email },
           { $set: { lockedOut: true } },
           function (err, result) {
             if (err) {
-              console.log("Account lock failed. Error: " + err);
             } else {
-              console.log("Success! Account locked: " + email);
-              //console.log(result)
               const sgDateTime = new Date().toLocaleString("en-US", {
                 timeZone: "Asia/Singapore",
               });
@@ -164,7 +155,6 @@ const apiLogin = asyncHandler(async (req, res) => {
               });
 
               /* SEND EMAIL TO ADMIN START*/
-              console.log("Sending email to admin...");             // [Alert] Send email to admin
               var nodemailer = require("nodemailer");
               var transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -187,9 +177,7 @@ const apiLogin = asyncHandler(async (req, res) => {
 
               transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
-                  console.log(error);
                 } else {
-                  console.log("Email sent: " + info.response);
                 }
                 /* SEND EMAIL TO ADMIN END*/
               });
@@ -197,15 +185,12 @@ const apiLogin = asyncHandler(async (req, res) => {
           }
         );
       } else {
-        console.log("Incrementing lockTimes: " + email);        // [Logging] Increment loginTimes by 1
         Account.updateOne(
           { email: email },
           { $inc: { loginTimes: 1 } },
           function (err, result) {
             if (err) {
-              console.log("loginTimes increment failed. Error: " + err);
             } else {
-              console.log("Success! loginTimes incremented for: " + email);
             }
           }
         );
@@ -228,42 +213,6 @@ const apiLogin = asyncHandler(async (req, res) => {
   }
 });
 
-// /***
-//  * @desc verify2FA
-//  * @route GET /v1/api/accounts/verify2FA
-//  * @access Public
-//  */
-// const apiVerify2FA = asyncHandler(async (req, res) => {
-//   try {
-//     const { email, token } = req.body;
-//     const account = await Account.findOne({ email });
-//     authy.verify(account.authyId, token, function (err, tokenRes) {
-//       if (err) {
-//         res.json({ message: "OTP verification failed" });
-//       }
-//       const access_token = generateToken(account._id)
-//       res.cookie("access_token", access_token, {
-//         httpOnly: true,                                  // [Prevent XSS] Cannot be accessed by client side JS
-//         // secure: process.env.JWT_SECRET,
-//         maxAge: 3600 * 1000,
-//         secure: true,
-//         sameSite: 'strict'                               // [Prevent CSRF] Cookie will only be sent in a first-party context and not be sent along with requests initiated by third party websites.
-//       });
-//       return res.status(200).json({
-//         _id: account.id,
-//         firstName: account.firstName,
-//         lastName: account.lastName,
-//         email: account.email,
-//         role: account.role,
-//         token: access_token,
-//         message: "Token is valid",
-//       });
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
 /***
  * @desc Get User
  * @route GET /v1/api/accounts/getUser
@@ -285,8 +234,8 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     role,
   } = await Account.findById(req.account.id);
 
-  const sessionTimeout = ((new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000) && (req.headers['x-forwarded-for'] === ipAddress) ? true : false
-
+  const sessionTimeout = ((new Date().getTime() - new Date(loggedTimestamp).getTime()) > 1800000) || (req.headers['x-forwarded-for'] !== ipAddress) ? true : false
+  
   res.status(200).json({
     id: _id,
     firstName,

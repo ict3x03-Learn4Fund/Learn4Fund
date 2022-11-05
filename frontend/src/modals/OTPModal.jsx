@@ -40,7 +40,7 @@ export const OTPModal = ({ closeModal }) => {
     setOtp(event.target.value);
   }
 
-  function handleCloseModal(){
+  function handleCloseModal() {
     dispatch(clearSignupState());
     closeModal(false);
   }
@@ -54,7 +54,6 @@ export const OTPModal = ({ closeModal }) => {
         })
         .catch((e) => {
           toast.error("Wrong Code!");
-          console.log(e);
           return;
         });
     } else {
@@ -89,7 +88,7 @@ export const OTPModal = ({ closeModal }) => {
 
             <button
               className="text-[black] bg-transparent text-[24px]"
-              onClick={() => {handleCloseModal()}}
+              onClick={() => { handleCloseModal() }}
             >
               <AiOutlineCloseSquare />
             </button>

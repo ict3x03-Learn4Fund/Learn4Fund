@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const dotenv = require("dotenv").config();
 const path = require('path')
 
-let gfs, gridFsStorage;
+let gfs;
 const connectDB = async () => {
   try {
     const conn = mongoose.createConnection(process.env.COURSES_DB_URI);
@@ -18,13 +18,10 @@ const connectDB = async () => {
       gfs = new mongoose.mongo.GridFSBucket(conn.db, {
         bucketName: "uploads",
       });
-      console.log(`MongoDB Connected for gridfs: ${conn.host}`);
 
     });
     const conn2 = await mongoose.connect(process.env.COURSES_DB_URI);
-    console.log(`MongoDB Connected: ${conn2.connection.host}`);
   } catch (error) {
-    console.log(error);
     process.exit(1);
   }
 };
@@ -34,7 +31,6 @@ const storage = new GridFsStorage({
   url: process.env.COURSES_DB_URI,
   file: (req, file) => {
     return new Promise((resolve, reject) => {
-      console.log(file)
       crypto.randomBytes(16, (err, buf) => {
         if (err) {
           return reject(err);
@@ -57,7 +53,6 @@ const store = multer({ storage });
 const uploadMiddleware = (req, res, next) => {
   const upload = store.single('image');
   upload(req, res, function (err) {
-    console.log(err)
     if (err instanceof multer.MulterError) {
       return res.status(400).send('File too large');
     } else if (err) {
@@ -74,7 +69,6 @@ const uploadMiddleware = (req, res, next) => {
 const apiUpload = asyncHandler(async (req, res) => {
   const { file } = req;
   const { id } = file;
-  console.log('uploaded file: ', file)
   return res.status(200).json({ id: file.id })
 })
 

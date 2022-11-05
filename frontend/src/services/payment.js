@@ -1,6 +1,6 @@
 import http from "../http-common"
 
-const getTransactions = async (accountID) =>{
+const getTransactions = async (accountID) => {
     return await http.get(`/payments/getTransactions/${accountID}`)
 }
 
@@ -13,12 +13,12 @@ const getMethods = async (accountID) => {
 }
 
 const addCard = async (accountID, card) => {
-    const request = {accountId: accountID, creditCard: card}
+    const request = { accountId: accountID, creditCard: card }
     return await http.post(`/payments/addCard`, request)
 }
 
 const addAddr = async (accountID, addr) => {
-    const request = {accountId: accountID, billAddress: addr}
+    const request = { accountId: accountID, billAddress: addr }
     return await http.post(`/payments/addAddr`, request)
 }
 

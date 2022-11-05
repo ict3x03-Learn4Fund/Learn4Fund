@@ -52,7 +52,6 @@ const protect = asyncHandler((req, res, next) => {
 
                     next() // Move on from the middleware
                 } catch (error) {
-                    console.log(error)
                     return res.status(403).json({ message: 'Error' })
                 }
             }
