@@ -101,7 +101,7 @@ export const CreditCardModal = ({
       cardType: reqCardType,
     };
     await paymentsService
-      .makePayment(payload)
+      .makePayment(payload, localStorage.getItem("userId"))
       .then((response) => {
         if (response.status == 200) {
           setModalOpen(false);
@@ -268,7 +268,7 @@ export const CreditCardModal = ({
       cardType = "MasterCard";
     }
     if (name && cardNumber && expiryDate) {
-      if (!validator.isLength(name, { max: 50 }) || !validator.matches(name, emojiRegex)) {
+      if (!validator.isLength(name, { max: 50 }) || validator.matches(name, emojiRegex)) {
         toast.error("Name is invalid!");
         return
       }

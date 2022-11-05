@@ -2,14 +2,19 @@ const express = require("express");
 const { apiGetReviews, apiCreateReview, apiVerifyReview } = require("../controller/reviews.controller");
 const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
-const { check, validationResult } = require("express-validator")
+const { check, validationResult , param} = require("express-validator")
 
 // @route   GET api/reviews/
 router.route("/:id").get(apiGetReviews);
 
 // @route   POST api/reviews/create
-router.route("/create").post(protect,
+router.route("/create/:userId").post(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         check("description", "Description is required").notEmpty().escape(), //[validation and sanitization]
         check("accountId", "Please login").notEmpty(), //[validation]
         check("courseId", "Error").notEmpty(), //[validation]
@@ -26,7 +31,7 @@ router.route("/create").post(protect,
     });
 
 // @route POST api/reviews/verifyReview
-router.route("/verifyReview").post(protect, apiVerifyReview)
+router.route("/verifyReview/:userId").post(protect, apiVerifyReview)
 
 
 module.exports = router;

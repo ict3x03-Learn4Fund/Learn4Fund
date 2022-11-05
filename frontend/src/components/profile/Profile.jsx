@@ -88,7 +88,7 @@ function Profile() {
     }
     formData.append("image", file);
     imagesService
-      .uploadImage(formData)
+      .uploadImage(formData, localStorage.getItem("userId"))
       .then((response) => {
         if (response.status == 200) {
           const imgId = response.data.id;

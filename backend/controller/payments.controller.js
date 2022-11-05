@@ -20,7 +20,7 @@ const Account = require("../models/accountModel");
  */
 const apiGetMethods = asyncHandler(async (req, res) => {
   try {
-    const accountId = req.params.id;
+    const accountId = req.params.userId;
     const creditCards = await CreditCard.find({ accountId: accountId });
     const billAddrs = await BillAddress.find({ accountId: accountId });
     const filteredCards = [];
@@ -336,7 +336,7 @@ const apiDeleteCard = asyncHandler(async (req, res) => {
  */
 const apiGetTransactions = asyncHandler(async (req, res) => {
   try {
-    const accountId = req.params.id;
+    const accountId = req.params.userId;
     const transactions = await Transaction.find({
       accountId: accountId,
     })

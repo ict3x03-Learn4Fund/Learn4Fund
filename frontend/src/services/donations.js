@@ -19,7 +19,7 @@ const getTotal = async () => {
 const addDonation = async (accountId, amount, showDonation) => {
   const donation = { accountId, amount, showDonation };
   // Making calls to server side
-  const response = await http.post("/donations/add", donation);
+  const response = await http.post(`/donations/add/${accountId}`, donation);
 
   return response.data;
 };

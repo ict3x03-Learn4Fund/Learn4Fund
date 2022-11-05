@@ -5,8 +5,8 @@ const getImg = async (id) => {
     return response;
 }
 
-const uploadImage = async (formData) => {
-    return await http.post(`/images/upload`, formData)
+const uploadImage = async (formData,userId) => {
+    return await http.post(`/images/upload/${userId}`, formData)
 }
 
 const imagesService = {

@@ -17,7 +17,7 @@ const Admin = () => {
 
   const fetchLogData = async () => {
     try {
-      const response = await adminAuthService.getAllLogs();
+      const response = await adminAuthService.getAllLogs(localStorage.getItem('userId'));
       axios.interceptors.response.use(
         (response) => {
           return response.data.message;
@@ -41,7 +41,7 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      const response = await adminAuthService.getAllAccounts(); // [Logging] /services/admin.js
+      const response = await adminAuthService.getAllAccounts(localStorage.getItem('userId')); // [Logging] /services/admin.js
       axios.interceptors.response.use((response) => {                   // [Error] To intercept error codes from Response
         return response.data.message; // [Error] Return error message
       },
