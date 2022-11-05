@@ -8,6 +8,7 @@ import imagesService from "../../services/images";
 import validator from 'validator';
 
 export const AddCourseModal = ({ closeModal, courseInfo }) => {
+  const [buttonState, setButtonState] = useState(false);
   const [file, setFile] = useState(null);
   const [checkBox, setCheckBox] = useState(false);
   const discountAmtRef = useRef(null);
@@ -106,6 +107,12 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
 
   const uploadImage = (e) => {
     e.preventDefault();
+
+    if(file === null){
+      toast.error('Please choose an image', {autoClose: false, limit: 1})
+      return
+    }
+    
     if (file.type != "image/jpeg" && file.type != "image/png") {
       toast.error("Please choose only jpeg and png images")
       return
@@ -143,7 +150,8 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   }
 
   const addOrUpdateCourse = () => {
-
+    if(buttonState) return;
+    setButtonState(true);
     // check if price amounts are more than a certain value
     if (originalAmtRef.current.value <= 0) {
       toast.error("Price amounts must be more than 0", { autoClose: false, limit: 1 })
@@ -182,6 +190,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
       // insert course
       createCourses(updatedList)
     }
+    setButtonState(false);
     closeModal(false);
   }
 
@@ -219,9 +228,6 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   };
 
   const handleFile = (e) => {
-    if(!e.target.files[0]){
-      toast.error('Please choose an image', {autoClose: false, limit: 1})
-    }
     setFile(e.target.files[0]);
   };
 
@@ -311,7 +317,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
           </div>
 
           <div className="flex w-full justify-center text-[1vw]">
-            {userInfo.role === 'admin' && <button className="bg-success text-w1 font-bold py-2 px-4 rounded-full" onClick={() => addOrUpdateCourse()}>
+            {userInfo.role === 'admin' && <button className="bg-success text-w1 font-bold py-2 px-4 rounded-full" onClick={() => addOrUpdateCourse()} disabled={buttonState}>
               Confirm {updatedList._id ? 'Update Course' : 'Add Course'}
             </button>}
 
