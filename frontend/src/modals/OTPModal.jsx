@@ -66,7 +66,7 @@ export const OTPModal = ({ closeModal }) => {
       if (otpSuccess) {
         toast.success('Logged in')
         dispatch(getUserDetails(localStorage.getItem("userId")));
-        dispatch(getCartNumber());
+        dispatch(getCartNumber(localStorage.getItem("userId")));
         navigate("/");
       }
       if (otpError) {
