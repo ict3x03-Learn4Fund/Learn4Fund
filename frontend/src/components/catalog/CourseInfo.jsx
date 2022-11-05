@@ -259,8 +259,8 @@ function CourseInfo() {
             <div className="font-type5 font-bold text-[1vw] text-success leading-[25px] self-center">
               Current Price:{" "}
               {courseDetails.canBeDiscounted
-                ? `${courseDetails.courseDiscountedPrice.toFixed(2)}`
-                : `${courseDetails.courseOriginalPrice.toFixed(2)}`}
+                ? `${courseDetails.courseDiscountedPrice}`
+                : `${courseDetails.courseOriginalPrice}`}
             </div>
           </div>
           <div className="font-type5 font-bold text-[1vw] text-[#55585D] leading-[25px] self-center">
