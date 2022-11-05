@@ -54,7 +54,7 @@ const protect = asyncHandler((req, res, next) => {
                         
                     }
 
-                    if (url !== '/v1/api/accounts/login') {
+                    if (url !== '/v1/api/accounts/login' || url !== '/v1/api/accounts/getAccount') {
                         if(req.account.ipAddress != req.headers['x-forwarded-for']){
                         Logs.create({
                             ip: req.headers['x-forwarded-for'],

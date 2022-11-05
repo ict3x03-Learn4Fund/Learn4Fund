@@ -65,6 +65,7 @@ export const OTPModal = ({ closeModal }) => {
     if (!qrUrl) {
       if (otpSuccess) {
         toast.success('Logged in')
+        dispatch(getCartNumber(userInfo?.id));
         navigate("/");
       }
       if (otpError) {
