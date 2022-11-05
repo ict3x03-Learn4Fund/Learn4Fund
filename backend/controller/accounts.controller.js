@@ -312,6 +312,9 @@ const apiChangePassword = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "Not authorized" });
     }
     const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET, { algorithm: "HS512" });
+    if (userId != decoded.id){
+      return res.status(400).json({message: "Invalid user id."})
+    }
     const user = await Account.findById(decoded.id)
     if (!user) {
       return res.status(400).json({ message: "Not authenticated" });
