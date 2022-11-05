@@ -16,6 +16,10 @@ const logsSchema = mongoose.Schema(
     time: {
       type: String,
       default: ""
+    },
+    id: {
+      type: String,
+      default: ""
     }
   },
   {
