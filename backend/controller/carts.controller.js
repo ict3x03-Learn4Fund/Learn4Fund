@@ -56,16 +56,21 @@ const apiGetCart = asyncHandler(async (req, res) => {
       const courseId = cart.coursesAdded[existingCart].cartItem.courseId;
       const quantity = cart.coursesAdded[existingCart].cartItem.quantity;
       courseDetails = await Course.findById(courseId);
+      let currentPriceTotal;
+      if (courseDetails.canBeDiscounted){
+        currentPriceTotal = courseDetails.courseDiscountedPrice
+      } else {
+        currentPriceTotal = courseDetails.courseOriginalPrice
+      }
       let cartItem = {
         courseId: courseId,
         quantity: quantity,
         courseName: courseDetails.courseName,
+        canBeDiscounted: courseDetails.canBeDiscounted,
         usualPriceTotal: (quantity * courseDetails.courseOriginalPrice).toFixed(
           2
         ),
-        currentPriceTotal: (
-          quantity * courseDetails.courseDiscountedPrice
-        ).toFixed(2),
+        currentPriceTotal: (quantity * currentPriceTotal).toFixed(2),
       };
       cartArray.push(cartItem);
     }
