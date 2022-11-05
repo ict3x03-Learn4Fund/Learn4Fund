@@ -20,14 +20,22 @@ const protect = asyncHandler((req, res, next) => {
                         return res.status(401).json({ message: 'Not logged in' })
                     }
 
+                    
+
                     //verify token
                     const decoded = jwt.verify(                                             //[Authentication] Verify token
                         token,
                         process.env.JWT_SECRET,
                         { algorithm: "HS512" })
 
+                        
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
+
+                    if (url !== '/v1/api/accounts/login') {
+                        req.headers['x-forwarded-for'] !== req.account.ipAddress
+                        return res.status(403).json({ message: 'Forbidden access' })
+                    }
 
                     if (url !== '/v1/api/accounts' && url !== '/v1/api/carts') {
                         //update user session timestamp
