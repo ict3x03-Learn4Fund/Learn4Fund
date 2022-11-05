@@ -304,8 +304,6 @@ const Cart = () => {
       {showModal && (
         <CreditCardModal
           closeModal={setShowModal}
-          totalAmount={totalAmount}
-          donation={donation}
           showDonation={showDonation}
           checkout={checkout}
         />

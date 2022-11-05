@@ -41,12 +41,7 @@ router.route("/pay").post(protect,
             .notEmpty().bail()
             .isAlphanumeric().bail()
             .isLength({ min: 24, max: 24 }),
-        body('donationAmount', 'Invalid donation amount')
-            .if(body('donationAmount').notEmpty()).isNumeric(),
         body('showDonation', 'Invalid type').isBoolean(),
-        body('totalAmount', 'Amount is required')
-            .notEmpty().bail()
-            .isFloat({ min: 0.01 }),
         body('last4No', 'Card No. is required')
             .notEmpty().bail()
             .isInt().isLength({ min: 4, max: 4 }),
@@ -115,7 +110,7 @@ router.route("/addAddr").post(protect,
         apiAddAddr(req, res)
     })
 
-router.route("/addCard").post(
+router.route("/addCard").post(protect,
     [
         body('accountId', 'Invalid account ID')
             .notEmpty().bail()
