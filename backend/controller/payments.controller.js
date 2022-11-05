@@ -80,7 +80,11 @@ const apiMakePayment = asyncHandler(async (req, res) => {
             courses[course].quantity -=
               checkedOutCart[purchased].cartItem.quantity;
             courses[course].save();
-            totalAmt = totalAmt + parseFloat(courses[course].courseDiscountedPrice) * checkedOutCart[purchased].cartItem.quantity
+            if (courses[course].canBeDiscounted){
+              totalAmt = totalAmt + parseFloat(courses[course].courseDiscountedPrice) * checkedOutCart[purchased].cartItem.quantity
+            } else {
+              totalAmt = totalAmt + parseFloat(courses[course].courseOriginalPrice) * checkedOutCart[purchased].cartItem.quantity
+            }
           } else {
             return res.status(400).json({
               message: "Quantity purchased more than the stocks left.",
@@ -343,13 +347,19 @@ const apiGetTransactions = asyncHandler(async (req, res) => {
         const courseId =
           transactions[transaction].checkedOutCart[cart].cartItem.courseId;
         const course = await Course.findById(courseId);
+        let currentPrice;
+        if (course.canBeDiscounted){
+          currentPrice = course.courseDiscountedPrice
+        } else {
+          currentPrice = course.courseOriginalPrice
+        }
         const newCartItem = {
           courseId: courseId,
           courseName: course.courseName,
           quantity:
             transactions[transaction].checkedOutCart[cart].cartItem.quantity,
           totalPrice: (
-            course.courseDiscountedPrice *
+            currentPrice *
             transactions[transaction].checkedOutCart[cart].cartItem.quantity
           ).toFixed(2),
         };

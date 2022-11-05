@@ -200,7 +200,7 @@ const Cart = () => {
                   {item.courseName}
                 </span>
                 <span className="font-type1 text-[1vw] text-b1 font-bold">
-                  ${item.currentPriceTotal}
+                  { item.canBeDiscounted ? `$${item.currentPriceTotal}` : `$${item.usualPriceTotal}`}
                 </span>
               </div>
             ))}
@@ -234,7 +234,8 @@ const Cart = () => {
                   .reduce(
                     (partialSum, a) =>
                       partialSum +
-                      parseFloat(a.usualPriceTotal - a.currentPriceTotal),
+                      parseFloat(a.usualPriceTotal - a.currentPriceTotal)
+                      ,
                     0.0
                   )
                   .toFixed(2)}
@@ -249,8 +250,7 @@ const Cart = () => {
                 {checkout
                   .reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.currentPriceTotal),
-                    0.0
+                      a.canBeDiscounted ? partialSum + parseFloat(a.currentPriceTotal) : partialSum + parseFloat(a.usualPriceTotal),0.0
                   )
                   .toFixed(2)}
               </span>
@@ -283,8 +283,7 @@ const Cart = () => {
                 {(
                   checkout.reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.currentPriceTotal),
-                    0.0
+                      a.canBeDiscounted ? partialSum + parseFloat(a.currentPriceTotal): partialSum + parseFloat(a.usualPriceTotal), 0.0
                   ) + donation
                 ).toFixed(2)}
               </span>
