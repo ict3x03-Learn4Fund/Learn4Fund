@@ -12,8 +12,13 @@ const router = express.Router()
 router.route("/").get(apiGetCourses)
 
 // POST /api/courses private
-router.route("/create").post(protect,
+router.route("/create/:userId").post(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         body('courseName', 'Invalid course name')
             .notEmpty().bail()
             .isString().bail()
@@ -61,8 +66,13 @@ router.route("/create").post(protect,
 )
 
 // PUT /api/courses/:id private
-router.route("/update/:id").put(protect,
+router.route("/update/:id/:userId").put(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         param('id', 'Invalid course id')
             .notEmpty().bail()
             .isString().bail()
@@ -114,8 +124,13 @@ router.route("/update/:id").put(protect,
     })
 
 // POST /api/courses/delete/:id private
-router.route("/delete/:id").post(protect,
+router.route("/delete/:id/:userId").post(protect,
     [
+        param('userId', 'Invalid user Id')
+        .notEmpty().bail()
+        .isString().bail()
+        .isAlphanumeric().bail()
+        .isLength({ min: 24, max: 24 }),
         param('id', 'Invalid course id')
             .notEmpty().bail()
             .isString().bail()
