@@ -32,18 +32,7 @@ const protect = asyncHandler((req, res, next) => {
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
 
-                    if (req.headers['x-forwarded-for'] !== req.account.ipAddress) {
-                        Logs.create({
-                            ip: req.headers['x-forwarded-for'],
-                            compare: req.account.ipAddress,
-                            type: "auth",
-                            reason: "Attempted to access " + req.url + " without authorization",
-                            time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
-                        });
-                        return res.status(403).json({ message: 'Forbidden access' })
-                    }
-
-                    if (url !== '/v1/api/accounts' && url !== '/v1/api/carts') {
+                    if (url !== '/v1/api/accounts' || url !== '/v1/api/carts') {
                         //update user session timestamp
                         await Account.findByIdAndUpdate(decoded.id, { loggedTimestamp: Date.now() }) //[Authentication] Update user session timestamp
                     }
@@ -62,6 +51,20 @@ const protect = asyncHandler((req, res, next) => {
 
                             return res.status(403).json({ message: 'Not authorized' });
                         }
+                        
+                    }
+
+                    if (url !== '/v1/api/accounts/login' || url !== '/v1/api/accounts/getAccount') {
+                        if(req.account.ipAddress != req.headers['x-forwarded-for']){
+                        Logs.create({
+                            ip: req.headers['x-forwarded-for'],
+                            compare: req.account.ipAddress,
+                            type: "ip-address fail to match",
+                            reason: "Attempted to access " + req.url + " without authorization",
+                            time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
+                        });
+                        return res.status(403).json({ message: 'Forbidden access' })
+                    }
                     }
 
                     next() // Move on from the middleware
@@ -75,7 +78,7 @@ const protect = asyncHandler((req, res, next) => {
         // Send to logs db
         Logs.create({
             ip: req.headers['x-forwarded-for'],
-            type: "auth",
+            type: "no auth token",
             reason: "Attempted to access " + req.url + " without authorization",
             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
         });
