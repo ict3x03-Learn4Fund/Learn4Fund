@@ -62,7 +62,7 @@ function TransactionHistory() {
                           0
                         )}
                       </td>
-                      <td>${transaction.totalAmount}</td>
+                      <td>${transaction.totalAmount.toFixed(2)}</td>
                       <td>
                         {transaction.cardType} ****{" "}
                         {transaction.last4No}
