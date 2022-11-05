@@ -33,7 +33,7 @@ const protect = asyncHandler((req, res, next) => {
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
 
                     if (url !== '/v1/api/accounts/login') {
-                        req.headers['x-forwarded-for'] !== req.account.ipAddress
+                        req.ip !== req.account.ipAddress
                         return res.status(403).json({ message: 'Forbidden access' })
                     }
 
@@ -68,7 +68,7 @@ const protect = asyncHandler((req, res, next) => {
     if (!token) {
         // Send to logs db
         Logs.create({
-            ip: req.headers['x-forwarded-for'],
+            ip: req.ip,
             type: "auth",
             reason: "Attempted to access " + req.url + " without authorization",
             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
