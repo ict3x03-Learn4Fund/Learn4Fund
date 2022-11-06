@@ -13,25 +13,17 @@ pipeline {
                         echo 'Skipping, no existing ODC reports present.'
                     }
                 }
-                dir('backend'){
-                    script{
-                        try{
-                            sh 'rm package-lock.json'
-                        }catch (err){
-                            echo 'Skipping, no existing package-lock.json present.'
-                        }
-                    }
-                }
                 sh 'cp /home/.backend.env backend/.env'
                 sh 'cp /home/.frontend.env frontend/.env'
                 script{
-                    try{                        
+                    try{
                         sh 'docker stop $(docker ps -a -q)'
                         sh 'docker rm $(docker ps -a -q)'
                     }catch (err){
                         echo 'Skipping, no existing containers present.'
                     }
                 }
+
                 sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.dev.yml build --no-cache --pull'
             }
@@ -82,23 +74,14 @@ pipeline {
 
         stage("OWASP Dependency Check") {
             steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
+                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend" --exclude "/var/jenkins_home/workspace/Learn4fund_final/backend/package-lock.json"', odcInstallation: 'Default'
             }
         }
 
         stage("Production Build") {
             steps {
                 sh 'cp /home/.backend.env backend/.env'
-                sh 'cp /home/.frontend.env frontend/.env'  
-                dir('backend'){
-                    script{
-                        try{
-                            sh 'rm package-lock.json'
-                        }catch (err){
-                            echo 'Skipping, no existing package-lock.json present.'
-                        }
-                    }
-                }                            
+                sh 'cp /home/.frontend.env frontend/.env'                              
                 sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.yml build --no-cache --pull'
             }
