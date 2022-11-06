@@ -3,7 +3,7 @@ import { AddCourseModal } from "../../components/admin/AddCourseModal";
 import courseService from "../../services/courses";
 import { ConfirmationModal } from "../../modals/ConfirmationModal";
 import { AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
-import coursesService from "../../services/courses";
+import { toast } from "react-toastify";
 
 const CoursesCatalog = () => {
   const [dataCourses, setDataCourses] = useState([]);
@@ -23,7 +23,7 @@ const CoursesCatalog = () => {
       .then((response) => {
         setDataCourses(response.data);
       })
-      .catch((e) => {});
+      .catch((e) => { toast.error("Unable to retrieve courses") });
   };
 
   const openEditorModal = (course) => {

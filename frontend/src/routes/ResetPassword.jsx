@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 import { MdAlternateEmail } from "react-icons/md";
 import authService from "../services/accounts";
 import { toast } from "react-toastify";

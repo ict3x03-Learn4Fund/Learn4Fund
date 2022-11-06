@@ -62,8 +62,7 @@ function Homepage({ setNewsModal }) {
       .then((response) => {
         setDataCourses(response.data);
       })
-      .catch((e) => {
-      });
+      .catch((e) => { toast.error("Unable to retrieve courses") });
   };
 
   return (

@@ -17,8 +17,6 @@ function Donations() {
   const offerAmtRef = useRef(0.0);
   const { setTab } = useNav();
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     window.scrollTo(0, 0);
     getTop5();
@@ -83,7 +81,6 @@ function Donations() {
     }
     if (offerAmtRef.current.value > 10000000) {
       toast.info('Please enter a valid amount no more than 10 million')
-      return
     }
     else if (userInfo) {
       addDonation();
