@@ -23,7 +23,9 @@ router.route("/add/:userId").post(protect,
     .isString().bail()
     .isAlphanumeric().bail()
     .isLength({ min: 24, max: 24 }),
-    body("donationAmt", "Enter amount between 0.01 to 10 million").isLength({ min: 0, max: 8 }).isFloat({ min: 0.01, max: 10000000 }),
+    body("donationAmt", "Enter amount between 1 to 10 million")
+      .isLength({ min: 0, max: 8 })
+      .isFloat({ min: 1, max: 10000000 }),
   ], (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
