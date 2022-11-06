@@ -151,7 +151,18 @@ router.route("/addCard/:userId").post(protect,
         body('creditCard.expiryDate', 'Invalid expiry date')
             .notEmpty().bail()
             .customSanitizer(value => value.replace(/\s*/g, ""))
-            .matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/),
+            .matches(/^(0[1-9]|1[0-2])\/?([0-9]{2})$/)
+            .custom(value => {
+                const year = new Date().toISOString().slice(0, 2) + value.substr(3, 4);
+                const month = value.substr(0, 2);
+                const expiryDate = new Date(year, month -1).toISOString().slice(0, 7);
+                currDate = new Date().toISOString().slice(0, 7);
+                console.log(currDate, expiryDate)
+                if (expiryDate < currDate) {
+                    throw new Error('Invalid expiry date')
+                }
+                return true;
+            }),
     ], (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
