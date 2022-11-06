@@ -13,11 +13,13 @@ pipeline {
                         echo 'Skipping, no existing ODC reports present.'
                     }
                 }
-                script{
-                    try{
-                        sh 'rm package-lock.json'
-                    }catch (err){
-                        echo 'Skipping, no existing package-lock.json present.'
+                dir('backend'){
+                    script{
+                        try{
+                            sh 'rm package-lock.json'
+                        }catch (err){
+                            echo 'Skipping, no existing package-lock.json present.'
+                        }
                     }
                 }
                 sh 'cp /home/.backend.env backend/.env'
@@ -88,11 +90,13 @@ pipeline {
             steps {
                 sh 'cp /home/.backend.env backend/.env'
                 sh 'cp /home/.frontend.env frontend/.env'  
-                script{
-                    try{
-                        sh 'rm package-lock.json'
-                    }catch (err){
-                        echo 'Skipping, no existing package-lock.json present.'
+                dir('backend'){
+                    script{
+                        try{
+                            sh 'rm package-lock.json'
+                        }catch (err){
+                            echo 'Skipping, no existing package-lock.json present.'
+                        }
                     }
                 }                            
                 sh 'docker system prune -a --force --volumes'
