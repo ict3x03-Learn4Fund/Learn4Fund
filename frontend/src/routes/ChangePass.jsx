@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { IoPersonCircleOutline } from "react-icons/io5";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useNav } from "../hooks/useNav";
+import { useParams, useNavigate } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import authService from "../services/accounts";
 import validator from "validator";
 
 function ChangePass() {
   const navigate = useNavigate();
+  const [buttonState, setButtonState] = useState(false);
   const { loading } = useSelector((state) => state.user);
   const {
     register,
@@ -49,21 +49,26 @@ function ChangePass() {
   };
 
   const changePassword = () => {
+    if(buttonState) return;
+    setButtonState(true);
     if (userId && jwt && password) {
       if (!validator.isAlphanumeric(userId) && !validator.isLength(userId, { min: 24, max: 24 }) || !validator.isJWT(jwt)) {
         toast.error("Request denied");
+        setButtonState(false);
         return;
       }
     }
     authService.changePass(userId, jwt, password).then((response) => {
       if (response.status == 200) {
         toast.success(response.data.message)
+        setButtonState(false);
         navigate("/login")
       }
       else { toast.error(response.data.message) }
     }).catch((error) => {
       toast.error(error.response.data.message)
     })
+    setButtonState(false);
   }
 
   const onChange = (e) => {

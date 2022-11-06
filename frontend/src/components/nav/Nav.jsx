@@ -146,7 +146,7 @@ function Nav() {
                 </span>
               </div>
             )}
-            <div
+            {userInfo && <div
               onClick={() => {
                 navigate("/cart");
               }}
@@ -162,7 +162,7 @@ function Nav() {
               <span className="flex mx-1 w-[16px] h-[16px] rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
                 {cartNo}
               </span>
-            </div>
+            </div>}
 
             {userInfo ? (
               <div

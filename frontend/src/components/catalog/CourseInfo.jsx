@@ -99,6 +99,10 @@ function CourseInfo() {
   // save quantity to cart
   function addToCart(e) {
     e.preventDefault();
+    if(!userInfo){
+      toast.error('Please login to add to cart');
+      return
+    }
     if (quantitySelected > courseDetails.quantity) {
       toast.error("amount exceeded");
     }
