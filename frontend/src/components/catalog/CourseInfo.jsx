@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { BsDash, BsPlus } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import courseService from "../../services/courses";
@@ -15,7 +15,7 @@ function CourseInfo() {
     (state) => state.user
   );
   const parse = require("html-react-parser");
-  const [quantitySelected, setQuantitySelected] = useState(0);
+  const [quantitySelected, setQuantitySelected] = useState(1);
   const { courseID } = useParams();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -32,8 +32,13 @@ function CourseInfo() {
   // retrieve all reviews
   const retrieveReviews = () => {
     reviewsService.getReviews(courseID).then((response) => {
-      console.log(response.data.reviews);
       setReviews(response.data.reviews);
+      let sum = 0;
+      response.data.reviews.map((review, index) => {
+        sum += parseInt(review.rating);
+      });
+      sum = sum / response.data.reviews.length;
+      setAverageStars(sum);
     });
   };
 
@@ -42,16 +47,14 @@ function CourseInfo() {
     courseService
       .getAll()
       .then((response) => {
-        console.log(response.data);
         setCourses(response.data);
         const course = response.data.find(
           (course) => course._id.toString() === courseID
         );
         setCourseDetails(course);
+        calculateAverageStars();
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      .catch((e) => {});
   };
 
   //function to see if user can make review
@@ -60,7 +63,6 @@ function CourseInfo() {
       .verifyReview(userInfo.id, courseID)
       .then((response) => {
         if (response.status == 200) {
-          console.log("repsonse", response.data.authorize);
           setReviewAllowed(response.data.authorize);
         }
       })
@@ -80,7 +82,7 @@ function CourseInfo() {
     if (userInfo) {
       verifyReview();
     }
-  },[]);
+  }, []);
 
   // Add quantity to const variable
   function handleChange(event) {
@@ -113,13 +115,11 @@ function CourseInfo() {
     cartsService
       .addCart(userInfo.id, courseDetails._id, quantitySelected)
       .then((response) => {
-        console.log(response.data);
         toast.success("Item added into cart.");
         dispatch(getCartNumber(userInfo.id));
       })
       .catch((e) => {
         toast.error("Error adding item to cart");
-        console.log(e);
       });
   };
 
@@ -143,15 +143,14 @@ function CourseInfo() {
   };
 
   const handleNewReview = () => {
-    var escapedReview = reviewDescription
+    var escapedReview = reviewDescription;
     if (validator.isEmpty(userInfo.id) || validator.isEmpty(courseID)) {
       toast.error("Error adding review");
       return;
     }
     if (!validator.isEmpty(reviewDescription)) {
       escapedReview = validator.escape(reviewDescription);
-    }
-    else {
+    } else {
       toast.error("Please enter a review");
       return;
     }
@@ -162,7 +161,7 @@ function CourseInfo() {
       courseId: courseID,
     };
     reviewsService
-      .getCreateReview(newReview)
+      .getCreateReview(newReview, localStorage.getItem("userId"))
       .then((response) => {
         if (response.status == 200) {
           toast.success("A review has been added successfully.");
@@ -170,7 +169,9 @@ function CourseInfo() {
         }
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
+        }
       });
   };
 
@@ -256,7 +257,10 @@ function CourseInfo() {
               </span>
             </div>
             <div className="font-type5 font-bold text-[1vw] text-success leading-[25px] self-center">
-              Current Price: ${courseDetails.courseDiscountedPrice}
+              Current Price:{" "}
+              {courseDetails.canBeDiscounted
+                ? `${courseDetails.courseDiscountedPrice}`
+                : `${courseDetails.courseOriginalPrice}`}
             </div>
           </div>
           <div className="font-type5 font-bold text-[1vw] text-[#55585D] leading-[25px] self-center">
@@ -321,7 +325,7 @@ function CourseInfo() {
         <div className="flex flex-row flex-wrap w-full h-auto bg-white rounded mt-[24px] mx-[16px] p-[24px]">
           <div className="flex w-full h-fit border-b-[2px] border-b3 shadow-price-quote">
             <span className="font-type5 text-[1vw] text-b3 font-bold">
-              Customer Reviews - {averageStars ? averageStars : 0}/5
+              Customer Reviews - {averageStars ? averageStars.toFixed(2) : 0}/5
             </span>
             <AiFillStar className="text-yellow-500 self-center" size={24} />
           </div>
@@ -335,16 +339,20 @@ function CourseInfo() {
           >
             {reviews.map((review, index) => {
               return (
-                <div className="flex-row flex-wrap w-full my-2 mt-[24px] mx-[16px] p-[24px]">
-                  <div className="flex w-full justify-between">
-                    <div className="flex flex-nowrap font-type1 font-bold">
-                      {review.name} [{review.rating}{" "}
-                      <AiFillStar className="self-center text-yellow-500" />]
+                <Fragment>
+                  <div className="flex-row flex-wrap w-full my-2 mt-[16px] mx-[16px] ">
+                    <div className="flex w-full justify-between">
+                      <div className="flex flex-nowrap font-type1 font-bold">
+                        {review.name} [{review.rating}{" "}
+                        <AiFillStar className="self-center text-yellow-500" />]
+                      </div>
+                      <div>{review.date}</div>
                     </div>
-                    <div>{review.date}</div>
+                    <p className="flex flex-wrap break-all">
+                      {review.description}
+                    </p>
                   </div>
-                  <p>{review.description}</p>
-                </div>
+                </Fragment>
               );
             })}
           </div>

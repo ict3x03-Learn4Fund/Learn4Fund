@@ -26,7 +26,10 @@ function Nav() {
   const [avatar, setAvatar] = useState();
 
   // get user info
-  useEffect(()=> {
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(getCartNumber(localStorage.getItem('userId')));
+    }
     dispatch(getUserDetails())
     setInterval(() => {
       //checks user every 1 mins

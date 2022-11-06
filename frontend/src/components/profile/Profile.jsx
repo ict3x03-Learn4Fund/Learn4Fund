@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import noimage from "../../assets/vectors/noimage.png";
 import imagesService from "../../services/images";
 import authService from "../../services/accounts";
@@ -37,7 +37,6 @@ function Profile() {
   }, [setAvatar]);
 
   const updateProfile = () => {
-    console.log(firstName, lastName, email);
     var error = false;
     if (firstName && lastName && email) {
       const normalizedEmail = validator.normalizeEmail(email);
@@ -47,54 +46,55 @@ function Profile() {
         toast.error("Invalid email format");
         error = true;
       }
-      if (!validator.isLength(escapedFirstName, {min: 2, max: 25}) || !validator.matches(firstName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
+      if (!validator.isLength(escapedFirstName, { min: 2, max: 25 }) || !validator.matches(firstName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
         toast.error("Invalid first name");
         error = true;
       }
-      if (!validator.isLength(escapedLastName, {min: 2, max: 25}) || !validator.matches(lastName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
+      if (!validator.isLength(escapedLastName, { min: 2, max: 25 }) || !validator.matches(lastName, /^((?!([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])).)*$/)) {
         toast.error("Invalid last name");
         error = true;
       }
       if (!error) {
         authService
-        .updateDetails(userInfo.id, escapedFirstName, escapedLastName, normalizedEmail)
-        .then((res) => {
-          if (res.status == 200) {
-            toast.success("Details Updated Successfully.");
-            dispatch(getUserDetails());
-          } else {
-            if (res.data.message && res.data.message === Array) {
-              res.data.message.map((err) => toast.error(err.msg));
+          .updateDetails(userInfo.id, escapedFirstName, escapedLastName, normalizedEmail)
+          .then((res) => {
+            if (res.status == 200) {
+              toast.success("Details Updated Successfully.");
+              dispatch(getUserDetails());
+            } else {
+              if (res.data.message && res.data.message === Array) {
+                res.data.message.map((err) => toast.error(err.msg));
+              }
+              else { toast.error("Error updating profile. Try again later."); }
+
             }
-            else{ toast.error("Error updating profile. Try again later.");}
-            
-          }
-        })
-        .catch((err) => {
-          toast.error("Error updating profile. Try again later.");
-          console.log(err.response.data.message);
-        });
+          })
+          .catch((err) => {
+            toast.error("Error updating profile. Try again later.");
+          });
       }
     }
     else {
       toast.error("Please fill all the fields");
     }
-    
+
   };
 
   const uploadImage = (e) => {
     e.preventDefault();
-    console.log(file);
-    if (file.type != "image/jpeg" && file.type != "image/png"){
+    if(file === null){
+      toast.error('Please choose an image', {autoClose: false, limit: 1})
+      return
+    }
+    if (file.type != "image/jpeg" && file.type != "image/png") {
       toast.error("Please choose only jpeg and png images")
       return
     }
     formData.append("image", file);
     imagesService
-      .uploadImage(formData)
+      .uploadImage(formData, localStorage.getItem("userId"))
       .then((response) => {
         if (response.status == 200) {
-          console.log(response.data);
           const imgId = response.data.id;
           authService
             .uploadAvatar(userInfo.id, imgId)
@@ -108,7 +108,7 @@ function Profile() {
         }
       })
       .catch((error) => {
-        if (error.response.data.message){
+        if (error.response.data.message) {
           return toast.error(error.response.data.message)
         }
         toast.error(error.message);
@@ -121,11 +121,11 @@ function Profile() {
 
   const deleteAccount = () => {
     authService.deleteAcc(userInfo.id).then((res) => {
-      if (res.status == 200){
+      if (res.status == 200) {
         toast.success("Account Deleted Successfully.")
         dispatch(logout());
         navigate("/login");
-        
+
       } else {
         toast.error("Error deleting your account.")
       }
@@ -136,7 +136,6 @@ function Profile() {
 
   const updateSubscription = () => {
     const emailSubscription = !userInfo?.emailSubscription
-    console.log(emailSubscription)
     authService
       .updateSubscription(userInfo.id, emailSubscription)
       .then((res) => {
@@ -261,9 +260,9 @@ function Profile() {
             <div className="flex w-full justify-between">
               <div className="self-center">
                 <b>Email Subscription</b> (
-                <span className="text-red-500" >{userInfo?.emailSubscription ? "On": "Off"}</span>)
+                <span className="text-red-500" >{userInfo?.emailSubscription ? "On" : "Off"}</span>)
               </div>
-              <button className="btn" onClick={() => updateSubscription()}>{userInfo?.emailSubscription ? "Toggle Off": "Toggle On"}</button>
+              <button className="btn" onClick={() => updateSubscription()}>{userInfo?.emailSubscription ? "Toggle Off" : "Toggle On"}</button>
             </div>
           </div>
           <div className="mt-5 flex w-full justify-between">

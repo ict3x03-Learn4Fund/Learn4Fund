@@ -5,44 +5,30 @@ const { errorHandler } = require("./middleware/errorMiddleware");
 const { connectDB } = require("./config/db");
 // const {recaptcha} =require("./config/recaptchsa");
 const dotenv = require("dotenv").config();
-const colors = require("colors");
 const port = process.env.port || 5000;
-const { GridFsStorage } = require("multer-gridfs-storage");
-const { default: mongoose } = require("mongoose");
-const Grid = require("gridfs-stream");
 const methodOverride = require("method-override");
-const multer = require("multer");
 const bodyParser = require("body-parser");
-const e = require("express");
-const Mockgoose = require("mockgoose").Mockgoose;
-const mockgoose = new Mockgoose(mongoose);
+const requestIp = require("request-ip"); // [DoS] Prevent brute force attacks
 
 connectDB();
-// recaptcha();
 
 const app = express();
 
 module.exports = { app };
 
-// TODO: Uncomment this line in production
-// app.set('trust proxy', 2);                                 // [DoS] trust 2 , cloudflare and nginx
-
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(requestIp.mw()); // [DoS] Prevent brute force attacks
 // parse application/x-www-form-urlencoded, false can only parse incoming Request Object of strings or arrays
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
-// app.set("view engine", "ejs");
 
 app.use(bodyParser.json());
-//for recaptcha
-// app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
   mongoSanitize({
     // [Sanitization] Prevent NoSQL injection
     onSanitize: ({ req, key }) => {
-      console.warn(`This request[${key}] is sanitized`, req);
     },
   })
 );

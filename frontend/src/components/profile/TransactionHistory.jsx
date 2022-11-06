@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import paymentsService from "../../services/payment";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../../features/user/userActions";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 function TransactionHistory() {
   const [transactions, setTransaction] = useState([]);
@@ -12,7 +12,6 @@ function TransactionHistory() {
   const retrieveTransactions = () => {
     paymentsService.getTransactions(userInfo.id).then((response) => {
       if (response.status == 200) {
-        console.log(response.data);
         setTransaction(response.data.reverse());
       }
     });
@@ -63,7 +62,7 @@ function TransactionHistory() {
                           0
                         )}
                       </td>
-                      <td>${transaction.totalAmount}</td>
+                      <td>${transaction.totalAmount.toFixed(2)}</td>
                       <td>
                         {transaction.cardType} ****{" "}
                         {transaction.last4No}
@@ -81,7 +80,7 @@ function TransactionHistory() {
                     {
                       transaction.donationAmount != null && (<tr>
                         <td>
-                        &nbsp;&nbsp;Donations Made:
+                          &nbsp;&nbsp;Donations Made:
                         </td>
                         <td></td>
                         <td></td>
@@ -89,9 +88,9 @@ function TransactionHistory() {
                           ${transaction.donationAmount.toFixed(2)}
                         </td>
                         <td></td>
-                      </tr>) 
+                      </tr>)
                     }
-                    
+
                   </Fragment>
                 );
               })

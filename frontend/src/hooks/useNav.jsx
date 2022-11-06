@@ -1,4 +1,4 @@
-import {useState, createContext, useContext } from 'react'
+import { useState, createContext, useContext } from 'react'
 
 const NavContext = createContext(null);
 
@@ -7,9 +7,9 @@ export function useNav() {
 }
 
 export function NavProvider({ children }) {
-    const [tab, setTab] = useState('');
-    
-  
+  const [tab, setTab] = useState('');
 
-  return (<NavContext.Provider value={{tab, setTab}}>{children}</NavContext.Provider>);
+
+
+  return (<NavContext.Provider value={{ tab, setTab }}>{children}</NavContext.Provider>);
 }

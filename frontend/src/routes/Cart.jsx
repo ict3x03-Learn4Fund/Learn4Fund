@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import cartsService from "../services/carts";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { CreditCardModal } from "../modals/CreditCardModal";
 import RemoveCircleOutlinedIcon from "@mui/icons-material/RemoveCircleOutlined";
@@ -15,12 +15,12 @@ const Cart = () => {
   const [showDonation, setShowDonation] = useState(false);
   const [totalAmount, setTotalAmount] = useState();
   const { userInfo } = useSelector((state) => state.user);
-  const {setTab} = useNav();
+  const { setTab } = useNav();
   const [checkedState, setCheckedState] = useState();
   const dispatch = useDispatch();
   useEffect(() => {
     window.scrollTo(0, 0);
-    setTab("cart")
+    setTab("cart");
     if (localStorage.getItem("userId")) {
       getCart();
     } else {
@@ -29,10 +29,15 @@ const Cart = () => {
   }, []);
 
   useEffect(() => {
-    getCart();
-    dispatch(getCartNumber(localStorage.getItem("userId")));
-  },[showModal]);
-
+    if (!showModal) {
+      setTotalAmount(0);
+      setDonation(0);
+      setCheckout([]);
+      getCart();
+      dispatch(getCartNumber(localStorage.getItem("userId")));
+      setCheckedState(new Array(cartList.length).fill(false));
+    }
+  }, [showModal]);
 
   useEffect(() => {
     setCheckedState(new Array(cartList.length).fill(false));
@@ -45,13 +50,11 @@ const Cart = () => {
     cartsService
       .getCart(userInfo.id)
       .then((response) => {
-        console.log(response.data);
         setCartList(response.data.coursesAdded);
         setDonation(response.data.donationAmt);
         setShowDonation(response.data.showDonation);
       })
       .catch((e) => {
-        console.log(e);
       });
   };
 
@@ -76,7 +79,6 @@ const Cart = () => {
           ) + parseFloat(donation)
         ).toFixed(2)
       );
-      console.log(totalAmount, "\n", donation, "\n", checkout);
       setShowModal(true);
     } else {
       toast.error("Select items to checkout");
@@ -89,17 +91,17 @@ const Cart = () => {
       .deleteCart(userInfo.id, courseId)
       .then((response) => {
         setCartList(response.data.coursesAdded);
+        dispatch(getCartNumber(localStorage.getItem('userId')));
         toast.success("Items successfully deleted from cart.");
       })
       .catch((e) => {
-        console.log(e);
         toast.success("Items failed to deleted from cart.");
       });
   };
 
   function removeItem(item, position) {
     deleteCart(item.courseId);
-    setCheckout([])
+    setCheckout([]);
   }
 
   function addToCheckout(item) {
@@ -112,7 +114,6 @@ const Cart = () => {
     } else {
       setCheckout([...checkout, item]);
     }
-    console.log("checkout: ", checkout);
   }
 
   const removeDonations = () => {
@@ -200,7 +201,7 @@ const Cart = () => {
                   {item.courseName}
                 </span>
                 <span className="font-type1 text-[1vw] text-b1 font-bold">
-                  ${item.currentPriceTotal}
+                  { item.canBeDiscounted ? `$${item.currentPriceTotal}` : `$${item.usualPriceTotal}`}
                 </span>
               </div>
             ))}
@@ -234,7 +235,8 @@ const Cart = () => {
                   .reduce(
                     (partialSum, a) =>
                       partialSum +
-                      parseFloat(a.usualPriceTotal - a.currentPriceTotal),
+                      parseFloat(a.usualPriceTotal - a.currentPriceTotal)
+                      ,
                     0.0
                   )
                   .toFixed(2)}
@@ -249,8 +251,7 @@ const Cart = () => {
                 {checkout
                   .reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.currentPriceTotal),
-                    0.0
+                      a.canBeDiscounted ? partialSum + parseFloat(a.currentPriceTotal) : partialSum + parseFloat(a.usualPriceTotal),0.0
                   )
                   .toFixed(2)}
               </span>
@@ -283,8 +284,7 @@ const Cart = () => {
                 {(
                   checkout.reduce(
                     (partialSum, a) =>
-                      partialSum + parseFloat(a.currentPriceTotal),
-                    0.0
+                      a.canBeDiscounted ? partialSum + parseFloat(a.currentPriceTotal): partialSum + parseFloat(a.usualPriceTotal), 0.0
                   ) + donation
                 ).toFixed(2)}
               </span>
@@ -304,8 +304,6 @@ const Cart = () => {
       {showModal && (
         <CreditCardModal
           closeModal={setShowModal}
-          totalAmount={totalAmount}
-          donation={donation}
           showDonation={showDonation}
           checkout={checkout}
         />

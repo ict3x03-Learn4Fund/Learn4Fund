@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const Donation = require("../models/donationModel");
-const Account = require("../models/accountModel");
 
 /***
  * @desc Get All donations
@@ -10,8 +9,6 @@ const Account = require("../models/accountModel");
 const apiGetDonations = asyncHandler(async (req, res) => {
   try {
     const donationList = await Donation.find();
-
-    // console.log(courses)
     res.status(200).json(donationList);
   } catch (error) {
     res.status(400).json(`message: ${error.message}`);
@@ -32,7 +29,6 @@ const apiGetTotal = asyncHandler(async (req, res) => {
         total += parseInt(object.amount);
       })
     })
-    // console.log(courses)
     res.status(200).json({ total: total });
   } catch (error) {
     res.status(400).json(`message: ${error.message}`);
@@ -82,7 +78,8 @@ const apiGetTop5Donors = asyncHandler(async (req, res) => {
       });
       const date = new Date(user.updatedAt)
       const niceD = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-      const donor = { name: user.accountId.firstName, amount: totalAmt, date: niceD }
+      const firstName = user.accountId.firstName != null ? user.accountId.firstName : "Deleted Account"
+      const donor = { name: firstName , amount: totalAmt, date: niceD }
       sortedList.push(donor)
     });
     sortedList.sort((a, b) => {
@@ -105,7 +102,8 @@ const apiTopRecent = asyncHandler(async (req, res) => {
         if (object.showDonation) {
           const d = object.date
           const date = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
-          const newObject = { name: donor.accountId.firstName, amount: object.amount, date: date }
+          const firstName = donor.accountId.firstName != null ? donor.accountId.firstName : "Deleted Account"
+          const newObject = { name: firstName, amount: object.amount, date: date }
           donorLists.push(newObject);
         }
       })

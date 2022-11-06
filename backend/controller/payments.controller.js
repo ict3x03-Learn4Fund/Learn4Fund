@@ -12,9 +12,6 @@ const { v4: uuidv4 } = require("uuid");
 const { sendEmail } = require("../middleware/mailer.js");
 const Account = require("../models/accountModel");
 
-//// encryption code
-// let decryptedData = decipher.update(encryptedCode, "hex", "utf-8")
-// decryptedData += decipher.final("utf8")
 
 /***
  * @desc Get payment methods
@@ -23,7 +20,7 @@ const Account = require("../models/accountModel");
  */
 const apiGetMethods = asyncHandler(async (req, res) => {
   try {
-    const accountId = req.params.id;
+    const accountId = req.params.userId;
     const creditCards = await CreditCard.find({ accountId: accountId });
     const billAddrs = await BillAddress.find({ accountId: accountId });
     const filteredCards = [];
@@ -53,9 +50,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
   try {
     const {
       accountId,
-      donationAmount,
       showDonation,
-      totalAmount,
       checkedOutCart,
       billAddressId,
       cardId,
@@ -71,6 +66,7 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     }
 
     // reduce quantity from courses from checkedout cart
+    let totalAmt = 0;
     const courses = await Course.find();
     for (const course in courses) {
       for (const purchased in checkedOutCart) {
@@ -83,8 +79,12 @@ const apiMakePayment = asyncHandler(async (req, res) => {
           ) {
             courses[course].quantity -=
               checkedOutCart[purchased].cartItem.quantity;
-            console.log("Course purchased: ", courses[course].quantity);
             courses[course].save();
+            if (courses[course].canBeDiscounted){
+              totalAmt = totalAmt + parseFloat(courses[course].courseDiscountedPrice) * checkedOutCart[purchased].cartItem.quantity
+            } else {
+              totalAmt = totalAmt + parseFloat(courses[course].courseOriginalPrice) * checkedOutCart[purchased].cartItem.quantity
+            }
           } else {
             return res.status(400).json({
               message: "Quantity purchased more than the stocks left.",
@@ -103,16 +103,19 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     let newCartList = existingCart.coursesAdded.filter(
       (cart) => !idArray.includes(cart.cartItem.courseId)
     );
+    const donationAmount = existingCart.donationAmt
     existingCart.donationAmt = 0;
     existingCart.coursesAdded = newCartList;
     existingCart.markModified("coursesAdded");
     existingCart.markModified("donationAmount");
     existingCart.save();
 
+
+    totalAmt = totalAmt + donationAmount
     // create transaction document
     const transaction = await Transaction.create({
       donationAmount: donationAmount,
-      totalAmount: totalAmount,
+      totalAmount: totalAmt.toFixed(2),
       checkedOutCart: checkedOutCart,
       accountId: accountId,
       billAddressId: billAddressId,
@@ -174,7 +177,6 @@ const apiMakePayment = asyncHandler(async (req, res) => {
     }
     let message = "";
     let list = "";
-    console.log(emailList);
     if (emailList.length != 0) {
       message = `Congratulations on your new purchases! \n The following are your course vouchers: \n`;
       list = "";
@@ -229,7 +231,6 @@ const apiAddCard = asyncHandler(async (req, res) => {
     let cardFlag = false;
 
     for (const card in existingCards) {
-      console.log(existingCards[card]);
       if (await bcrypt.compare(creditCard.cardNo, existingCards[card].cardNo)) {
         cardFlag = true;
       }
@@ -322,7 +323,6 @@ const apiDeleteCard = asyncHandler(async (req, res) => {
     if (!card) {
       return res.status(400).json({ message: "card not found." });
     }
-    console.log(card);
     return res.status(200).json(`card ${card.last4No} is deleted`);
   } catch (e) {
     return res.status(400).json({ message: e.message });
@@ -336,32 +336,34 @@ const apiDeleteCard = asyncHandler(async (req, res) => {
  */
 const apiGetTransactions = asyncHandler(async (req, res) => {
   try {
-    const accountId = req.params.id;
+    const accountId = req.params.userId;
     const transactions = await Transaction.find({
       accountId: accountId,
     })
       .populate({ path: "cardId", select: ["cardType", "last4No"] });
-
-    const filteredTrans = transactions;
-    console.log(transactions[0].checkedOutCart[0]);
     for (const transaction in transactions) {
       for (const cart in transactions[transaction].checkedOutCart) {
         // const courseInfo = await Course.findById()
         const courseId =
           transactions[transaction].checkedOutCart[cart].cartItem.courseId;
         const course = await Course.findById(courseId);
+        let currentPrice;
+        if (course.canBeDiscounted){
+          currentPrice = course.courseDiscountedPrice
+        } else {
+          currentPrice = course.courseOriginalPrice
+        }
         const newCartItem = {
           courseId: courseId,
           courseName: course.courseName,
           quantity:
             transactions[transaction].checkedOutCart[cart].cartItem.quantity,
           totalPrice: (
-            course.courseDiscountedPrice *
+            currentPrice *
             transactions[transaction].checkedOutCart[cart].cartItem.quantity
           ).toFixed(2),
         };
         transactions[transaction].checkedOutCart[cart].cartItem = newCartItem;
-        // transactions[transaction].checkedOutCart[cart].cartItem.courseName = course.CourseName;
       }
     }
 

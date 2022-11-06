@@ -8,7 +8,6 @@ const Course = require("../models/courseModel");
  */
 const apiGetCourses = asyncHandler(async (req, res) => {
   const courses = await Course.find({ deleteIndicator: "false" });
-  // console.log(courses)
   res.json(courses);
 });
 
@@ -18,7 +17,7 @@ const apiGetCourses = asyncHandler(async (req, res) => {
  * @access Private
  */
 const apiCreateCourse = asyncHandler(async (req, res) => {
-  if (req.body.courseDiscountedPrice > req.body.courseOriginalPrice) {
+  if (parseFloat(req.body.courseDiscountedPrice) > parseFloat(req.body.courseOriginalPrice)) {
     return res.status(400).json({ message: "Discounted price cannot be higher than original price" });
   }
   const course = await Course.create({                      // Create new course
@@ -80,7 +79,6 @@ const apiDeleteCourse = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Course not found');
   }
-  // TODO: delete indicator set but still displayed on frontend
   const updatedCourse = await Course.findByIdAndUpdate({ _id: req.params.id }, { deleteIndicator: true });
   res.status(200).json(updatedCourse);
 });

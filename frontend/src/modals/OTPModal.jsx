@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useForm } from "react-hook-form";
 import {
-  userLogin,
   getUserDetails,
   getCartNumber,
   user2FA,
@@ -40,7 +39,7 @@ export const OTPModal = ({ closeModal }) => {
     setOtp(event.target.value);
   }
 
-  function handleCloseModal(){
+  function handleCloseModal() {
     dispatch(clearSignupState());
     closeModal(false);
   }
@@ -54,7 +53,6 @@ export const OTPModal = ({ closeModal }) => {
         })
         .catch((e) => {
           toast.error("Wrong Code!");
-          console.log(e);
           return;
         });
     } else {
@@ -66,8 +64,6 @@ export const OTPModal = ({ closeModal }) => {
     if (!qrUrl) {
       if (otpSuccess) {
         toast.success('Logged in')
-        dispatch(getUserDetails(localStorage.getItem("userId")));
-        dispatch(getCartNumber());
         navigate("/");
       }
       if (otpError) {
@@ -89,7 +85,7 @@ export const OTPModal = ({ closeModal }) => {
 
             <button
               className="text-[black] bg-transparent text-[24px]"
-              onClick={() => {handleCloseModal()}}
+              onClick={() => { handleCloseModal() }}
             >
               <AiOutlineCloseSquare />
             </button>

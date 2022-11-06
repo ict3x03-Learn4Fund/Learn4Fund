@@ -7,19 +7,19 @@ const voucherSchema = mongoose.Schema(
     },
     expiryDate: {
       type: Date,
-      default: () => new Date(+ new Date() + 365*24*60*60*1000)
+      default: () => new Date(+ new Date() + 365 * 24 * 60 * 60 * 1000)
     },
     accountId: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Account"
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Account"
     },
     courseId: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Course"
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Course"
     },
     transactionId: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Transaction"
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Transaction"
     },
     salt: {
       type: String,

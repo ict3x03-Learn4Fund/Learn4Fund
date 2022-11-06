@@ -20,16 +20,32 @@ const protect = asyncHandler((req, res, next) => {
                         return res.status(401).json({ message: 'Not logged in' })
                     }
 
+                    
+
                     //verify token
                     const decoded = jwt.verify(                                             //[Authentication] Verify token
                         token,
                         process.env.JWT_SECRET,
                         { algorithm: "HS512" })
-
+                    
+                    if (req.params.userId != decoded.id){
+                        return res.status(400).json({message: "Please do not use someone else's userId."})
+                    }
+                        
                     //get user from token
                     req.account = await Account.findById(decoded.id)                        //[Authentication] Get user from token, and set as req.account
+                    
+                    if(req.account.ipAddress != req.headers['x-forwarded-for']){
+                        Logs.create({
+                            ip: req.headers['x-forwarded-for'],
+                            type: "ip-address fail to match",
+                            reason: req.headers['x-forwarded-for'] + " tried to access " + req.url + " without authorization",
+                            time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
+                        });
+                        return res.status(403).json({ message: 'Forbidden access', sessionTimeout: true })
+                    }
 
-                    if (url !== '/v1/api/accounts' && url !== '/v1/api/carts') {
+                    if (url !== '/v1/api/accounts' || url !== '/v1/api/carts') {
                         //update user session timestamp
                         await Account.findByIdAndUpdate(decoded.id, { loggedTimestamp: Date.now() }) //[Authentication] Update user session timestamp
                     }
@@ -48,11 +64,13 @@ const protect = asyncHandler((req, res, next) => {
 
                             return res.status(403).json({ message: 'Not authorized' });
                         }
+                        
                     }
+
+                        
 
                     next() // Move on from the middleware
                 } catch (error) {
-                    console.log(error)
                     return res.status(403).json({ message: 'Error' })
                 }
             }
@@ -62,7 +80,7 @@ const protect = asyncHandler((req, res, next) => {
         // Send to logs db
         Logs.create({
             ip: req.headers['x-forwarded-for'],
-            type: "auth",
+            type: "no auth token",
             reason: "Attempted to access " + req.url + " without authorization",
             time: new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore", }),
         });

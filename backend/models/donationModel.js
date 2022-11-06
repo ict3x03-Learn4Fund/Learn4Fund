@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 mongoose.set('sanitizeFilter', true)
 const donationSchema = mongoose.Schema(
   {
-    donationList : {
+    donationList: {
       type: Array,
       default: []
     },
@@ -10,7 +10,7 @@ const donationSchema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "Account",
     },
-    transactionId:{
+    transactionId: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: "Transaction",
     },

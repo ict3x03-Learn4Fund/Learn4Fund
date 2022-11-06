@@ -5,7 +5,7 @@
     @apply bg-blue-500 uppercase text-[12px] text-white font-bold p-2 rounded;
 }
 
-.btn:hover{
+.btn:hover {
     @apply bg-blue-700;
 }
 
@@ -13,7 +13,7 @@
     @apply outline-none shadow-lg;
 }
 
-.btn:active{
+.btn:active {
     @apply bg-blue-900;
 }
 
@@ -42,14 +42,11 @@
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
-
-
-

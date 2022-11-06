@@ -8,13 +8,13 @@ const getCart = async (accountId) => {
 const addCart = async (accountId, courseId, quantity) => {
   const cartItem = { courseId, quantity };
   const cart = { accountId, cartItem };
-  const response = await http.post(`/carts/add`, cart);
+  const response = await http.post(`/carts/add/${accountId}`, cart);
   return response;
 };
 
 const deleteCart = async (accountId, courseId) => {
   const cart = { accountId, courseId };
-  return await http.post(`/carts/delete`, cart);
+  return await http.post(`/carts/delete/${accountId}`, cart);
 };
 
 const getTotal = async (accoundId) => {
@@ -22,8 +22,8 @@ const getTotal = async (accoundId) => {
 }
 
 const addDonationToCart = async (accountId, donationAmt, showDonation) => {
-  const cart = {accountId, donationAmt, showDonation};
-  return await http.post("/carts/addDonation", cart);
+  const cart = { accountId, donationAmt, showDonation };
+  return await http.post(`/carts/addDonation/${accountId}`, cart);
 }
 
 const clearDonationsInCart = async (accoundId) => {

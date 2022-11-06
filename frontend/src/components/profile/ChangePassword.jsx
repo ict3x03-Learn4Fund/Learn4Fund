@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { BsShieldLockFill } from "react-icons/bs";
 import { AiOutlineCloseSquare } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,10 +9,10 @@ import authService from "../../services/accounts";
 import validator from "validator";
 
 function ChangePassword() {
-  const { userId } = useSelector(
+  const { userInfo } = useSelector(
     (state) => state.user
   );
-  
+
   const [errorMsg] = useState("");
   const {
     register,
@@ -38,7 +38,7 @@ function ChangePassword() {
 
 
   const checkPassword = (e) => {
-    
+
 
     if (e.target.value.length >= 12) {
       setFufillPassword((prevState) => [
@@ -132,7 +132,7 @@ function ChangePassword() {
     setModalOpen(true);
   };
 
-  
+
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -140,20 +140,18 @@ function ChangePassword() {
 
   // for otp submit
   const submitForm = (data) => {
-    if (userId && otp && password) {
-      if (!validator.isAlphanumeric(userId) && !validator.isLength(userId, { min: 24, max: 24 })) {
+    console.log(userInfo.id, otp, password)
+    if (userInfo.id && otp && password) {
+      if (!validator.isAlphanumeric(userInfo.id) && !validator.isLength(userInfo.id, { min: 24, max: 24 })) {
         toast.error("Request denied");
         return;
       }
       else {
-        const payload = {userId: userId, token: otp}
-        console.log(payload)
+        const payload = { userId: userInfo.id, token: otp }
         authService.verify2FA(payload).then((response) => {
-          console.log("status", response.status)
-          if (response.status == 200){
-            console.log(userId, password)
-            authService.normalChangePass(userId, password).then((res) => {
-              if (res.status == 200){
+          if (response.status == 200) {
+            authService.normalChangePass(userInfo.id, password).then((res) => {
+              if (res.status == 200) {
                 toast.success("Password changed successfully!")
                 setModalOpen(false)
               }
@@ -162,9 +160,8 @@ function ChangePassword() {
               }
             }).catch((err) => {
               toast.error(err.response.data.message);
-              // console.log(err.response.data.message)
             })
-  
+
           } else {
             toast.error(response.data.message);
           }
@@ -181,7 +178,7 @@ function ChangePassword() {
         toast.error("Enter all fields");
       }
     }
-    
+
   };
 
   return (
