@@ -151,8 +151,8 @@ function Nav() {
                 navigate("/cart");
               }}
               className={
-                "cursor-pointer flex flex-row flex-wrap h-fit ml-8" +
-                (tab === "cart" ? "border-b-4 border-b2" : "")
+                "cursor-pointer flex flex-row flex-wrap h-fit ml-8 " +
+                  (tab === "cart" ? "border-b-4 border-b2" : "")
               }
             >
               <BsCart className="flex w-8 h-[18px] mr-[8px] self-center" />
