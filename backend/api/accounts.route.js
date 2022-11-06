@@ -111,7 +111,7 @@ const resetPasswordLimiter = rateLimit({
 const loginRateLimiter = rateLimit({
   // [DoS] Prevent mass account creation
   windowMs: 10 * 60 * 1000, // 10 mins
-  max: 5, // Limit each IP to 10 login requests per 10 mins
+  max: 10, // Limit each IP to 10 login requests per 10 mins
   keyGenerator: (req, res) => {
     return req.clientIp;
   },
