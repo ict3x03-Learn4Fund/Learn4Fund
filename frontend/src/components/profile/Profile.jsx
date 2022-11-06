@@ -212,7 +212,7 @@ function Profile() {
                 className="btn w-full"
                 type="button"
                 value="Update Details"
-                onClick={(e) => updateProfile(e)}
+                onClick={(e) => updateProfile()}
               />
             </form>
           </div>

@@ -46,7 +46,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
   }, [courseInfo, setUpdatedList])
 
   function validation() {
-    const error = false;
+    let error = false;
     if (updatedList.courseDescription && updatedList.courseName && updatedList.courseTutor && updatedList.quantity && updatedList.courseOriginalPrice) {
       if (!validator.isLength(updatedList.courseDescription, { max: 500 })) { toast.error("Course description: 500 characters only"); error = true; }
       if (!validator.isLength(updatedList.courseName, { max: 100 })) { toast.error("Course name: 100 characters only"); error = true; }
