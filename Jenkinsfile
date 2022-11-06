@@ -74,7 +74,7 @@ pipeline {
 
         stage("OWASP Dependency Check") {
             steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend" --exclude "/var/jenkins_home/workspace/Learn4fund_final/backend/package-lock.json"', odcInstallation: 'Default'
+                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend"', odcInstallation: 'Default'
             }
         }
 
