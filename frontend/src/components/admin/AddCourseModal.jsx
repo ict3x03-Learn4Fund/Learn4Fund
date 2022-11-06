@@ -155,11 +155,13 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
     // check if price amounts are more than a certain value
     if (originalAmtRef.current.value <= 0) {
       toast.error("Price amounts must be more than 0", { autoClose: false, limit: 1 })
+      setButtonState(false);
       return;
     }
     // check if price amounts are more than a certain value
     if (originalAmtRef.current.value > 50000 || discountAmtRef.current.value > 50000) {
       toast.error("Price amounts cannot be more than $50,000", { autoClose: false, limit: 1 })
+      setButtonState(false);
       return;
     }
 
@@ -169,6 +171,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
 
     if (updatedList.quantity > 1000 || updatedList.quantity < 1){
       toast.error("Quantity must be between 1 and 1000", { autoClose: false, limit: 1 })
+      setButtonState(false);
       return;
     }
 
@@ -178,9 +181,11 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
 
     if (parseFloat(updatedList.courseOriginalPrice) < parseFloat(updatedList.courseDiscountedPrice)) {
       toast.error("Discounted price cannot be more than original price", { autoClose: false, limit: 1 })
+      setButtonState(false);
       return;
     }
     if (!validation()) {
+      setButtonState(false);
       return
     }
     // update course

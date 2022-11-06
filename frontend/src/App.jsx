@@ -78,29 +78,22 @@ function App() {
             <Route
               path="*"
               element={
-                <main className="p-8 bg-rose-200 h-screen">
-                  <div className="bg-rose-400 p-8">
-                    <p className="font-bold text-white">
-                      URL not found - 404 code
-                    </p>
-                    <p>
-                      Go back to{" "}
-                      <u>
-                        <Link to="/" className="font-bold">
-                          Main Page
-                        </Link>
-                      </u>
-                    </p>
-                    <p>
-                      If you suspect this is a bug, please contact us at{" "}
-                      <a
-                        href="mailto:learn4fund@gmail.com"
-                        className="font-bold"
-                      >
-                        learn4fund@gmail.com
-                      </a>
-                    </p>
-                  </div>
+                <main className="p-8 h-screen">
+                  <div className="bg-gray-400 p-8">
+          <p className="font-bold text-2xl text-white">
+            Unauthorized &nbsp;
+          </p>
+          <span className='mr-2'>
+            <NavLink to='/login' className="font-bold text-blue-600">Login</NavLink> to gain access.
+          </span>
+          If you suspect this is a bug, please contact us at{" "}
+          <a
+            href="mailto:learn4fund@gmail.com"
+            className="font-bold"
+          >
+            learn4fund@gmail.com
+          </a>
+        </div>
                 </main>
               }
             />
