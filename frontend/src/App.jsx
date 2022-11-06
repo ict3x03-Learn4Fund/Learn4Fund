@@ -81,10 +81,10 @@ function App() {
                 <main className="p-8 h-screen">
                   <div className="bg-gray-400 p-8">
           <p className="font-bold text-2xl text-white">
-            Unauthorized &nbsp;
+            URL Not Found &nbsp;
           </p>
           <span className='mr-2'>
-            <NavLink to='/login' className="font-bold text-blue-600">Login</NavLink> to gain access.
+            Go Back to <Link to='/' className="font-bold text-blue-600">Main Page</Link>.
           </span>
           If you suspect this is a bug, please contact us at{" "}
           <a

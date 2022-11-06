@@ -15,8 +15,8 @@ function ResetPassword() {
   } = useForm();
   const [otp, setOtp] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const { loading } = useSelector((state) => state.user);
   const [email, setEmail] = useState("");
+  const [buttonState, setButtonState] = useState(false);
 
   function handleOtp(event) {
     setOtp(event.target.value);
@@ -34,9 +34,12 @@ function ResetPassword() {
   });
 
   const resetPassword = () => {
+    if(buttonState) return;
+    setButtonState(true);
     if (email && otp) {
       if (!validator.isEmail(email) || (!validator.isInt(otp) && !validator.isLength(otp, { min: 6, max: 6 }) && !validator.matches(otp, /^[0-9]*$/))) {
         toast.error("Invalid Credentials");
+        setButtonState(false);
         return;
       }
       else {
@@ -44,12 +47,14 @@ function ResetPassword() {
         authService.resetPass(request).then((response) => {
           if (response.status == 200) {
             toast.success(response.data.message)
+            setButtonState(false);
           }
         }).catch((error) => {
           toast.error(error.response.data.message)
         })
       }
     }
+    setButtonState(false);
   }
 
   return (
@@ -101,7 +106,7 @@ function ResetPassword() {
               <button
                 className="p-2 w-full rounded bg-success text-w1 font-bold"
                 type="submit"
-                disabled={loading}
+                disabled={buttonState}
               >
                 Reset
               </button>

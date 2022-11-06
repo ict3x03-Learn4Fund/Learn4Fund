@@ -11,7 +11,6 @@ import validator from "validator";
 function ChangePass() {
   const navigate = useNavigate();
   const [buttonState, setButtonState] = useState(false);
-  const { loading } = useSelector((state) => state.user);
   const {
     register,
     handleSubmit,
@@ -153,7 +152,7 @@ function ChangePass() {
               <button
                 className="p-2 w-full rounded bg-success text-w1 font-bold"
                 type="submit"
-                disabled={loading} // [Validation] React Hook Form
+                disabled={buttonState} // [Validation] React Hook Form
               >
                 Reset Password
               </button>
