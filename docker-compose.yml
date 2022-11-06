@@ -1,61 +1,30 @@
-# docker compose file version
 version: '3'
-
-# all of your services list will define here
-services:         
-
+services:  
     backend:   
-        build: # build image
-            context: ./backend #directory location
-            dockerfile: Dockerfile # dockerfile name
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
         volumes: 
             - /app/node_modules
-            - ./backend:/app    
-        environment: 
-             # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
-             # container service name and port on which it is running
-            - MONGODB_URI=MONGODB_URI=mongodb://root:example@mongoDb:27017/dockerizingMernApplicationTestDB?authSource=admin
-            - CHOKIDAR_USEPOLLING=true #for hot reloading
-           
-        depends_on:  # don't run untill mongoDb service will not start 
-            - mongoDb   
-        restart: always    
+            - ./backend:/app 
+        ports:
+            - "5000:5000"   
+        restart: always
+        environment:
+            - CURRENT_ENV=deployment    
 
-    frontend:   
-        build: 
+    frontend:
+        ports:
+            - "3000:3000"   
+        build:
             context: ./frontend
             dockerfile: Dockerfile
-        restart: always    
         volumes: 
-            - /app/node_modules # we reference the node_modules which is present in app directory inside the docker, to our current node modules which is present in front directory
-            - ./frontend:/app  # frontend directory is used as a volume(bind mount)  
-             
+            - /app/node_modules
+            - ./frontend:/app    
+        
         environment: 
-            #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
-    
-    nginx:
-        image: linuxserver/swag
-        ports:
-            - 80:80
-            - 443:443
-        volumes:
-            - ./nginx/config:/config
-            - ./nginx/default.conf:/config/nginx/site-confs/default
-            - ./nginx/ssl.conf:/config/nginx/ssl.conf
-        container_name: nginx
-        restart: unless-stopped
-        environment: 
-            - PUID=1000
-            - PGID=1000
-            - TZ=Europe/London
-            - URL=easydevops.tk
-            - SUBDOMAINS=www,
-            - VALIDATION=http
-            - STAGING= false #optional 
-            - EMAIL=dijes29341@asmm5.com
-
-        # volumes are defined here
 volumes: 
     db-volume:

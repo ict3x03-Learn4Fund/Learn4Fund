@@ -1,35 +1,35 @@
-version: '3'
-services:  
-    backend:   
+version: '3.8'
+
+services:
+    backend:
         build:
             context: ./backend
             dockerfile: Dockerfile.dev
-        volumes: 
+        volumes:
             - /app/node_modules
-            - ./backend:/app 
+            - ./backend:/app
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+            - CURRENT_ENV=testing
+        restart: always
         ports:
-            - "5000:5000"   
-        restart: always    
+            - 5000:5000
 
-    frontend:   
+    frontend:
+        mem_limit: "1300M"
+        stdin_open: true
         build:
             context: ./frontend
             dockerfile: Dockerfile.dev
-        volumes: 
+        volumes:
             - /app/node_modules
-            - ./frontend:/app    
-        #request will forward to same url, so we only need /api to distinguish that this request will forward to our backend           
-        environment: 
+            - ./frontend:/app
+        restart: always
+        environment:            
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
-    
-    nginx:
-        build:
-            context: ./nginx
-            dockerfile: Dockerfile.dev
-        ports: 
-            - 3000:80
-        restart: always
-
-volumes: 
+            - REACT_APP_CURRENT_ENV=testing
+        ports:
+            - 3000:3000
+volumes:
     db-volume:

@@ -1,9 +1,11 @@
 FROM node:latest
 
-COPY package.json yarn.lock ./
+# WORKDIR '/app'
 
-RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json ./
+
+RUN npm i
 
 COPY . .
 
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]
