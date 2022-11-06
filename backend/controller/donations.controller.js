@@ -73,14 +73,21 @@ const apiGetTop5Donors = asyncHandler(async (req, res) => {
     let sortedList = [];
     donors.map((user) => {
       let totalAmt = 0
-      user.donationList.map((donation) => {
+      let showDonation = false;
+      const donationListLen = user.donationList.length
+      user.donationList.map((donation, index) => {
         totalAmt += parseInt(donation.amount);
+        if ((index +1 == donationListLen) && donation.showDonation){
+          showDonation = true;
+        }
       });
-      const date = new Date(user.updatedAt)
-      const niceD = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
-      const firstName = user.accountId.firstName != null ? user.accountId.firstName : "Deleted Account"
-      const donor = { name: firstName , amount: totalAmt, date: niceD }
-      sortedList.push(donor)
+      if (showDonation){
+        const date = new Date(user.updatedAt)
+        const niceD = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`
+        const firstName = user.accountId.firstName != null ? user.accountId.firstName : "Deleted Account"
+        const donor = { name: firstName , amount: totalAmt, date: niceD }
+        sortedList.push(donor)
+      }
     });
     sortedList.sort((a, b) => {
       return b.amount - a.amount;
