@@ -38,7 +38,8 @@ pipeline {
 
         stage("Unit Testing"){
             steps{
-                sh 'docker compose down --rmi all' // Kill containers to run unit test
+                sh 'docker stop $(docker ps -a -q)' // Kill containers to run unit test
+                sh 'docker rm $(docker ps -a -q)'
                 dir('backend'){
                     sh 'npm i'
                     sh 'npm run test'
@@ -74,8 +75,6 @@ pipeline {
             steps {
                 sh 'cp /home/.backend.env backend/.env'
                 sh 'cp /home/.frontend.env frontend/.env'                              
-                sh 'docker stop $(docker ps -a -q)'
-                sh 'docker rm $(docker ps -a -q)'
                 sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.yml build --no-cache --pull'
             }
