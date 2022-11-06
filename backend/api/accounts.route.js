@@ -31,7 +31,7 @@ const emojiRegex =
 const createAccountLimiter = rateLimit({
   // [DoS] Prevent mass account creation
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5, // Limit each IP to 5 create account requests per hour
+  max: 10, // Limit each IP to 5 create account requests per hour
   keyGenerator: (req, res) => {
     return req.clientIp;
   },
