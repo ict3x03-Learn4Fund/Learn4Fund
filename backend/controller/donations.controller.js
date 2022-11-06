@@ -26,7 +26,7 @@ const apiGetTotal = asyncHandler(async (req, res) => {
     let total = 0;
     donationList.map((donor) => {
       donor.donationList.map((object) => {
-        total += parseInt(object.amount);
+       total += parseInt(object.amount);
       })
     })
     res.status(200).json({ total: total });
@@ -47,9 +47,6 @@ const apiAddDonations = asyncHandler(async (req, res) => {
       path: "accountId",
       select: ["firstName", "lastName"],
     });
-    // if (!accountId) {
-    //   return res.status(400).json({ message: "AccountId cannot be null." });
-    // }
     if (!donator) {
       donator = await Donation.create({
         accountId,

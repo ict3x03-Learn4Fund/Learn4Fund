@@ -268,7 +268,6 @@ const apiResetPassword = asyncHandler(async (req, res) => {
 
 const apiVerifyReset = asyncHandler(async (req, res) => {
   try {
-    // const userId = req.params.id;
     const jwtToken = req.params.jwt;
     if (!jwtToken) {
       return res.status(400).json({ message: "No token, authorization denied" });

@@ -5,7 +5,6 @@ import { logout } from "../features/user/userSlice";
 
 const ProtectedRoute = () => {
   const { userInfo } = useSelector((state) => state.user)
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import courseService from "../services/courses";
 import { BsSearch } from "react-icons/bs";
+import { toast } from "react-toastify";
 
 function Catalog() {
   const [dataCourses, setDataCourses] = useState([]);
@@ -25,7 +26,7 @@ function Catalog() {
       .then((response) => {
         setDataCourses(response.data);
       })
-      .catch((e) => {
+      .catch((e) => { toast.error("Unable to retrieve courses")
       });
   };
 
