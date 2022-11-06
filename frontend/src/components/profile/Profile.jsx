@@ -260,7 +260,7 @@ function Profile() {
             <div className="flex w-full justify-between">
               <div className="self-center">
                 <b>Email Subscription</b> (
-                <span className="text-red-500" >{userInfo?.emailSubscription ? "On" : "Off"}</span>)
+                <span className={userInfo?.emailSubscription ? "text-success":"text-red-500"} >{userInfo?.emailSubscription ? "On" : "Off"}</span>)
               </div>
               <button className="btn" onClick={() => updateSubscription()}>{userInfo?.emailSubscription ? "Toggle Off" : "Toggle On"}</button>
             </div>
