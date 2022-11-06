@@ -140,7 +140,7 @@ function Homepage({ setNewsModal }) {
                     alt={"example"}
                   />
                   <div className="flex-row flex-wrap w-full space-y-2">
-                    <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528]">
+                    <div className="flex w-full h-[24px] justify-center pt-[8px] text-[1vw] leading-[20px] font-bold font-type1 text-[#242528] overflow-hidden">
                       <span className="truncate ... w-2/3 overflow-hidden self-center">
                         {course.courseName}
                       </span>
