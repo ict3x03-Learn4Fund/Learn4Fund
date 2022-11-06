@@ -77,12 +77,12 @@ function Donations() {
   };
 
   function addToCart() {
-    if (offerAmtRef.current.value <= 0) {
-      toast.error("Please enter a valid amount");
+    if (offerAmtRef.current.value < 1) {
+      toast.error("Minimum donation of 1 dollar");
       return;
     }
-    if (offerAmtRef.current.value > 9999999) {
-      toast.info('Please enter a valid amount less than 10 million')
+    if (offerAmtRef.current.value > 10000000) {
+      toast.info('Please enter a valid amount no more than 10 million')
       return
     }
     else if (userInfo) {
