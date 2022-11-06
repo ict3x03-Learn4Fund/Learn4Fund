@@ -15,8 +15,14 @@ pipeline {
                 }
                 sh 'cp /home/.backend.env backend/.env'
                 sh 'cp /home/.frontend.env frontend/.env'
-                sh 'docker stop $(docker ps -a -q)'
-                sh 'docker rm $(docker ps -a -q)'
+                script{
+                    try{
+                        sh 'docker stop $(docker ps -a -q)'
+                        sh 'docker rm $(docker ps -a -q)'
+                    }catch (err){
+                        echo 'Skipping, no existing containers present.'
+                    }
+                }
                 sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.dev.yml build --no-cache --pull'
             }
