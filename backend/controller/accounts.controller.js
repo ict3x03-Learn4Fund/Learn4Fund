@@ -123,11 +123,6 @@ const apiLogin = asyncHandler(async (req, res) => {
       Account.updateOne(
         { email: email },
         { $set: { loginTimes: 0, loggedTimestamp: new Date(), ipAddress: req.headers['x-forwarded-for'] } },
-        function (err, result) {                                      // [Authentication] Reset the loginTimes
-          if (err) {
-          } else {
-          }
-        }
       );
       return res.status(200).json({
         _id: account.id,
@@ -176,12 +171,7 @@ const apiLogin = asyncHandler(async (req, res) => {
                   email,
               };
 
-              transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                } else {
-                }
-                /* SEND EMAIL TO ADMIN END*/
-              });
+              transporter.sendMail(mailOptions)
             }
           }
         );
@@ -189,11 +179,6 @@ const apiLogin = asyncHandler(async (req, res) => {
         Account.updateOne(
           { email: email },
           { $inc: { loginTimes: 1 } },
-          function (err, result) {
-            if (err) {
-            } else {
-            }
-          }
         );
       }
       const attemptsLeft = 4 - account.loginTimes;              // [Logging] Calculate login attempts left out of 5

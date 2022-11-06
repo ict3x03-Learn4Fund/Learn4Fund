@@ -202,7 +202,7 @@ export const CreditCardModal = ({
   };
 
   const onAddrSubmit = (data) => {
-    const error = false;
+    let error = false;
     if (billMethod == "new" && !validator.isPostalCode(postalCode, "SG")) {
       toast.error("Enter valid Postal Code!");
       return;
