@@ -289,7 +289,7 @@ export const AddCourseModal = ({ closeModal, courseInfo }) => {
                     accept=".jpeg, .png"
                     onChange={(e) => handleFile(e)}
                   ></input>
-                  <button className='btn h-[6vh] self-center' onClick={(e) => uploadImage(e)}>Upload image</button>
+                  <button className='btn h-[6vh] w-full mt-2' onClick={(e) => uploadImage(e)}>Upload image</button>
                 </div>
               </div>
               <div className='flex h-[6vh] flex-wrap mr-8'>

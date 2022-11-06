@@ -57,7 +57,7 @@ function Nav() {
       style={{ zIndex: 99 }}
     >
       <div className="flex-row flex-wrap w-full px-[40px] text-black shadow-lg">
-        <div className="flex flex-row flex-wrap w-full justify-between mb-2">
+        <div className="flex flex-row flex-wrap w-full justify-between">
           {userInfo ? (
             <div className="flex w-full lg:w-1/2 justify-center lg:justify-start my-2">
               <img
@@ -92,8 +92,8 @@ function Nav() {
                   navigate("/admin");
                 }}
                 className={
-                  "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                  (tab === "admin" ? "underline" : "")
+                  "cursor-pointer flex flex-row flex-wrap h-fit ml-8 " +
+                  (tab === "admin" ? "border-b-4 border-b2" : "")
                 }
               >
                 <RiAdminLine className="w-[18px] h-[18px] mr-[8px] self-center" />
@@ -107,8 +107,8 @@ function Nav() {
                 navigate("/");
               }}
               className={
-                "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                (tab === "" ? "underline" : "")
+                "cursor-pointer flex flex-row flex-wrap h-fit ml-8 " +
+                (tab === "" ? "border-b-4 border-b2" : "")
               }
             >
               <AiOutlineHome className="w-[18px] h-[18px] mr-[8px] self-center" />
@@ -121,8 +121,8 @@ function Nav() {
                 navigate("/donate");
               }}
               className={
-                "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                (tab === "donate" ? "underline" : "")
+                "cursor-pointer flex flex-row flex-wrap h-fit ml-8 " +
+                (tab === "donate" ? "border-b-4 border-b2" : "")
               }
             >
               <BiDonateHeart className="w-[18px] h-[18px] mr-[8px] self-center" />
@@ -136,8 +136,8 @@ function Nav() {
                   navigate("/settings");
                 }}
                 className={
-                  "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                  (tab === "settings" ? "underline" : "")
+                  "cursor-pointer flex flex-row flex-wrap h-fit ml-8 " +
+                  (tab === "settings" ? "border-b-4 border-b2" : "")
                 }
               >
                 <RiUserSettingsFill className="w-[18px] h-[18px] mr-[8px] self-center" />
@@ -151,15 +151,15 @@ function Nav() {
                 navigate("/cart");
               }}
               className={
-                "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                (tab === "cart" ? "underline" : "")
+                "cursor-pointer flex flex-row flex-wrap h-fit ml-8" +
+                (tab === "cart" ? "border-b-4 border-b2" : "")
               }
             >
-              <BsCart className="w-[18px] h-[18px] mr-[8px] self-center" />
-              <span className=" h-[22px] font-normal leading-[22px] font-type1">
+              <BsCart className="flex w-8 h-[18px] mr-[8px] self-center" />
+              <span className="flex h-[22px] font-normal leading-[22px] font-type1">
                 Cart
               </span>
-              <span className="flex mx-1 w-[16px] h-[16px] rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
+              <span className="absolute ml-6 mb-4 w-4 h-4 rounded-full bg-b1 text-w1 self-center text-[12px] text-center justify-center">
                 {cartNo}
               </span>
             </div>}
@@ -167,7 +167,7 @@ function Nav() {
             {userInfo ? (
               <div
                 onClick={handleLogout}
-                className="cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px]"
+                className="cursor-pointer flex flex-row flex-wrap h-[22px] ml-8"
               >
                 <RiLogoutBoxRLine className="w-[18px] h-[18px] mr-[8px] self-center" />
                 <span className=" h-[22px] font-normal leading-[22px] font-type1">
@@ -180,8 +180,8 @@ function Nav() {
                   navigate("/login");
                 }}
                 className={
-                  "cursor-pointer flex flex-row flex-wrap h-[22px] ml-[32px] " +
-                  (tab === "login" ? "underline" : "")
+                  "cursor-pointer flex flex-row flex-wrap h-fit ml-8 " +
+                  (tab === "login" ? "border-b-4 border-b2" : "")
                 }
               >
                 <RiLoginBoxFill className="w-[18px] h-[18px] mr-[8px] self-center" />

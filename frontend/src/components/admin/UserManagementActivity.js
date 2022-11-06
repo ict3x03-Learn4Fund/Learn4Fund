@@ -98,7 +98,7 @@ export default function UserManagementActivity({ account, fetchData }) {
 
   return (
     <tr>
-      <td>{account._id + ""}</td>
+      <td>{account._id.substring(account._id.length - 5)}</td>
       <td>{account.email}</td>
       <td>{account.firstName}</td>
       <td>{account.lockedOut + ""}</td>
