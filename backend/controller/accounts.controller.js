@@ -246,9 +246,6 @@ const apiGetAccount = asyncHandler(async (req, res) => {
     avatarImg,
     donation,
     emailSubscription,
-    lockedOut,
-    loginTimes,
-    loggedTimestamp,
     sessionTimeout
   });
 });
