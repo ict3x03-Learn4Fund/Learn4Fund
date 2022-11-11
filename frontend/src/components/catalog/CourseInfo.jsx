@@ -11,13 +11,14 @@ import { getCartNumber } from "../../features/user/userActions";
 import validator from "validator";
 
 function CourseInfo() {
-  const { userInfo } = useSelector(
+  const { loading, userInfo, error, success, cartNo } = useSelector(
     (state) => state.user
   );
+  const parse = require("html-react-parser");
   const [quantitySelected, setQuantitySelected] = useState(1);
   const { courseID } = useParams();
   const navigate = useNavigate();
-  const [setCourses] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [courseDetails, setCourseDetails] = useState({});
 
   const [reviews, setReviews] = useState([]);
@@ -53,7 +54,7 @@ function CourseInfo() {
         setCourseDetails(course);
         calculateAverageStars();
       })
-      .catch((e) => { toast.error("Unable to retrieve courses") });
+      .catch((e) => {});
   };
 
   //function to see if user can make review
@@ -65,8 +66,8 @@ function CourseInfo() {
           setReviewAllowed(response.data.authorize);
         }
       })
-      .catch((e) => {
-        toast.error("Unable to verify review");
+      .catch((error) => {
+        toast.error(error.message);
       });
   };
 
@@ -171,9 +172,9 @@ function CourseInfo() {
           setReviewSubmitted(true);
         }
       })
-      .catch((e) => {
-        if (e.response.data.message) {
-          toast.error(e.response.data.message);
+      .catch((error) => {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message);
         }
       });
   };

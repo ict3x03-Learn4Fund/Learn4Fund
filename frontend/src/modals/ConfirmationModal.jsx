@@ -25,7 +25,6 @@ export const ConfirmationModal = ({ closeModal, courseInfo }) => {
         }
       })
       .catch((e) => {
-        toast.error("Error deleting course.");
       });
   }
   return (

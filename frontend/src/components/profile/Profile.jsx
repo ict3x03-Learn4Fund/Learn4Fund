@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import { toast } from "react-toastify";
 import noimage from "../../assets/vectors/noimage.png";
 import imagesService from "../../services/images";
@@ -6,6 +6,7 @@ import authService from "../../services/accounts";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserDetails } from "../../features/user/userActions";
 import { logout } from "../../features/user/userSlice";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
 
@@ -211,7 +212,7 @@ function Profile() {
                 className="btn w-full"
                 type="button"
                 value="Update Details"
-                onClick={(e) => updateProfile()}
+                onClick={(e) => updateProfile(e)}
               />
             </form>
           </div>

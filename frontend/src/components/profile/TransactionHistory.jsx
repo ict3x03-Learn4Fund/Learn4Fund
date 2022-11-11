@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 function TransactionHistory() {
   const [transactions, setTransaction] = useState([]);
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, userId } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const retrieveTransactions = () => {

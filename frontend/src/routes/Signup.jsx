@@ -11,7 +11,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import axios from "axios";
 
 const Signup = () => {
-  const [reCaptchaKey] = useState(
+  const [reCaptchaKey, setRecaptchaKey] = useState(
     process.env.REACT_APP_RECAPTCHA_SITE_KEY
   );
   const { error, success, stateErrorMsg } = useSelector((state) => state.user);

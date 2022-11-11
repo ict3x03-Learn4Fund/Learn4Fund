@@ -1,11 +1,12 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { AiOutlineQuestionCircle, AiOutlineCloseCircle, AiOutlineCloseSquare } from "react-icons/ai";
+import { AiOutlineQuestionCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import validator from "validator";
 import { toast } from "react-toastify";
 import paymentsService from "../services/payment";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import authService from "../services/accounts";
+import { AiOutlineCloseSquare } from "react-icons/ai";
 import { BsShieldLockFill } from "react-icons/bs";
 import { useCreditCardValidator } from "react-creditcard-validator";
 
@@ -177,6 +178,7 @@ export const CreditCardModal = ({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -200,7 +202,7 @@ export const CreditCardModal = ({
   };
 
   const onAddrSubmit = (data) => {
-    let error = false;
+    const error = false;
     if (billMethod == "new" && !validator.isPostalCode(postalCode, "SG")) {
       toast.error("Enter valid Postal Code!");
       return;
@@ -325,6 +327,7 @@ export const CreditCardModal = ({
     getCardNumberProps,
     getExpiryDateProps,
     getCVCProps,
+    getCardImageProps,
     meta: { erroredInputs },
   } = useCreditCardValidator();
 

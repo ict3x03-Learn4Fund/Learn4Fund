@@ -123,6 +123,11 @@ const apiLogin = asyncHandler(async (req, res) => {
       Account.updateOne(
         { email: email },
         { $set: { loginTimes: 0, loggedTimestamp: new Date(), ipAddress: req.headers['x-forwarded-for'] } },
+        function (err, result) {                                      // [Authentication] Reset the loginTimes
+          if (err) {
+          } else {
+          }
+        }
       );
       return res.status(200).json({
         _id: account.id,
@@ -171,7 +176,12 @@ const apiLogin = asyncHandler(async (req, res) => {
                   email,
               };
 
-              transporter.sendMail(mailOptions)
+              transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                } else {
+                }
+                /* SEND EMAIL TO ADMIN END*/
+              });
             }
           }
         );
@@ -179,6 +189,11 @@ const apiLogin = asyncHandler(async (req, res) => {
         Account.updateOne(
           { email: email },
           { $inc: { loginTimes: 1 } },
+          function (err, result) {
+            if (err) {
+            } else {
+            }
+          }
         );
       }
       const attemptsLeft = 4 - account.loginTimes;              // [Logging] Calculate login attempts left out of 5
@@ -268,6 +283,7 @@ const apiResetPassword = asyncHandler(async (req, res) => {
 
 const apiVerifyReset = asyncHandler(async (req, res) => {
   try {
+    // const userId = req.params.id;
     const jwtToken = req.params.jwt;
     if (!jwtToken) {
       return res.status(400).json({ message: "No token, authorization denied" });

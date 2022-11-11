@@ -23,7 +23,6 @@ pipeline {
                         echo 'Skipping, no existing containers present.'
                     }
                 }
-
                 sh 'docker system prune -a --force --volumes'
                 sh 'docker compose -f docker-compose.dev.yml build --no-cache --pull'
             }
@@ -74,7 +73,7 @@ pipeline {
 
         stage("OWASP Dependency Check") {
             steps {
-                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend"', odcInstallation: 'Default'
+                dependencyCheck additionalArguments: '--format HTML --format XML --disableYarnAudit --scan "/var/jenkins_home/workspace/Learn4fund_final/backend"', odcInstallation: 'Default' //--out /var/jenkins_home/workspace
             }
         }
 

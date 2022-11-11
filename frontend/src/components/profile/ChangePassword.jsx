@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { BsShieldLockFill } from "react-icons/bs";
 import { AiOutlineCloseSquare } from "react-icons/ai";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartNumber, user2FA, getUserDetails } from "../../features/user/userActions";
 import authService from "../../services/accounts";
 import validator from "validator";
 

@@ -19,30 +19,36 @@ const login = async (email, password) => {
 // Verify 2FA
 const verify2FA = async (userData) => {
   // Making calls to server side
-  return await http.post("/accounts/verify2FA", userData);
+  const response = await http.post("/accounts/verify2FA", userData);
+
+  return response;
 };
 
 // Get Account
 const getAccount = async (userId) => {
   // Making calls to server side
-  return await http.get(`/accounts/getAccount/${userId}`);
+  const response = await http.get(`/accounts/getAccount/${userId}`);
 
+  return response.data;
 };
 
 // Reset password
 const resetPass = async (request) => {
   // Making calls to server side
-  return await http.post(`/accounts/reset`, request);
+  const response = await http.post(`/accounts/reset`, request);
+  return response;
 };
 
 // Verify reset
 const verifyReset = async (id, jwt) => {
-  return await http.get(`/accounts/reset/${id}/${jwt}`);
+  const response = await http.get(`/accounts/reset/${id}/${jwt}`);
+  return response;
 }
 
 // change password after reset
 const changePass = async (id, jwt, password) => {
-  return await http.post(`/accounts/reset/${id}/${jwt}`, { password: password });
+  const response = await http.post(`/accounts/reset/${id}/${jwt}`, { password: password });
+  return response;
 }
 
 // normal password change
